@@ -1,9 +1,10 @@
-﻿@page "/Game"
+﻿@page "/game"
 @using Microsoft.AspNetCore.SignalR.Client;
+@implements IAsyncDisposable;
 
 @if(IsConnected == false){
 <div>
-    <button @onclick="ConnectToGame">Connect</button>
+    <button @onclick="ConnectWithGame">Connect</button>
 </div>
 }
 else
@@ -58,17 +59,29 @@ else
         _chosenThisRound = true;
     }
 
-    private async Task ConnectToGame(MouseEventArgs e)
+    private async Task ConnectWithGame(MouseEventArgs e)
     {
         _hubConnection = new HubConnectionBuilder()
             .WithUrl("https://localhost:5001/game")
             .Build();
 
-        Console.WriteLine("connection started...");
-
+        _hubConnection.On<string>("ConnectionStatusUpdate", (message) => Console.WriteLine(message));
+        
         await _hubConnection.StartAsync();
         StateHasChanged();
+
+        await JoinRoom("lja123");
     }
 
+    private async Task JoinRoom(string roomKey)
+    {
+        await _hubConnection.SendAsync("ConnectToRoom", roomKey);
+    }
+    
     public bool IsConnected => _hubConnection != null && _hubConnection.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        await _hubConnection.DisposeAsync();
+    }
 }
