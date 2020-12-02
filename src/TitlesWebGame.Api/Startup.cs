@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TitlesWebGame.Api.Hubs;
+using TitlesWebGame.Api.Services;
 
 namespace TitlesWebGame.Api
 {
@@ -32,6 +33,8 @@ namespace TitlesWebGame.Api
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "TitlesWebGame.Api", Version = "v1"});
             });
 
+            services.AddSingleton<IGameConnectionGroupsManager, GameConnectionGroupsManager>();
+            
             services.AddSignalR();
 
             services.AddCors(options =>
