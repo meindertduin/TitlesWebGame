@@ -11,7 +11,7 @@
             {
                 var optionNumber = i;
                 string optionColor = "option-color-" + i;
-            
+
                 <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor">
                     <div class="option-mark">
                         A)
@@ -34,7 +34,7 @@
 </div>
 
 @code {
-    private bool _chosenThisRound = false;
+    private bool _chosenThisRound;
     
     private void HandlePlayerChoice(MouseEventArgs e, int number)
     {
