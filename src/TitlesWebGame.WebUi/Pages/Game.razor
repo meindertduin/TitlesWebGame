@@ -1,4 +1,19 @@
 ﻿@page "/Game"
+@using Microsoft.AspNetCore.SignalR.Client;
+
+@if(IsConnected == false){
+<div>
+    <button @onclick="ConnectToGame">Connect</button>
+</div>
+}
+else
+{
+    <div>
+        Connected
+    </div>
+}
+
+
 
 <div class="container">
     @if (_chosenThisRound == false)
@@ -35,11 +50,25 @@
 
 @code {
     private bool _chosenThisRound;
+    private HubConnection _hubConnection;
     
     private void HandlePlayerChoice(MouseEventArgs e, int number)
     {
         Console.WriteLine(number);
         _chosenThisRound = true;
-
     }
+
+    private async Task ConnectToGame(MouseEventArgs e)
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:5001/game")
+            .Build();
+
+        Console.WriteLine("connection started...");
+
+        await _hubConnection.StartAsync();
+        StateHasChanged();
+    }
+
+    public bool IsConnected => _hubConnection != null && _hubConnection.State == HubConnectionState.Connected;
 }
