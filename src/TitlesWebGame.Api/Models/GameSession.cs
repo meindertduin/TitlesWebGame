@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using TitlesWebGame.Api.Hubs;
@@ -55,14 +56,42 @@ namespace TitlesWebGame.Api.Models
                     // loops through all gameRoundInfo in titleRound
                     foreach (var gameRoundInfo in titleRound)
                     {
+                        await UpdatePlayersOfNewRoundInfo(gameRoundInfo);
                         await PlayNewRound(gameRoundInfo);
+                        await UpdatePlayersOfSessionState(gameRoundInfo);
                     }
                 }
-
                 IsPlaying = false;
             }
         }
-        
+
+        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo)
+        {
+            GameRoundInfoViewModel newGameRoundInfoVm = null;
+            
+            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
+            {
+                newGameRoundInfoVm = new MultipleChoiceRoundInfoViewModel()
+                {
+                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
+                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
+                    Choices = multipleChoiceRoundInfo.Choices,
+                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
+                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
+                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
+                };
+            }
+
+            if (newGameRoundInfoVm != null)
+            {
+                return _titlesGameHub.Clients.Group(RoomKey).SendAsync("NextRoundInfoUpdate", newGameRoundInfoVm);
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
+            }
+
+        }
         private async Task PlayNewRound(GameRoundInfo gameRoundInfo)
         {
             if (gameRoundInfo is MultipleChoiceRoundInfo roundInfo)
@@ -75,16 +104,6 @@ namespace TitlesWebGame.Api.Models
             var scores = await _currentGameRound.PlayRound();
             
             AddScores(scores);
-        }
-
-        public bool AddAnswer(GameRoundAnswer gameRoundAnswer)
-        {
-            if (_players.FirstOrDefault(x => x.ConnectionId == gameRoundAnswer.ConnectionId) != null)
-            {
-                return _currentGameRound.AddAnswer(gameRoundAnswer);
-            }
-
-            return false;
         }
 
         private void AddScores(List<(string, int)> scores)
@@ -101,6 +120,25 @@ namespace TitlesWebGame.Api.Models
             }
         }
 
+        private Task UpdatePlayersOfSessionState(GameRoundInfo currentRoundInfo)
+        {
+            return _titlesGameHub.Clients.Group(RoomKey).SendAsync("GameSessionStateUpdate",
+                new SessionStateUpdateViewModel()
+                {
+                    GameSessionPlayers = _players,
+                    PreviousRoundInfo = currentRoundInfo,
+                });
+        }
+        public bool AddAnswer(GameRoundAnswer gameRoundAnswer)
+        {
+            if (_players.FirstOrDefault(x => x.ConnectionId == gameRoundAnswer.ConnectionId) != null)
+            {
+                return _currentGameRound.AddAnswer(gameRoundAnswer);
+            }
+
+            return false;
+        }
+        
         public bool AddPlayer(GameSessionPlayer player)
         {
             if (IsPlaying == false)
