@@ -1,32 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Hubs;
-using TitlesWebGame.Api.Models;
 
 namespace TitlesWebGame.Api.Models
 {
     public class GameSession
     {
-        private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         public string RoomKey { get; set; }
         public string OwnerConnectionId { get; set; }
         public bool IsPlaying { get; private set; }
-
-
+        
         private List<GameSessionPlayer> _players = new();
         
         private IGameRound _currentGameRound;
         
         private IEnumerator<GameRoundInfo> _gameRoundInfoIterator;
         
-        public GameSession(IHubContext<TitlesGameHub> titlesGameHub)
-        {
-            _titlesGameHub = titlesGameHub;
-        }
-
         public void SetRoundInfo(List<GameRoundInfo> gameRoundInfos)
         {
             _gameRoundInfoIterator = gameRoundInfos.GetEnumerator();
