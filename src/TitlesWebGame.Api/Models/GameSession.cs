@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using TitlesWebGame.Api.Hubs;
 
 namespace TitlesWebGame.Api.Models
@@ -24,38 +26,41 @@ namespace TitlesWebGame.Api.Models
             _titlesGameHub = titlesGameHub;
         }
 
-        public async Task PlayGame()
+        public async Task PlayGame(string connectionId)
         {
-            IsPlaying = true;
-            
-            // get info of all rounds being played
-            // Todo: make this into a factory class or some sort
-            
-            _gameRoundsInfo = new[]
+            if (connectionId == OwnerConnectionId)
             {
-                new[] { new MultipleChoiceRoundInfo()
-                {
-                    Answer = 1,
-                    Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
-                    RewardPoints = 500,
-                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                    RoundStatement = "What animal is primarily known for having stripes",
-                    RoundTimeMs = 100,
-                    TitleCategory = TitleCategories.Scientist,
-                }}
-            };
+                IsPlaying = true;
             
-            // loops through all title rounds
-            foreach (var titleRound in _gameRoundsInfo)
-            {
-                // loops through all gameRoundInfo in titleRound
-                foreach (var gameRoundInfo in titleRound)
+                // get info of all rounds being played
+                // Todo: make this into a factory class or some sort
+            
+                _gameRoundsInfo = new[]
                 {
-                    await PlayNewRound(gameRoundInfo);
+                    new[] { new MultipleChoiceRoundInfo()
+                    {
+                        Answer = 1,
+                        Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
+                        RewardPoints = 500,
+                        GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                        RoundStatement = "What animal is primarily known for having stripes",
+                        RoundTimeMs = 100,
+                        TitleCategory = TitleCategories.Scientist,
+                    }}
+                };
+            
+                // loops through all title rounds
+                foreach (var titleRound in _gameRoundsInfo)
+                {
+                    // loops through all gameRoundInfo in titleRound
+                    foreach (var gameRoundInfo in titleRound)
+                    {
+                        await PlayNewRound(gameRoundInfo);
+                    }
                 }
-            }
 
-            IsPlaying = false;
+                IsPlaying = false;
+            }
         }
         
         private async Task PlayNewRound(GameRoundInfo gameRoundInfo)
@@ -74,7 +79,12 @@ namespace TitlesWebGame.Api.Models
 
         public bool AddAnswer(GameRoundAnswer gameRoundAnswer)
         {
-            return _currentGameRound.AddAnswer(gameRoundAnswer);
+            if (_players.FirstOrDefault(x => x.ConnectionId == gameRoundAnswer.ConnectionId) != null)
+            {
+                return _currentGameRound.AddAnswer(gameRoundAnswer);
+            }
+
+            return false;
         }
 
         private void AddScores(List<(string, int)> scores)

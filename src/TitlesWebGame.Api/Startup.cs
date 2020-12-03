@@ -33,7 +33,7 @@ namespace TitlesWebGame.Api
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "TitlesWebGame.Api", Version = "v1"});
             });
 
-            services.AddSingleton<IGameConnectionGroupsManager, GameSessionManager>();
+            services.AddSingleton<IGameSessionManager, GameSessionManager>();
             
             services.AddSignalR();
 
