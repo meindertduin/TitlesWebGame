@@ -5,6 +5,7 @@ namespace TitlesWebGame.Api.Models
 {
     public interface IGameRound
     {
+        bool AddAnswer(GameRoundAnswer answer);
         Task<List<(string, int)>> PlayRound();
     }
 }

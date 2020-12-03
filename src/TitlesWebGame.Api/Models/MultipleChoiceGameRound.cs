@@ -10,7 +10,7 @@ namespace TitlesWebGame.Api.Models
         private readonly int _rewardPoints;
         private readonly int _roundTimeMs;
 
-        private const int BufferTimeMs = 1;
+        private const int BufferTimeMs = 1000;
 
         private bool _canCommitAnswer;
         
@@ -24,19 +24,18 @@ namespace TitlesWebGame.Api.Models
             _roundTimeMs = roundTimeMs;
         }
         
-        public void AddAnswer(string connectionId, int answer)
+        public bool AddAnswer(GameRoundAnswer answer)
         {
             if (_canCommitAnswer)
             {
                 var elapsedTime = (DateTime.Now - _startTime).TotalMilliseconds;
-            
-                _playerAnswers.Add(new MultipleChoiceAnswer()
-                {
-                    ConnectionId = connectionId,
-                    Answer = answer,
-                    TimeMs = (int) elapsedTime,
-                });
+
+                answer.TimeMs = (int) elapsedTime;
+                _playerAnswers.Add((MultipleChoiceAnswer) answer);
+                return true;
             }
+
+            return false;
         }
 
         public async Task<List<(string, int)>> PlayRound()
@@ -67,7 +66,8 @@ namespace TitlesWebGame.Api.Models
                 if (answer.Answer == _answer)
                 {
                     // if answer time is above buffer time, points will be decreased linearly depending on the amount of time
-                    score += _rewardPoints * answer.TimeMs > BufferTimeMs ? ((_roundTimeMs - BufferTimeMs) / answer.TimeMs) : 1;
+                    var multiplier = answer.TimeMs > BufferTimeMs ? ((_roundTimeMs - BufferTimeMs) / answer.TimeMs) : 1;
+                    score += _rewardPoints * multiplier;
                 }
 
                 scores.Add((answer.ConnectionId, score));
