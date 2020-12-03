@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using Microsoft.AspNetCore.SignalR;
+using TitlesWebGame.Api.Hubs;
 using TitlesWebGame.Api.Models;
 
 namespace TitlesWebGame.Api.Services
 {
-    public class GameConnectionGroupsManager : IGameConnectionGroupsManager
+    public class GameSessionManager : IGameConnectionGroupsManager
     {
+        private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         private static ConcurrentDictionary<string, GameSession> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
 
         private Random _random = new Random();
+
+        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub)
+        {
+            _titlesGameHub = titlesGameHub;
+        }
         
         public string CreateSession()
         {
@@ -24,7 +32,7 @@ namespace TitlesWebGame.Api.Services
                     .Select(s => s[_random.Next(s.Length)]).ToArray());
             } while (_gameSessions.ContainsKey(roomKey) == false);
 
-            _gameSessions.TryAdd(roomKey, new GameSession()
+            _gameSessions.TryAdd(roomKey, new GameSession(_titlesGameHub)
             {
                 RoomKey = roomKey,
             });

@@ -1,30 +1,70 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using TitlesWebGame.Api.Hubs;
 
 namespace TitlesWebGame.Api.Models
 {
     public class GameSession
     {
+        private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         public string RoomKey { get; set; }
-        public List<GameSessionPlayer> Players { get; set; }
+        public string OwnerConnectionId { get; set; }
+        public bool IsPlaying { get; private set; }
 
+
+        private List<GameSessionPlayer> _players = new();
+        
         private IGameRound _currentGameRound;
+        private GameRoundInfo[][] _gameRoundsInfo;
 
-        public async Task PlayNewRound()
+        public GameSession(IHubContext<TitlesGameHub> titlesGameHub)
         {
-            // simulated round info but in future will be obtained from database
-            var roundInfo = new MultipleChoiceRoundInfo()
-            {
-                Answer = 1,
-                Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
-                RewardPoints = 500,
-                GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                RoundStatement = "What animal is primarily known for having stripes"
-            };
+            _titlesGameHub = titlesGameHub;
+        }
 
-            // initialize the new round
-            _currentGameRound =
-                new MultipleChoiceGameRound(roundInfo.Answer, roundInfo.RewardPoints, roundInfo.RoundTimeMs);
+        public async Task PlayGame()
+        {
+            IsPlaying = true;
+            
+            // get info of all rounds being played
+            // Todo: make this into a factory class or some sort
+            
+            _gameRoundsInfo = new[]
+            {
+                new[] { new MultipleChoiceRoundInfo()
+                {
+                    Answer = 1,
+                    Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
+                    RewardPoints = 500,
+                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                    RoundStatement = "What animal is primarily known for having stripes",
+                    RoundTimeMs = 100,
+                    TitleCategory = TitleCategories.Scientist,
+                }}
+            };
+            
+            // loops through all title rounds
+            foreach (var titleRound in _gameRoundsInfo)
+            {
+                // loops through all gameRoundInfo in titleRound
+                foreach (var gameRoundInfo in titleRound)
+                {
+                    await PlayNewRound(gameRoundInfo);
+                }
+            }
+
+            IsPlaying = false;
+        }
+        
+        private async Task PlayNewRound(GameRoundInfo gameRoundInfo)
+        {
+            if (gameRoundInfo is MultipleChoiceRoundInfo roundInfo)
+            {
+                _currentGameRound =
+                    new MultipleChoiceGameRound(roundInfo.Answer, roundInfo.RewardPoints, roundInfo.RoundTimeMs);
+            }            
             
             // await the game round being played
             var scores = await _currentGameRound.PlayRound();
@@ -32,9 +72,9 @@ namespace TitlesWebGame.Api.Models
             AddScores(scores);
         }
 
-        public void AddAnswer(GameRoundAnswer gameRoundAnswer)
+        public bool AddAnswer(GameRoundAnswer gameRoundAnswer)
         {
-            _currentGameRound.AddAnswer(gameRoundAnswer);
+            return _currentGameRound.AddAnswer(gameRoundAnswer);
         }
 
         private void AddScores(List<(string, int)> scores)
@@ -42,13 +82,24 @@ namespace TitlesWebGame.Api.Models
             // adds tuples score to players
             foreach (var score in scores)
             {
-                var player = Players.Find(p => p.ConnectionId == score.Item1);
+                var player = _players.Find(p => p.ConnectionId == score.Item1);
                 
                 if (player != null)
                 {
                     player.CurrentPoints += score.Item2;
                 }
             }
+        }
+
+        public bool AddPlayer(GameSessionPlayer player)
+        {
+            if (IsPlaying == false)
+            {
+                _players.Add(player);
+                return true;
+            }
+
+            return false;
         }
     }
 }

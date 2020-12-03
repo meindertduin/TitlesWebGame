@@ -1,15 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TitlesWebGame.Api.Models;
 using Xunit;
 
 namespace TitleWebGame.Api.Tests.Application
 {
-    public class GameSession
+    public class GameSessionTests
     {
         [Fact]
         public async Task PlayRound_MultipleChoiceRound_AddTwoAnswers_ReturnsCountTwo()
         {
-            // arrange
+            // Arrange
             var roundInfo = GetMultipleChoiceRoundInfo();
             
             var gameRound = new MultipleChoiceGameRound(roundInfo.Answer, roundInfo.RewardPoints, roundInfo.RoundTimeMs);
@@ -91,6 +93,54 @@ namespace TitleWebGame.Api.Tests.Application
                 GameRoundsType = GameRoundsType.MultipleChoiceRound,
                 RoundStatement = "What animal is primarily known for having stripes",
                 RoundTimeMs = 100,
+                TitleCategory = TitleCategories.Scientist,
+            };
+        }
+
+        private List<GameSessionPlayer> GetGameSessionPlayers()
+        {
+            return new()
+            {
+                new GameSessionPlayer()
+                {
+                    DisplayName = "Mark",
+                    ConnectionId = "kjhadadlkajsakcm",
+                    CurrentPoints = 0,
+                },
+                new GameSessionPlayer()
+                {
+                    DisplayName = "Cassandra",
+                    ConnectionId = "aslkcaskcnnaklsc",
+                    CurrentPoints = 0,
+                },
+                new GameSessionPlayer()
+                {
+                    DisplayName = "Jan",
+                    ConnectionId = "jadhasjdhaskdjah",
+                    CurrentPoints = 0,
+                },
+            };
+        }
+
+        private List<GameRoundAnswer> GetMultipleChoiceAnswers()
+        {
+            return new()
+            {
+                new MultipleChoiceAnswer()
+                {
+                    Answer = 1,
+                    ConnectionId = "kjhadadlkajsakcm",
+                },
+                new MultipleChoiceAnswer()
+                {
+                    Answer = 2,
+                    ConnectionId = "aslkcaskcnnaklsc",
+                },
+                new MultipleChoiceAnswer()
+                {
+                    Answer = 0,
+                    ConnectionId = "jadhasjdhaskdjah",
+                }
             };
         }
     }

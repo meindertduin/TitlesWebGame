@@ -6,5 +6,6 @@ namespace TitlesWebGame.Api.Models
     {
         public string RoundStatement { get; set; }
         public GameRoundsType GameRoundsType { get; set; }
+        public TitleCategories TitleCategory { get; set; }
     }
 }

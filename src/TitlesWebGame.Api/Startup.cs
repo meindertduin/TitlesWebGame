@@ -33,7 +33,7 @@ namespace TitlesWebGame.Api
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "TitlesWebGame.Api", Version = "v1"});
             });
 
-            services.AddSingleton<IGameConnectionGroupsManager, GameConnectionGroupsManager>();
+            services.AddSingleton<IGameConnectionGroupsManager, GameSessionManager>();
             
             services.AddSignalR();
 
@@ -70,7 +70,7 @@ namespace TitlesWebGame.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<TitlesGameControllerHub>("/game");
+                endpoints.MapHub<TitlesGameHub>("/game");
                 endpoints.MapControllers();
             });
         }

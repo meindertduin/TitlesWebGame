@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace TitlesWebGame.Api.Hubs
 {
-    public class TitlesGameControllerHub : Hub
+    public class TitlesGameHub : Hub
     {
         public async Task ConnectToRoom(string groupName)
         {
