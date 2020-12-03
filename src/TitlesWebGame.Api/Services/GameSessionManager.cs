@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -38,7 +39,24 @@ namespace TitlesWebGame.Api.Services
                 RoomKey = roomKey,
                 OwnerConnectionId = ownerSessionPlayer.ConnectionId,
             };
+            
+            // Todo: make this a factory
+            var loadedRounds = new List<GameRoundInfo>()
+            {
+                new MultipleChoiceRoundInfo()
+                {
+                    Answer = 1,
+                    Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
+                    RewardPoints = 500,
+                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                    RoundStatement = "What animal is primarily known for having stripes",
+                    RoundTimeMs = 100,
+                    TitleCategory = TitleCategories.Scientist,
+                },
+            };
+            
             newGameSession.AddPlayer(ownerSessionPlayer);
+            newGameSession.SetRoundInfo(loadedRounds);
             
             _gameSessions.TryAdd(roomKey, newGameSession);
 
@@ -54,12 +72,69 @@ namespace TitlesWebGame.Api.Services
         public void StartSession(string roomKey, string connectionId)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
-            if (gameSession != null)
+            
+            if (gameSession != null && connectionId == gameSession.OwnerConnectionId)
             {
-                Task.Run(() => gameSession.PlayGame(connectionId));
+                Task.Run(() => PlaySessionGame(gameSession));
             }
         }
 
+        private async Task PlaySessionGame(GameSession gameSession)
+        {
+            gameSession.SetPlayingStatus(true);
+            while (true)
+            {
+                var newRoundInfo = gameSession.GetNextRound();
+                if (newRoundInfo == null)
+                {
+                    break;
+                }
+
+                await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSession.RoomKey);
+                var scores = await gameSession.PlayNewRound(newRoundInfo);
+                gameSession.AddScores(scores);
+                await UpdatePlayersOfSessionState(newRoundInfo, gameSession.GetPlayers());
+            }
+            gameSession.SetPlayingStatus(false);
+        }
+        
+        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
+        {
+            GameRoundInfoViewModel newGameRoundInfoVm = null;
+            
+            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
+            {
+                newGameRoundInfoVm = new MultipleChoiceRoundInfoViewModel()
+                {
+                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
+                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
+                    Choices = multipleChoiceRoundInfo.Choices,
+                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
+                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
+                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
+                };
+            }
+
+            if (newGameRoundInfoVm != null)
+            {
+                return _titlesGameHub.Clients.Group(roomKey).SendAsync("NextRoundInfoUpdate", newGameRoundInfoVm);
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
+            }
+        }
+        
+        private Task UpdatePlayersOfSessionState(GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
+        {
+            return _titlesGameHub.Clients.Group(RoomKey).SendAsync("GameSessionStateUpdate",
+                new SessionStateUpdateViewModel()
+                {
+                    GameSessionPlayers = gameSessionPlayers,
+                    PreviousRoundInfo = currentRoundInfo,
+                });
+        }
+        
         public bool JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;

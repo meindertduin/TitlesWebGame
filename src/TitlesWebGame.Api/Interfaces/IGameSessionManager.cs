@@ -1,4 +1,5 @@
-﻿using TitlesWebGame.Api.Models;
+﻿using System.Threading.Tasks;
+using TitlesWebGame.Api.Models;
 
 namespace TitlesWebGame.Api.Services
 {

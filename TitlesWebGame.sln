@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitlesWebGame.WebUi", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitleWebGame.Api.Tests", "tests\TitleWebGame.Api.Tests\TitleWebGame.Api.Tests.csproj", "{8A24D491-4688-40AA-B439-CF15B6448FE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitlesWebGame.Models", "src\TitlesWebGame.Models\TitlesWebGame.Models.csproj", "{ED116723-D41E-427E-BB7F-DFC94C413A69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +29,14 @@ Global
 		{8A24D491-4688-40AA-B439-CF15B6448FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A24D491-4688-40AA-B439-CF15B6448FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A24D491-4688-40AA-B439-CF15B6448FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED116723-D41E-427E-BB7F-DFC94C413A69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED116723-D41E-427E-BB7F-DFC94C413A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED116723-D41E-427E-BB7F-DFC94C413A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED116723-D41E-427E-BB7F-DFC94C413A69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C6BF0D24-BEF5-4EB8-AB7A-CFDA1355CFD7} = {0459EF4D-8231-4110-B8E2-D9191634D2EF}
 		{C25DB07C-EDF7-41E1-BB72-1F6E8DF60D97} = {0459EF4D-8231-4110-B8E2-D9191634D2EF}
+		{ED116723-D41E-427E-BB7F-DFC94C413A69} = {0459EF4D-8231-4110-B8E2-D9191634D2EF}
 	EndGlobalSection
 EndGlobal
