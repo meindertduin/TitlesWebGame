@@ -27,6 +27,7 @@ namespace TitlesWebGame.Api.Hubs
 
             await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
             {
+                MessageCode = 101,
                 Error = false,
                 Message = roomKey,
             });
@@ -44,17 +45,18 @@ namespace TitlesWebGame.Api.Hubs
             if (joinSessionResult)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomKey);
-                var message = $"{displayName} has joined the group {displayName}.";
                 await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
                 {
+                    MessageCode = 102,
                     Error = false,
-                    Message = message,
+                    Message = displayName,
                 });
             }
             else
             {
                 await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
                 {
+                    MessageCode = 200,
                     Error = true,
                     Message = "Could not connect with specified room key. Are your sure it's the right key?",
                 });
@@ -66,16 +68,52 @@ namespace TitlesWebGame.Api.Hubs
             _gameSessionManager.StartSession(roomKey, Context.ConnectionId);
         }
         
-        public async Task DisconnectFromRoom(string roomKey)
+        public async Task DisconnectFromRoom(string roomKey, string displayName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomKey);
-            var message = $"{Context.ConnectionId} has left the group {roomKey}.";
-            await Clients.Group(roomKey).SendAsync("ConnectionStatusUpdate", message);
+            await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+            {
+                MessageCode = 103,
+                Error = false,
+                Message = displayName,
+            });
         }
 
-        public void AnswerChoice(string roomKey, GameRoundAnswer gameRoundAnswer)
+        public async Task AnswerChoice(string roomKey, GameRoundAnswer gameRoundAnswer)
         {
-            _gameSessionManager.AddAnswer(roomKey, gameRoundAnswer);
+            var answerProcessed = _gameSessionManager.AddAnswer(roomKey, gameRoundAnswer);
+            TitlesGameHubMessageModel callerAnswer = null;
+            
+            if (answerProcessed)
+            {
+                callerAnswer = new TitlesGameHubMessageModel()
+                {
+                    MessageCode = 150,
+                    Error = false,
+                    Message = "Your answer has been processed",
+                };
+            }
+            else
+            {
+                callerAnswer = new TitlesGameHubMessageModel()
+                {
+                    MessageCode = 151,
+                    Error = false,
+                    Message = "Answer was given outside the round time",
+                };
+            }
+
+            await Clients.Caller.SendAsync("ServerMessageUpdate", callerAnswer);
+        }
+
+        private TitlesGameHubMessageModel GetServerErrorMessageModel()
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                MessageCode = 500,
+                Error = true,
+                Message = "Something unexpected happened while processing your request"
+            };
         }
     }
 }
