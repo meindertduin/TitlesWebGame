@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
@@ -26,7 +25,11 @@ namespace TitlesWebGame.Api.Hubs
                 CurrentPoints = 0,
             });
 
-            await Clients.Caller.SendAsync("ConnectionStatusUpdate", roomKey);
+            await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+            {
+                Error = false,
+                Message = roomKey,
+            });
         }
         
         public async Task ConnectToRoom(string roomKey, string displayName)

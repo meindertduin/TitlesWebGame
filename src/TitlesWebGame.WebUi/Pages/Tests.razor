@@ -15,11 +15,30 @@ else
     </div>
 }
 
+<div>
+    <span>roomKey: </span>
+    <input @bind="selectedRoomKey"/>
+</div>
+
+<div>
+    <span>displayName: </span>
+    <input @bind="displayName"/>
+</div>
+
+<div>
+    <button @onclick="JoinRoom">Join</button>
+    <button @onclick="CreateRoom">Create room</button>
+    <button @onclick="StartGameSession">StartGame</button>
+</div>
+
 
 
 @code {
     private bool _chosenThisRound;
     private HubConnection _hubConnection;
+
+    private string selectedRoomKey = "";
+    private string displayName = "";
     
     public bool IsConnected => _hubConnection != null && _hubConnection.State == HubConnectionState.Connected;
     
@@ -30,16 +49,43 @@ else
             .Build();
 
         _hubConnection.On<TitlesGameHubMessageModel>("ServerMessageUpdate", (message) => Console.WriteLine(message.Message));
+        _hubConnection.On<GameRoundInfoViewModel>("NextRoundInfoUpdate", (GameRoundInfo) =>
+        {
+            Console.WriteLine(GameRoundInfo.RoundStatement);
+            Console.WriteLine(GameRoundInfo.TitleCategory.ToString());
+        });
+        _hubConnection.On<SessionStateUpdateViewModel>("GameSessionStateUpdate", (sessionState) =>
+        {
+            Console.WriteLine(sessionState.PreviousRoundInfo);
+            foreach (var player in sessionState.GameSessionPlayers)
+            {
+                Console.WriteLine(player.DisplayName);
+            }
+        });
+        _hubConnection.On<TitlesGameEndGameResults>("EndGameResultsUpdate", (endGameResults) =>
+        {
+            Console.WriteLine("Game ended, want to restart?");
+        });
         
         await _hubConnection.StartAsync();
         StateHasChanged();
 
-        await JoinRoom("lja123");
     }
 
-    private async Task JoinRoom(string roomKey)
+    private async Task CreateRoom()
     {
-        await _hubConnection.SendAsync("ConnectToRoom", roomKey, "mark");
+        await _hubConnection.SendAsync("CreateRoom", displayName);
+    }
+
+    private async Task JoinRoom()
+    {
+        Console.WriteLine(selectedRoomKey);
+        await _hubConnection.SendAsync("ConnectToRoom", selectedRoomKey, displayName);
+    }
+
+    private async Task StartGameSession()
+    {
+        await _hubConnection.SendAsync("StartGameSession", selectedRoomKey);
     }
     
 

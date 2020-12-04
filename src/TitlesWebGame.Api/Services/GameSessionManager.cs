@@ -43,24 +43,9 @@ namespace TitlesWebGame.Api.Services
                 OwnerConnectionId = ownerSessionPlayer.ConnectionId,
             };
             
-            // Todo: make this a factory
-            var loadedRounds = new List<GameRoundInfo>()
-            {
-                new MultipleChoiceRoundInfo()
-                {
-                    Answer = 1,
-                    Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
-                    RewardPoints = 500,
-                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                    RoundStatement = "What animal is primarily known for having stripes",
-                    RoundTimeMs = 100,
-                    TitleCategory = TitleCategory.Scientist,
-                },
-            };
-            
             newGameSession.AddPlayer(ownerSessionPlayer);
-            newGameSession.SetRoundInfo(loadedRounds);
-            
+            _titlesGameHub.Groups.AddToGroupAsync(ownerSessionPlayer.ConnectionId, roomKey);
+
             _gameSessions.TryAdd(roomKey, newGameSession);
 
             return roomKey;
@@ -84,22 +69,54 @@ namespace TitlesWebGame.Api.Services
 
         private async Task PlaySessionGame(GameSession gameSession)
         {
-            gameSession.SetPlayingStatus(true);
-            while (true)
+            if (gameSession.IsPlaying == false)
             {
-                var newRoundInfo = gameSession.GetNextRound();
-                if (newRoundInfo == null)
+                gameSession.SetPlayingStatus(true);
+                
+                // Todo: make this a factory
+                var loadedRounds = new List<GameRoundInfo>()
                 {
-                    break;
-                }
+                    new MultipleChoiceRoundInfo()
+                    {
+                        Answer = 1,
+                        Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
+                        RewardPoints = 500,
+                        GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                        RoundStatement = "What animal is primarily known for having stripes",
+                        RoundTimeMs = 100,
+                        TitleCategory = TitleCategory.Scientist,
+                    },
+                };
+            
+                gameSession.SetRoundInfo(loadedRounds);
+                
+                while (true)
+                {
+                    var newRoundInfo = gameSession.GetNextRound();
+                    if (newRoundInfo == null)
+                    {
+                        break;
+                    }
 
-                await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSession.RoomKey);
-                await gameSession.PlayNewRound(newRoundInfo);
-                var scores = gameSession.GetRoundScores();
-                gameSession.AddScores(scores);
-                await UpdatePlayersOfSessionState(gameSession.RoomKey ,newRoundInfo, gameSession.GetPlayers());
+                    await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSession.RoomKey);
+                    await gameSession.PlayNewRound(newRoundInfo);
+                    var scores = gameSession.GetRoundScores();
+                    gameSession.AddScores(scores);
+                    await UpdatePlayersOfSessionState(gameSession.RoomKey ,newRoundInfo, gameSession.GetPlayers());
+                }
+                gameSession.SetPlayingStatus(false);
+                await UpdatePlayersOfEndGame(gameSession);
             }
-            gameSession.SetPlayingStatus(false);
+        }
+
+        private Task UpdatePlayersOfEndGame(GameSession gameSession)
+        {
+            var endGameResults = new TitlesGameEndGameResults()
+            {
+                GameSessionPlayers = gameSession.GetPlayers(),
+            };
+
+            return _titlesGameHub.Clients.Group(gameSession.RoomKey).SendAsync("EndGameResultsUpdate", endGameResults);
         }
         
         private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
