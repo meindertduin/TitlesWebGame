@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TitlesWebGame.Models\TitlesWebGame.Models.csproj" />
+      <ProjectReference Include="..\TitlesWebGame.Domain\TitlesWebGame.Domain.csproj" />
     </ItemGroup>
 
 </Project>

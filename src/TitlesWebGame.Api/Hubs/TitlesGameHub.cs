@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
+using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Hubs
 {
@@ -40,15 +42,23 @@ namespace TitlesWebGame.Api.Hubs
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomKey);
                 var message = $"{displayName} has joined the group {displayName}.";
-                await Clients.Group(roomKey).SendAsync("ConnectionStatusUpdate", message);
+                await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+                {
+                    Error = false,
+                    Message = message,
+                });
             }
             else
             {
-                // implement way of notifying client of error joining room
+                await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+                {
+                    Error = true,
+                    Message = "Could not connect with specified room key. Are your sure it's the right key?",
+                });
             }
         }
 
-        public async Task StartGameSession(string roomKey)
+        public void StartGameSession(string roomKey)
         {
             _gameSessionManager.StartSession(roomKey, Context.ConnectionId);
         }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Hubs;
 using TitlesWebGame.Api.Models;
+using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Services
 {
@@ -51,7 +54,7 @@ namespace TitlesWebGame.Api.Services
                     GameRoundsType = GameRoundsType.MultipleChoiceRound,
                     RoundStatement = "What animal is primarily known for having stripes",
                     RoundTimeMs = 100,
-                    TitleCategory = TitleCategories.Scientist,
+                    TitleCategory = TitleCategory.Scientist,
                 },
             };
             
@@ -139,7 +142,12 @@ namespace TitlesWebGame.Api.Services
         public bool JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
-            return gameSession.AddPlayer(gameSessionPlayer);
+            if (gameSession != null)
+            {
+                return gameSession.AddPlayer(gameSessionPlayer);
+            }
+
+            return false;
         }
 
         public bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)

@@ -1,4 +1,4 @@
-﻿namespace TitlesWebGame.Api.Hubs
+﻿namespace TitlesWebGame.Domain.ViewModels
 {
     public class MultipleChoiceRoundInfoViewModel : GameRoundInfoViewModel
     {

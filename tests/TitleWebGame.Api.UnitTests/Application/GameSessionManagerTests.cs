@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using Moq;
 using TitlesWebGame.Api.Hubs;
-using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
+using TitlesWebGame.Domain.Entities;
 using Xunit;
 
 namespace TitleWebGame.Api.Tests.Application

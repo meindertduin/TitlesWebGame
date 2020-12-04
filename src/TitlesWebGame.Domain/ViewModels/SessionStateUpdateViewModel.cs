@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using TitlesWebGame.Api.Models;
+using TitlesWebGame.Domain.Entities;
 
-namespace TitlesWebGame.Api.Hubs
+namespace TitlesWebGame.Domain.ViewModels
 {
     public class SessionStateUpdateViewModel
     {
         public List<GameSessionPlayer> GameSessionPlayers { get; set; }
         public GameRoundInfo PreviousRoundInfo { get; set; }
     }
-    
 }

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Api.Models;
+using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 using Xunit;
 
 namespace TitleWebGame.Api.Tests.Application
@@ -95,7 +96,7 @@ namespace TitleWebGame.Api.Tests.Application
                 GameRoundsType = GameRoundsType.MultipleChoiceRound,
                 RoundStatement = "What animal is primarily known for having stripes",
                 RoundTimeMs = 100,
-                TitleCategory = TitleCategories.Scientist,
+                TitleCategory = TitleCategory.Scientist,
             };
         }
 

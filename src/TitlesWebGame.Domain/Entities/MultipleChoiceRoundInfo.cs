@@ -1,4 +1,6 @@
-﻿namespace TitlesWebGame.Api.Models
+﻿using TitlesWebGame.Domain.Enums;
+
+namespace TitlesWebGame.Domain.Entities
 {
     public class MultipleChoiceRoundInfo : GameRoundInfo
     {
@@ -6,5 +8,6 @@
         public int RoundTimeMs { get; set; }
         public int RewardPoints { get; set; }
         public string[] Choices { get; set; }
+        public TitleCategory TitleCategory { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace TitlesWebGame.Api.Models
+﻿namespace TitlesWebGame.Domain.Enums
 {
-    public enum TitleCategories
+    public enum TitleCategory
     {
         Friend = 0,
         Comedian = 1,

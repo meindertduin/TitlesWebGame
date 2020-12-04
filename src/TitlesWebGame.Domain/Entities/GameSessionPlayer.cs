@@ -1,4 +1,4 @@
-﻿namespace TitlesWebGame.Api.Models
+﻿namespace TitlesWebGame.Domain.Entities
 {
     public class GameSessionPlayer
     {

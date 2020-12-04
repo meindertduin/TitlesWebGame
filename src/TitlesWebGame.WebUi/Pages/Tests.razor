@@ -1,0 +1,50 @@
+﻿@page "/Tests"
+@using Microsoft.AspNetCore.SignalR.Client;
+@using TitlesWebGame.Domain.ViewModels
+@implements IAsyncDisposable;
+
+@if(IsConnected == false){
+<div>
+    <button @onclick="ConnectWithGame">Connect</button>
+</div>
+}
+else
+{
+    <div>
+        Connected
+    </div>
+}
+
+
+
+@code {
+    private bool _chosenThisRound;
+    private HubConnection _hubConnection;
+    
+    public bool IsConnected => _hubConnection != null && _hubConnection.State == HubConnectionState.Connected;
+    
+    private async Task ConnectWithGame(MouseEventArgs e)
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:5001/game")
+            .Build();
+
+        _hubConnection.On<TitlesGameHubMessageModel>("ServerMessageUpdate", (message) => Console.WriteLine(message.Message));
+        
+        await _hubConnection.StartAsync();
+        StateHasChanged();
+
+        await JoinRoom("lja123");
+    }
+
+    private async Task JoinRoom(string roomKey)
+    {
+        await _hubConnection.SendAsync("ConnectToRoom", roomKey, "mark");
+    }
+    
+
+    public async ValueTask DisposeAsync()
+    {
+        await _hubConnection.DisposeAsync();
+    }
+}

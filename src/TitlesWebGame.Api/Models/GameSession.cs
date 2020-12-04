@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TitlesWebGame.Domain.Entities;
 
 namespace TitlesWebGame.Api.Models
 {
