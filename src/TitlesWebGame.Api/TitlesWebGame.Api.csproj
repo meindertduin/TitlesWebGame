@@ -15,4 +15,8 @@
       <Folder Include="Controllers" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TitlesWebGame.Models\TitlesWebGame.Models.csproj" />
+    </ItemGroup>
+
 </Project>
