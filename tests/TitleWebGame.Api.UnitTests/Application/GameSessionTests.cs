@@ -32,7 +32,8 @@ namespace TitleWebGame.Api.Tests.Application
             var playRoundTask = gameRound.PlayRound();
             gameRound.AddAnswer(gameAnswerOne);
             gameRound.AddAnswer(gameAnswerTwo);
-            var scores = await playRoundTask;
+            await playRoundTask;
+            var scores = gameRound.StopRound();
             
             // Assert
             
@@ -54,8 +55,9 @@ namespace TitleWebGame.Api.Tests.Application
             
             // Act
             await gameRound.PlayRound();
+            var scores = gameRound.StopRound();
             var addResult = gameRound.AddAnswer(gameAnswerOne);
-            
+
             // Assert
             Assert.False(addResult);
         }

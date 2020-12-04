@@ -34,7 +34,7 @@ namespace TitlesWebGame.Api.Models
             IsPlaying = isPlaying;
         }
         
-        public Task<List<(string, int)>>PlayNewRound(GameRoundInfo gameRoundInfo)
+        public Task PlayNewRound(GameRoundInfo gameRoundInfo)
         {
             if (gameRoundInfo is MultipleChoiceRoundInfo roundInfo)
             {
@@ -44,6 +44,11 @@ namespace TitlesWebGame.Api.Models
             
             // await the game round being played
             return _currentGameRound.PlayRound();
+        }
+
+        public List<(string, int)> GetRoundScores()
+        {
+            return _currentGameRound.StopRound();
         }
 
         public void AddScores(List<(string, int)> scores)

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitlesWebGame.Api", "src\Ti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitlesWebGame.WebUi", "src\TitlesWebGame.WebUi\TitlesWebGame.WebUi.csproj", "{C25DB07C-EDF7-41E1-BB72-1F6E8DF60D97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitleWebGame.Api.Tests", "tests\TitleWebGame.Api.Tests\TitleWebGame.Api.Tests.csproj", "{8A24D491-4688-40AA-B439-CF15B6448FE9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitleWebGame.Api.UnitTests", "tests\TitleWebGame.Api.UnitTests\TitleWebGame.Api.UnitTests.csproj", "{8A24D491-4688-40AA-B439-CF15B6448FE9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitlesWebGame.Models", "src\TitlesWebGame.Models\TitlesWebGame.Models.csproj", "{ED116723-D41E-427E-BB7F-DFC94C413A69}"
 EndProject

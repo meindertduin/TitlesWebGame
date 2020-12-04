@@ -38,16 +38,15 @@ namespace TitlesWebGame.Api.Models
             return false;
         }
 
-        public async Task<List<(string, int)>> PlayRound()
+        public Task PlayRound()
         {
             _startTime = DateTime.Now;
             _canCommitAnswer = true;
 
-            await Task.Delay(_roundTimeMs);
-            return StopRound();
+            return Task.Delay(_roundTimeMs);
         }
 
-        private List<(string, int)>StopRound()
+        public List<(string, int)>StopRound()
         {
             _canCommitAnswer = false;
             var scores = CalculatePlayersPoints();

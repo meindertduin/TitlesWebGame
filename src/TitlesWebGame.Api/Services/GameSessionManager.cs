@@ -32,9 +32,9 @@ namespace TitlesWebGame.Api.Services
             {
                 roomKey = new string(Enumerable.Repeat(chars, RoomKeyLenght)
                     .Select(s => s[_random.Next(s.Length)]).ToArray());
-            } while (_gameSessions.ContainsKey(roomKey) == false);
+            } while (_gameSessions.ContainsKey(roomKey));
 
-            var newGameSession = new GameSession(_titlesGameHub)
+            var newGameSession = new GameSession()
             {
                 RoomKey = roomKey,
                 OwnerConnectionId = ownerSessionPlayer.ConnectionId,
@@ -91,9 +91,10 @@ namespace TitlesWebGame.Api.Services
                 }
 
                 await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSession.RoomKey);
-                var scores = await gameSession.PlayNewRound(newRoundInfo);
+                await gameSession.PlayNewRound(newRoundInfo);
+                var scores = gameSession.GetRoundScores();
                 gameSession.AddScores(scores);
-                await UpdatePlayersOfSessionState(newRoundInfo, gameSession.GetPlayers());
+                await UpdatePlayersOfSessionState(gameSession.RoomKey ,newRoundInfo, gameSession.GetPlayers());
             }
             gameSession.SetPlayingStatus(false);
         }
@@ -125,9 +126,9 @@ namespace TitlesWebGame.Api.Services
             }
         }
         
-        private Task UpdatePlayersOfSessionState(GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
+        private Task UpdatePlayersOfSessionState(string roomKey, GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
         {
-            return _titlesGameHub.Clients.Group(RoomKey).SendAsync("GameSessionStateUpdate",
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("GameSessionStateUpdate",
                 new SessionStateUpdateViewModel()
                 {
                     GameSessionPlayers = gameSessionPlayers,
