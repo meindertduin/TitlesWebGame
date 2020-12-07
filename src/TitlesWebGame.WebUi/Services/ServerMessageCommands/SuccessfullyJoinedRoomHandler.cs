@@ -7,11 +7,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 {
     public class SuccessfullyJoinedRoomHandler : IServerMessageHandler 
     {
-        private readonly GameSessionSateManager _gameSessionSateManager;
+        private readonly GameSessionState _gameSessionState;
 
-        public SuccessfullyJoinedRoomHandler(GameSessionSateManager gameSessionSateManager)
+        public SuccessfullyJoinedRoomHandler(GameSessionState gameSessionSateManager)
         {
-            _gameSessionSateManager = gameSessionSateManager;
+            _gameSessionState = gameSessionSateManager;
         }
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
@@ -19,8 +19,8 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
             if (hubMessageModel.AppendedObject != null)
             {
                 var roomPlayers = hubMessageModel.AppendedObject as List<GameSessionPlayer>;
-                _gameSessionSateManager.SetPlayersState(roomPlayers);
                 
+                // Todo: initialize game session
             }
         }
     }

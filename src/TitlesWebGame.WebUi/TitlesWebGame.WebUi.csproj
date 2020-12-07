@@ -15,8 +15,4 @@
       <ProjectReference Include="..\TitlesWebGame.Domain\TitlesWebGame.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Components" />
-    </ItemGroup>
-
 </Project>

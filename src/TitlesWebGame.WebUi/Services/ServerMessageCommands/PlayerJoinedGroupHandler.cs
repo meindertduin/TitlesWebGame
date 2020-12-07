@@ -5,11 +5,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 {
     public class PlayerJoinedGroupHandler : IServerMessageHandler
     {
-        private readonly GameSessionSateManager _gameSessionSateManager;
+        private readonly GameSessionState _gameSessionState;
 
-        public PlayerJoinedGroupHandler(GameSessionSateManager gameSessionSateManager)
+        public PlayerJoinedGroupHandler(GameSessionState gameSessionSateManager)
         {
-            _gameSessionSateManager = gameSessionSateManager;
+            _gameSessionState = gameSessionSateManager;
         }
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
@@ -17,7 +17,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
             if (hubMessageModel.AppendedObject != null)
             {
                 var joinedPlayer = hubMessageModel.AppendedObject as GameSessionPlayer;
-                _gameSessionSateManager.AddPlayer(joinedPlayer);
+                _gameSessionState.AddPlayer(joinedPlayer);
             }
         }
     }

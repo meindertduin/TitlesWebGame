@@ -16,6 +16,7 @@ namespace TitlesWebGame.WebUi
             
             builder.Services.AddScoped<GameSocketConnectionManager>();
             builder.Services.AddTransient<GameSocketServerMessageHandler>();
+            builder.Services.AddSingleton<GameSessionState>();
 
             builder.Services.AddScoped(
                 sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});

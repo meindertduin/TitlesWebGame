@@ -7,14 +7,13 @@ namespace TitlesWebGame.WebUi.Services
     public class GameSocketConnectionManager
     {
         private readonly GameSocketServerMessageHandler _gameSocketServerMessageHandler;
-        private readonly GameSessionSateManager _gameSessionSateManager;
+        private readonly GameSessionState _gameSessionState;
         public HubConnection HubConnection { get; private set; }
 
-        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler, 
-            GameSessionSateManager gameSessionSateManager)
+        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler, GameSessionState gameSessionState)
         {
             _gameSocketServerMessageHandler = gameSocketServerMessageHandler;
-            _gameSessionSateManager = gameSessionSateManager;
+            _gameSessionState = gameSessionState;
         }
         public async Task ConnectSocket()
         {
@@ -52,7 +51,7 @@ namespace TitlesWebGame.WebUi.Services
             {
                 // Todo: handle right answers of previous game
 
-                _gameSessionSateManager.SetPlayersState(sessionState.GameSessionPlayers);
+                _gameSessionState.SetPlayerStates(sessionState.GameSessionPlayers);
             });
         }
 

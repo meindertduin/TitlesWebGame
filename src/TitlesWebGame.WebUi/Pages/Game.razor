@@ -1,87 +1,20 @@
 ﻿@page "/game"
-@using Microsoft.AspNetCore.SignalR.Client;
-@implements IAsyncDisposable;
+@inject GameSessionState GameSessionState;
+@using TitlesWebGame.WebUi.Services
+@implements IDisposable;
 
-@if(IsConnected == false){
-<div>
-    <button @onclick="ConnectWithGame">Connect</button>
-</div>
-}
-else
-{
-    <div>
-        Connected
-    </div>
-}
-
-
-
-<div class="container">
-    @if (_chosenThisRound == false)
-    {
-        <div class="row justify-content-center">
-            <div class="round-title">Who is the most loved of this group</div>
-        </div>
-        <div class="options-container">
-            @for (int i = 0; i < 4; i++)
-            {
-                var optionNumber = i;
-                string optionColor = "option-color-" + i;
-
-                <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor">
-                    <div class="option-mark">
-                        A)
-                    </div>
-                    <div class="option-text">
-                        Me myself and I
-                    </div>
-                </div>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="row justify-content-center">
-            <div class="waiting-round-text">
-                Waiting for the rest of players...
-            </div>
-        </div>
-    }
-</div>
+<GameSessionLobby /> 
 
 @code {
-    private bool _chosenThisRound;
-    private HubConnection _hubConnection;
     
-    private void HandlePlayerChoice(MouseEventArgs e, int number)
+    protected override void OnInitialized()
     {
-        Console.WriteLine(number);
-        _chosenThisRound = true;
+        GameSessionState.OnChange += StateHasChanged;
     }
 
-    private async Task ConnectWithGame(MouseEventArgs e)
+    public void Dispose()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:5001/game")
-            .Build();
-
-        _hubConnection.On<string>("ConnectionStatusUpdate", (message) => Console.WriteLine(message));
-        
-        await _hubConnection.StartAsync();
-        StateHasChanged();
-
-        await JoinRoom("lja123");
+        GameSessionState.OnChange -= StateHasChanged;
     }
 
-    private async Task JoinRoom(string roomKey)
-    {
-        await _hubConnection.SendAsync("ConnectToRoom", roomKey);
-    }
-    
-    public bool IsConnected => _hubConnection != null && _hubConnection.State == HubConnectionState.Connected;
-
-    public async ValueTask DisposeAsync()
-    {
-        await _hubConnection.DisposeAsync();
-    }
 }

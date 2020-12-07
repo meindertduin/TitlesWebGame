@@ -7,14 +7,11 @@ namespace TitlesWebGame.WebUi.Services
 {
     public class GameSocketServerMessageHandler
     {
-        private readonly GameSocketConnectionManager _gameSocketConnectionManager;
-        private readonly GameSessionSateManager _gameSessionSateManager;
+        private readonly GameSessionState _gameSessionState;
         
-        public GameSocketServerMessageHandler(GameSocketConnectionManager gameSocketConnectionManager, 
-            GameSessionSateManager gameSessionSateManager)
+        public GameSocketServerMessageHandler(GameSessionState gameSessionState)
         {
-            _gameSocketConnectionManager = gameSocketConnectionManager;
-            _gameSessionSateManager = gameSessionSateManager;
+            _gameSessionState = gameSessionState;
         }
         
         public void Handle(TitlesGameHubMessageModel serverMessage)
@@ -27,10 +24,10 @@ namespace TitlesWebGame.WebUi.Services
             {
                 GameHubMessageType.GeneralGroup => new GeneralMessageHandler(),
                 GameHubMessageType.SessionCreationSuccessful => new SessionCreationSuccessfulHandler(
-                    _gameSessionSateManager),
-                GameHubMessageType.PlayerJoinedGroup => new PlayerJoinedGroupHandler(_gameSessionSateManager),
-                GameHubMessageType.PlayerLeftGroup => new PlayerLeftGroupHandler(_gameSessionSateManager),
-                GameHubMessageType.SuccessfullyJoinedRoom => new SuccessfullyJoinedRoomHandler(_gameSessionSateManager),
+                    _gameSessionState),
+                GameHubMessageType.PlayerJoinedGroup => new PlayerJoinedGroupHandler(_gameSessionState),
+                GameHubMessageType.PlayerLeftGroup => new PlayerLeftGroupHandler(_gameSessionState),
+                GameHubMessageType.SuccessfullyJoinedRoom => new SuccessfullyJoinedRoomHandler(_gameSessionState),
                 _ => throw new ArgumentException(message: "invalid enum value", paramName: nameof(serverMessage.MessageType)),
             };
     }

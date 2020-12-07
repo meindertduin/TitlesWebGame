@@ -8,7 +8,7 @@ namespace TitlesWebGame.Api.Services
     {
         string CreateSession(GameSessionPlayer ownerSessionPlayer);
         bool DeleteSession(string roomKey);
-        List<GameSessionPlayer> JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
+        List<GameSessionPlayer> JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer);
         void StartSession(string roomKey, string connectionId);
         bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer);
     }

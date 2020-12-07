@@ -4,16 +4,16 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 {
     public class SessionCreationSuccessfulHandler : IServerMessageHandler
     {
-        private readonly GameSessionSateManager _gameSessionSateManager;
+        private readonly GameSessionState _gameSessionState;
 
-        public SessionCreationSuccessfulHandler(GameSessionSateManager gameSessionSateManager)
+        public SessionCreationSuccessfulHandler(GameSessionState gameSessionSateManager)
         {
-            _gameSessionSateManager = gameSessionSateManager;
+            _gameSessionState = gameSessionSateManager;
         }
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            _gameSessionSateManager.SetGame(hubMessageModel.Message);
+            // Todo: initialize game session state here
         }
     }
 }

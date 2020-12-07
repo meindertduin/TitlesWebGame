@@ -49,7 +49,7 @@ namespace TitleWebGame.Api.Tests.Application
 
             var joinResult = gameSessionManager.JoinSession(roomKey, newPlayer);
             
-            Assert.True(joinResult);
+            Assert.True(joinResult != null);
         }
 
         private GameSessionPlayer getFakeSessionPlayer()
