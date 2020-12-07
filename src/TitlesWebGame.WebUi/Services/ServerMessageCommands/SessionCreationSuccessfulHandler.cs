@@ -13,7 +13,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            // Todo: initialize game session state here
+            if (hubMessageModel.AppendedObject != null)
+            {
+                var gameSessionInitModel = hubMessageModel.AppendedObject as GameSessionInitViewModel;
+                _gameSessionState.InitializeNewState(gameSessionInitModel);
+            }
         }
     }
 }

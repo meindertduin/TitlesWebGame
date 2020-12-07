@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
@@ -19,18 +20,21 @@ namespace TitlesWebGame.Api.Hubs
 
         public async Task CreateRoom(string displayName)
         {
-            var roomKey= _gameSessionManager.CreateSession(new GameSessionPlayer()
+            var ownerGameSessionPlayerModel = new GameSessionPlayer()
             {
                 DisplayName = displayName,
                 ConnectionId = Context.ConnectionId,
                 CurrentPoints = 0,
-            });
+            };
+            
+            var gameSessionInitState= _gameSessionManager.CreateSession(ownerGameSessionPlayerModel);
 
             await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
             {
                 MessageType = GameHubMessageType.SessionCreationSuccessful,
                 Error = false,
-                Message = roomKey,
+                Message = "Session successfully created",
+                AppendedObject = gameSessionInitState,
             });
         }
         

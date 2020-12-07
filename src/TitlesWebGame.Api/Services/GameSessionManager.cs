@@ -26,7 +26,7 @@ namespace TitlesWebGame.Api.Services
             _titlesGameHub = titlesGameHub;
         }
         
-        public string CreateSession(GameSessionPlayer ownerSessionPlayer)
+        public GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -48,7 +48,22 @@ namespace TitlesWebGame.Api.Services
 
             _gameSessions.TryAdd(roomKey, newGameSession);
 
-            return roomKey;
+            return GetGameSessionState(newGameSession);
+        }
+
+        private GameSessionInitViewModel GetGameSessionState(GameSession gameSession)
+        {
+            if (gameSession != null)
+            {
+                return new GameSessionInitViewModel()
+                {
+                    GameSessionPlayers = gameSession.GetPlayers(),
+                    OwnerConnectionId = gameSession.OwnerConnectionId,
+                    RoomKey = gameSession.RoomKey,
+                };
+            }
+
+            return null;
         }
         
         public bool DeleteSession(string roomKey)
@@ -156,7 +171,7 @@ namespace TitlesWebGame.Api.Services
                 });
         }
         
-        public List<GameSessionPlayer> JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
+        public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             if (gameSession != null)
@@ -164,7 +179,7 @@ namespace TitlesWebGame.Api.Services
                 var addPlayerSuccessful = gameSession.AddPlayer(gameSessionPlayer);
                 if (addPlayerSuccessful)
                 {
-                    return gameSession.GetPlayers();
+                    return GetGameSessionState(gameSession);
                 }
             }
             

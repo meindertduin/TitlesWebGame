@@ -9,12 +9,12 @@
     
     protected override void OnInitialized()
     {
-        GameSessionState.OnChange += StateHasChanged;
+        GameSessionState.OnSessionStateChanged += StateHasChanged;
     }
 
     public void Dispose()
     {
-        GameSessionState.OnChange -= StateHasChanged;
+        GameSessionState.OnSessionStateChanged -= StateHasChanged;
     }
 
 }

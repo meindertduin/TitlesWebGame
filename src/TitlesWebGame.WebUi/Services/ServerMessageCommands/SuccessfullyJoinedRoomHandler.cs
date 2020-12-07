@@ -18,9 +18,8 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         {
             if (hubMessageModel.AppendedObject != null)
             {
-                var roomPlayers = hubMessageModel.AppendedObject as List<GameSessionPlayer>;
-                
-                // Todo: initialize game session
+                var gameSessionInitModel = hubMessageModel.AppendedObject as GameSessionInitViewModel;
+                _gameSessionState.InitializeNewState(gameSessionInitModel);
             }
         }
     }
