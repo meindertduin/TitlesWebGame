@@ -1,6 +1,9 @@
 ﻿@inject GameSocketConnectionManager GameSocketConnectionManager
 @using TitlesWebGame.WebUi.Services
 @inherits LayoutComponentBase
+@implements IDisposable;
+@inject GameSessionState GameSessionState;
+@inject NavigationManager NavManager;
 
 <div class="page">
     <div class="main">
@@ -15,5 +18,16 @@
     protected override async Task OnInitializedAsync()
     {
         await GameSocketConnectionManager.ConnectSocket();
+        GameSessionState.OnSessionInit += InitGameSession;
+    }
+
+    private void InitGameSession()
+    {
+        NavManager.NavigateTo("game");   
+    }
+    
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 }

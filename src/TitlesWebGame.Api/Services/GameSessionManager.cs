@@ -48,10 +48,10 @@ namespace TitlesWebGame.Api.Services
 
             _gameSessions.TryAdd(roomKey, newGameSession);
 
-            return GetGameSessionState(newGameSession);
+            return GetGameSessionState(newGameSession, ownerSessionPlayer);
         }
 
-        private GameSessionInitViewModel GetGameSessionState(GameSession gameSession)
+        private GameSessionInitViewModel GetGameSessionState(GameSession gameSession, GameSessionPlayer gameSessionPlayer)
         {
             if (gameSession != null)
             {
@@ -60,6 +60,7 @@ namespace TitlesWebGame.Api.Services
                     GameSessionPlayers = gameSession.GetPlayers(),
                     OwnerConnectionId = gameSession.OwnerConnectionId,
                     RoomKey = gameSession.RoomKey,
+                    CurrentPlayer = gameSessionPlayer,
                 };
             }
 
@@ -179,7 +180,7 @@ namespace TitlesWebGame.Api.Services
                 var addPlayerSuccessful = gameSession.AddPlayer(gameSessionPlayer);
                 if (addPlayerSuccessful)
                 {
-                    return GetGameSessionState(gameSession);
+                    return GetGameSessionState(gameSession, gameSessionPlayer);
                 }
             }
             

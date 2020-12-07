@@ -1,15 +1,17 @@
 ﻿@page "/game"
 @inject GameSessionState GameSessionState;
 @using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.Domain.Entities
 @implements IDisposable;
 
 <GameSessionLobby /> 
 
 @code {
-    
+
     protected override void OnInitialized()
     {
         GameSessionState.OnSessionStateChanged += StateHasChanged;
+        Console.WriteLine(GameSessionState.RoomKey);
     }
 
     public void Dispose()

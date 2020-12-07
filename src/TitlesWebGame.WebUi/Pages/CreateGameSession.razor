@@ -10,7 +10,6 @@
 </div>
 <div>
     <button @onclick="CreateRoom">Create room</button>
-    <button @onclick="StartGameSession">StartGame</button>
 </div>
 
 @code {
@@ -22,8 +21,4 @@
         await GameSocketConnectionManager.CreateGameSession(displayName);
     }
     
-    private async Task StartGameSession()
-    {
-        await GameSocketConnectionManager.StartGameSession(selectedRoomKey);
-    }
 }

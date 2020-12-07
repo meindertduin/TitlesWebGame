@@ -1,4 +1,6 @@
-﻿using TitlesWebGame.Domain.ViewModels;
+﻿using System;
+using Newtonsoft.Json;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 {
@@ -13,10 +15,12 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            if (hubMessageModel.AppendedObject != null)
+            string leavingConnectionId =
+                JsonConvert.DeserializeObject<string>(hubMessageModel.AppendedObject.ToString() ?? string.Empty);
+
+            if (String.IsNullOrEmpty(leavingConnectionId) == false)
             {
-                var leavingPlayerConnId = hubMessageModel.AppendedObject as string;
-                _gameSessionState.RemovePlayer(leavingPlayerConnId);
+                _gameSessionState.RemovePlayer(leavingConnectionId);
             }
         }
     }

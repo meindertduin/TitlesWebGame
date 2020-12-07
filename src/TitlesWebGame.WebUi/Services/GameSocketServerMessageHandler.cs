@@ -23,8 +23,7 @@ namespace TitlesWebGame.WebUi.Services
             serverMessage.MessageType switch
             {
                 GameHubMessageType.GeneralGroup => new GeneralMessageHandler(),
-                GameHubMessageType.SessionCreationSuccessful => new SessionCreationSuccessfulHandler(
-                    _gameSessionState),
+                GameHubMessageType.SessionCreationSuccessful => new SessionCreationSuccessfulHandler(_gameSessionState),
                 GameHubMessageType.PlayerJoinedGroup => new PlayerJoinedGroupHandler(_gameSessionState),
                 GameHubMessageType.PlayerLeftGroup => new PlayerLeftGroupHandler(_gameSessionState),
                 GameHubMessageType.SuccessfullyJoinedRoom => new SuccessfullyJoinedRoomHandler(_gameSessionState),

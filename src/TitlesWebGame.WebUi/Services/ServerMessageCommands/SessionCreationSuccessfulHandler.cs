@@ -1,4 +1,7 @@
-﻿using TitlesWebGame.Domain.ViewModels;
+﻿using System;
+using Newtonsoft.Json;
+using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 {
@@ -13,11 +16,14 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            if (hubMessageModel.AppendedObject != null)
+            GameSessionInitViewModel gameSessionState =
+                JsonConvert.DeserializeObject<GameSessionInitViewModel>(hubMessageModel.AppendedObject.ToString() ?? string.Empty);
+            
+            if (gameSessionState != null)
             {
-                var gameSessionInitModel = hubMessageModel.AppendedObject as GameSessionInitViewModel;
-                _gameSessionState.InitializeNewState(gameSessionInitModel);
+                _gameSessionState.InitializeNewState(gameSessionState);
             }
         }
+
     }
 }

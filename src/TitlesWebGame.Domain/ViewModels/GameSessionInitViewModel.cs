@@ -8,5 +8,7 @@ namespace TitlesWebGame.Domain.ViewModels
         public string RoomKey { get; set; }
         public string OwnerConnectionId { get; set; }
         public List<GameSessionPlayer> GameSessionPlayers { get; set; }
+
+        public GameSessionPlayer CurrentPlayer { get; set; }
     }
 }
