@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Hubs
@@ -27,7 +28,7 @@ namespace TitlesWebGame.Api.Hubs
 
             await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
             {
-                MessageCode = 101,
+                MessageType = GameHubMessageType.SessionCreationSuccessful,
                 Error = false,
                 Message = roomKey,
             });
@@ -47,7 +48,7 @@ namespace TitlesWebGame.Api.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomKey);
                 await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
                 {
-                    MessageCode = 102,
+                    MessageType = GameHubMessageType.PlayerJoinedGroup,
                     Error = false,
                     Message = displayName,
                 });
@@ -56,7 +57,7 @@ namespace TitlesWebGame.Api.Hubs
             {
                 await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
                 {
-                    MessageCode = 200,
+                    MessageType = GameHubMessageType.ErrorConnectingToRoom,
                     Error = true,
                     Message = "Could not connect with specified room key. Are your sure it's the right key?",
                 });
@@ -73,7 +74,7 @@ namespace TitlesWebGame.Api.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomKey);
             await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
             {
-                MessageCode = 103,
+                MessageType = GameHubMessageType.PlayerLeftGroup,
                 Error = false,
                 Message = displayName,
             });
@@ -88,7 +89,7 @@ namespace TitlesWebGame.Api.Hubs
             {
                 callerAnswer = new TitlesGameHubMessageModel()
                 {
-                    MessageCode = 150,
+                    MessageType = GameHubMessageType.AnswerSuccessfullyProcessed,
                     Error = false,
                     Message = "Your answer has been processed",
                 };
@@ -97,7 +98,7 @@ namespace TitlesWebGame.Api.Hubs
             {
                 callerAnswer = new TitlesGameHubMessageModel()
                 {
-                    MessageCode = 151,
+                    MessageType = GameHubMessageType.AnswerTooLate,
                     Error = false,
                     Message = "Answer was given outside the round time",
                 };
@@ -110,7 +111,7 @@ namespace TitlesWebGame.Api.Hubs
         {
             return new TitlesGameHubMessageModel()
             {
-                MessageCode = 500,
+                MessageType = GameHubMessageType.ServerError,
                 Error = true,
                 Message = "Something unexpected happened while processing your request"
             };
