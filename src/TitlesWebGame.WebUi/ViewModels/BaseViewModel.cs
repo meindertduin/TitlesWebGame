@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using TitlesWebGame.WebUi.Annotations;
 
 namespace TitlesWebGame.WebUi.ViewModels
 {

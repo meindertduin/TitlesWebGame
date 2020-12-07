@@ -1,20 +1,36 @@
 ﻿@page "/game"
 @inject GameSessionState GameSessionState;
 @using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.WebUi.ViewModels
+@using System.ComponentModel
+@using TitlesWebGame.WebUi.Annotations
 @implements IDisposable;
+@inject GameViewModel GameViewModel; 
 
-<GameSessionLobby /> 
+
+<CascadingValue Value="@GameViewModel" Name="GameViewModel">
+    <GameSessionLobby />
+</CascadingValue>
 
 @code {
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        GameSessionState.OnSessionStateChanged += StateHasChanged;
+        GameViewModel.PropertyChanged += OnPropertyChangedHandler;
+        await base.OnInitializedAsync();
+    }
+    
+    private void OnPropertyChangedHandler([CanBeNull] object sender, PropertyChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        GameSessionState.OnSessionStateChanged -= StateHasChanged;
+        GameViewModel.PropertyChanged -= OnPropertyChangedHandler;
+        GameViewModel.Dispose();
     }
+    
+    
 
 }

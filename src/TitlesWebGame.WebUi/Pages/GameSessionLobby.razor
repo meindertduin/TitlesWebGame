@@ -1,10 +1,9 @@
 ﻿@using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.Domain.Entities
-@inject GameSessionState GameSessionState;
 @using TitlesWebGame.WebUi.Services
-@implements IDisposable;
+@using TitlesWebGame.WebUi.ViewModels
 
-@if (GameSessionState.IsOwner())
+@if (GameViewModel.IsOwner)
 {
     <div>
         <div>Your the owner</div>
@@ -12,14 +11,6 @@
 }
 
 @code {
-    protected override void OnInitialized()
-    {
-        GameSessionState.OnSessionStateChanged += StateHasChanged;
-    }
-
-    public void Dispose()
-    {
-        GameSessionState.OnSessionStateChanged -= StateHasChanged;
-    }
-    
+    [CascadingParameter(Name = "GameViewModel")]
+    protected GameViewModel GameViewModel { get; set; }
 }

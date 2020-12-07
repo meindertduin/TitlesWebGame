@@ -16,7 +16,7 @@ namespace TitlesWebGame.WebUi
             builder.RootComponents.Add<App>("#app");
             
             builder.Services.AddScoped<GameSocketConnectionManager>();
-            builder.Services.AddScoped<IGameViewModel, GameViewModel>();
+            builder.Services.AddTransient<GameViewModel>();
             builder.Services.AddTransient<GameSocketServerMessageHandler>();
             builder.Services.AddSingleton<GameSessionState>();
 
