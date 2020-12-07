@@ -1,5 +1,27 @@
-﻿<h3>JoinGameSession</h3>
+﻿@using TitlesWebGame.WebUi.Services
+@inject GameSocketConnectionManager GameSocketConnectionManager
+
+<h3>JoinGameSession</h3>
+<div>
+    <span>roomKey: </span>
+    <input @bind="roomKey"/>
+</div>
+<div>
+    <span>displayName: </span>
+    <input @bind="displayName"/>
+</div>
+
+<div>
+    <button @onclick="JoinRoom">Create room</button>
+</div>
+
 
 @code {
-    
+    private string roomKey;
+    private string displayName;
+
+    private async Task JoinRoom()
+    {
+        await GameSocketConnectionManager.JoinGameSession(roomKey, displayName);
+    }
 }

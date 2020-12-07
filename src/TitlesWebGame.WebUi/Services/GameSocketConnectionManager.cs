@@ -70,6 +70,11 @@ namespace TitlesWebGame.WebUi.Services
                 _gameSocketServerMessageHandler.Handle(message));
         }
 
+        public async Task JoinGameSession(string roomKey, string displayName)
+        {
+            await HubConnection.SendAsync("ConnectToRoom", roomKey, displayName);
+        }
+        
         public async Task CreateGameSession(string displayName)
         {
             await HubConnection.SendAsync("CreateRoom", displayName);

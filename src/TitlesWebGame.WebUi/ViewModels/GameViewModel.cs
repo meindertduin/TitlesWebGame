@@ -13,15 +13,20 @@ namespace TitlesWebGame.WebUi.ViewModels
         public GameViewModel(GameSessionState gameSessionState)
         {
             _gameSessionState = gameSessionState;
-            _gameSessionState.OnSessionStateChanged += OnGameStateChanged;
-
-            // Initialize values from gameSessionState
-            IsOwner = _gameSessionState.IsOwner();
-            
+            _gameSessionState.OnSessionStateChanged += LoadUpdatedGameSessionValues;
+            LoadUpdatedGameSessionValues();
         }
-        private void OnGameStateChanged()
+        private void LoadUpdatedGameSessionValues()
         {
             IsOwner = _gameSessionState.IsOwner();
+            Player = _gameSessionState.GameSessionPlayer;
+            SessionPlayers = _gameSessionState.Players;
+            HasEnded = _gameSessionState.HasEnded;
+            NextRoundInfo = _gameSessionState.NextRoundInfo;
+            PreviousRoundInfo = _gameSessionState.PreviousRoundInfo;
+            RoomKey = _gameSessionState.RoomKey;
+
+            OnPropertyChanged();
         }
         
         private bool _isOwner;
@@ -66,9 +71,17 @@ namespace TitlesWebGame.WebUi.ViewModels
             set => SetValue(ref _previousRoundInfo, value);
         }
 
+        private string _roomKey;
+
+        public string RoomKey
+        {
+            get => _roomKey;
+            set => SetValue(ref _roomKey, value);
+        }
+
         public void Dispose()
         {
-            _gameSessionState.OnSessionStateChanged -= OnGameStateChanged;
+            _gameSessionState.OnSessionStateChanged -= LoadUpdatedGameSessionValues;
         }
     }
     

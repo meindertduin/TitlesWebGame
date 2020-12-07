@@ -2,15 +2,33 @@
 @using TitlesWebGame.Domain.Entities
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
+@inject GameSocketConnectionManager GameSocketConnectionManager;
+
+<h1>@GameViewModel.RoomKey</h1>
 
 @if (GameViewModel.IsOwner)
 {
-    <div>
-        <div>Your the owner</div>
+    <div class="lobby-owner-dashboard">
+        <button @onclick="StartGame">Start Game</button>
     </div>
 }
+
+@foreach (var player in GameViewModel.SessionPlayers)
+{
+    <div class="players-lobby-container">
+        <div>
+            @player.DisplayName
+        </div>
+    </div>
+}
+
 
 @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
+
+    private async Task StartGame()
+    {
+        await GameSocketConnectionManager.StartGameSession(GameViewModel.RoomKey);
+    }
 }

@@ -3,7 +3,7 @@
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
 @using System.ComponentModel
-@using TitlesWebGame.WebUi.Annotations
+@using TitlesWebGame.WebUi.Models
 @implements IDisposable;
 @inject GameViewModel GameViewModel; 
 
@@ -19,12 +19,12 @@
         GameViewModel.PropertyChanged += OnPropertyChangedHandler;
         await base.OnInitializedAsync();
     }
-    
-    private void OnPropertyChangedHandler([CanBeNull] object sender, PropertyChangedEventArgs e)
-    {
-        InvokeAsync(StateHasChanged);
-    }
 
+    public async void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
     public void Dispose()
     {
         GameViewModel.PropertyChanged -= OnPropertyChangedHandler;
