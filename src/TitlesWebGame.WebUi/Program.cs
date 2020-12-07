@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using TitlesWebGame.WebUi.Services;
+using TitlesWebGame.WebUi.ViewModels;
 
 namespace TitlesWebGame.WebUi
 {
@@ -15,6 +16,7 @@ namespace TitlesWebGame.WebUi
             builder.RootComponents.Add<App>("#app");
             
             builder.Services.AddScoped<GameSocketConnectionManager>();
+            builder.Services.AddScoped<IGameViewModel, GameViewModel>();
             builder.Services.AddTransient<GameSocketServerMessageHandler>();
             builder.Services.AddSingleton<GameSessionState>();
 

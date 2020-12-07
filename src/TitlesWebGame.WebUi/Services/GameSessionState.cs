@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
-using TitlesWebGame.WebUi.Models;
 
 namespace TitlesWebGame.WebUi.Services
 {
@@ -35,7 +34,9 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateInit();
             NotifyStateChanged();
         }
-        
+
+        public bool IsOwner() => GameSessionPlayer.ConnectionId == OwnerConnectionId;
+
         public void SetPlayerStates(List<GameSessionPlayer> playerStates)
         {
             Players = playerStates;

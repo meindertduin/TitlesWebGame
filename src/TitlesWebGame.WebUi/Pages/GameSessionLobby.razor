@@ -1,8 +1,25 @@
 ﻿@using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.Domain.Entities
+@inject GameSessionState GameSessionState;
+@using TitlesWebGame.WebUi.Services
+@implements IDisposable;
 
-<h3>GameSessionLobby</h3>
+@if (GameSessionState.IsOwner())
+{
+    <div>
+        <div>Your the owner</div>
+    </div>
+}
 
 @code {
+    protected override void OnInitialized()
+    {
+        GameSessionState.OnSessionStateChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        GameSessionState.OnSessionStateChanged -= StateHasChanged;
+    }
     
 }
