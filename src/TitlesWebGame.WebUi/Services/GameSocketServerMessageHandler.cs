@@ -28,6 +28,9 @@ namespace TitlesWebGame.WebUi.Services
                 GameHubMessageType.GeneralGroup => new GeneralMessageHandler(),
                 GameHubMessageType.SessionCreationSuccessful => new SessionCreationSuccessfulHandler(
                     _gameSessionSateManager),
+                GameHubMessageType.PlayerJoinedGroup => new PlayerJoinedGroupHandler(_gameSessionSateManager),
+                GameHubMessageType.PlayerLeftGroup => new PlayerLeftGroupHandler(_gameSessionSateManager),
+                GameHubMessageType.SuccessfullyJoinedRoom => new SuccessfullyJoinedRoomHandler(_gameSessionSateManager),
                 _ => throw new ArgumentException(message: "invalid enum value", paramName: nameof(serverMessage.MessageType)),
             };
     }

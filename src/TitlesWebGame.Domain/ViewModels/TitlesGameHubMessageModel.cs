@@ -7,5 +7,6 @@ namespace TitlesWebGame.Domain.ViewModels
         public bool Error { get; set; }
         public string Message { get; set; }
         public GameHubMessageType MessageType { get; set; }
+        public object AppendedObject { get; set; }
     }
 }

@@ -20,5 +20,15 @@ namespace TitlesWebGame.WebUi.Services
         {
             _gameSessionState.SetPlayerStates(playersStates);
         }
+
+        public void AddPlayer(GameSessionPlayer player)
+        {
+            _gameSessionState.AddPlayer(player);
+        }
+
+        public void RemovePlayer(string connectionId)
+        {
+            _gameSessionState.RemovePlayer(connectionId);
+        }
     }
 }

@@ -36,21 +36,33 @@ namespace TitlesWebGame.Api.Hubs
         
         public async Task ConnectToRoom(string roomKey, string displayName)
         {
-            var joinSessionResult = _gameSessionManager.JoinSession(roomKey, new GameSessionPlayer()
+            var newPlayerModel = new GameSessionPlayer()
             {
                 DisplayName = displayName,
                 ConnectionId = Context.ConnectionId,
                 CurrentPoints = 0,
-            });
+            };
             
-            if (joinSessionResult)
+            var joinSessionResult = _gameSessionManager.JoinSession(roomKey, newPlayerModel);
+            
+            if (joinSessionResult != null)
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, roomKey);
                 await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
                 {
                     MessageType = GameHubMessageType.PlayerJoinedGroup,
                     Error = false,
-                    Message = displayName,
+                    Message = $"{displayName} joined the room",
+                    AppendedObject = newPlayerModel,
+                });
+                
+                await Groups.AddToGroupAsync(Context.ConnectionId, roomKey);
+
+                await Clients.Caller.SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+                {
+                    MessageType = GameHubMessageType.SuccessfullyJoinedRoom,
+                    Error = false,
+                    Message = "Successfully joined room",
+                    AppendedObject = joinSessionResult,
                 });
             }
             else
@@ -72,11 +84,13 @@ namespace TitlesWebGame.Api.Hubs
         public async Task DisconnectFromRoom(string roomKey, string displayName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomKey);
+
             await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
             {
                 MessageType = GameHubMessageType.PlayerLeftGroup,
                 Error = false,
                 Message = displayName,
+                AppendedObject = Context.ConnectionId,
             });
         }
 

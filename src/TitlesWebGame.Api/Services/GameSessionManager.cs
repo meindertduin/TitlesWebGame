@@ -156,15 +156,19 @@ namespace TitlesWebGame.Api.Services
                 });
         }
         
-        public bool JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
+        public List<GameSessionPlayer> JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             if (gameSession != null)
             {
-                return gameSession.AddPlayer(gameSessionPlayer);
+                var addPlayerSuccessful = gameSession.AddPlayer(gameSessionPlayer);
+                if (addPlayerSuccessful)
+                {
+                    return gameSession.GetPlayers();
+                }
             }
-
-            return false;
+            
+            return null;
         }
 
         public bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)

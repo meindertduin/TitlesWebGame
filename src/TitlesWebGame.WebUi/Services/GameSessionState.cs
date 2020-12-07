@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using TitlesWebGame.Domain.Entities;
 
 namespace TitlesWebGame.WebUi.Services
@@ -18,6 +19,12 @@ namespace TitlesWebGame.WebUi.Services
         public void AddPlayer(GameSessionPlayer player)
         {
             Players.Add(player);
+        }
+
+        public void RemovePlayer(string connectionId)
+        {
+            var leavingPlayer = Players.FirstOrDefault(x => x.ConnectionId == connectionId);
+            Players.Remove(leavingPlayer);
         }
     }   
 }

@@ -1,4 +1,5 @@
-﻿using TitlesWebGame.Api.Models;
+﻿using System.Collections.Generic;
+using TitlesWebGame.Api.Models;
 using TitlesWebGame.Domain.Entities;
 
 namespace TitlesWebGame.Api.Services
@@ -7,7 +8,7 @@ namespace TitlesWebGame.Api.Services
     {
         string CreateSession(GameSessionPlayer ownerSessionPlayer);
         bool DeleteSession(string roomKey);
-        bool JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer);
+        List<GameSessionPlayer> JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         void StartSession(string roomKey, string connectionId);
         bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer);
     }
