@@ -19,6 +19,9 @@ namespace TitlesWebGame.WebUi.Services
         
         public event Action OnSessionStateChanged;
         public event Action OnSessionInit;
+
+        public event Action RoundReview;
+        public event Action RoundStart;
         
         public void InitializeNewState(GameSessionInitViewModel gameSessionInitModel)
         {
@@ -36,12 +39,6 @@ namespace TitlesWebGame.WebUi.Services
         }
 
         public bool IsOwner() => GameSessionPlayer.ConnectionId == OwnerConnectionId;
-
-        public void SetPlayerStates(List<GameSessionPlayer> playerStates)
-        {
-            Players = playerStates;
-            NotifyStateChanged();
-        }
 
         public void AddPlayer(GameSessionPlayer player)
         {
@@ -68,9 +65,11 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
 
-        public void SetPreviousRoundInfo(GameRoundInfo gameRoundInfo)
+        public void SetSessionGameStatUpdateInfo(SessionStateUpdateViewModel sessionStateUpdate)
         {
-            PreviousRoundInfo = gameRoundInfo;
+            Players = sessionStateUpdate.GameSessionPlayers;
+            PreviousRoundInfo = sessionStateUpdate.PreviousRoundInfo;
+            
             NotifyStateChanged();
         }
 
@@ -82,5 +81,8 @@ namespace TitlesWebGame.WebUi.Services
 
         private void NotifyStateChanged() => OnSessionStateChanged?.Invoke();
         private void NotifyStateInit() => OnSessionInit?.Invoke();
+
+        private void NotifyRoundReview() => RoundReview?.Invoke();
+        private void NotifyRoundStart() => RoundStart?.Invoke();
     }
 }

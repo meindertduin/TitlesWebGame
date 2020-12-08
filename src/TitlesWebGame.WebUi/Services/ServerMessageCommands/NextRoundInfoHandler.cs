@@ -15,6 +15,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         }
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
+
             var nextRoundType =
                 JsonConvert.DeserializeObject<GameRoundInfoViewModel>(hubMessageModel.AppendedObject.ToString() ??
                                                                       String.Empty).GameRoundsType;
@@ -25,6 +26,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
                 nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
                     hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
+            
             
             if (nextRoundInfo != null)
             {

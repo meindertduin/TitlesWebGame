@@ -6,7 +6,7 @@ namespace TitlesWebGame.Api.Models
 {
     public class MultipleChoiceGameRound : IGameRound
     {
-        private readonly int _answer;
+        private readonly string _answer;
         private readonly int _rewardPoints;
         private readonly int _roundTimeMs;
 
@@ -17,7 +17,7 @@ namespace TitlesWebGame.Api.Models
         private List<MultipleChoiceAnswer> _playerAnswers = new();
         private DateTime _startTime;
 
-        public MultipleChoiceGameRound(int answer, int rewardPoints, int roundTimeMs)
+        public MultipleChoiceGameRound(string answer, int rewardPoints, int roundTimeMs)
         {
             _answer = answer;
             _rewardPoints = rewardPoints;

@@ -94,7 +94,7 @@ namespace TitlesWebGame.Api.Services
                 {
                     new MultipleChoiceRoundInfo()
                     {
-                        Answer = 1,
+                        Answer = 1.ToString(),
                         Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
                         RewardPoints = 500,
                         GameRoundsType = GameRoundsType.MultipleChoiceRound,
@@ -186,12 +186,19 @@ namespace TitlesWebGame.Api.Services
         
         private Task UpdatePlayersOfSessionState(string roomKey, GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
         {
-            return _titlesGameHub.Clients.Group(roomKey).SendAsync("GameSessionStateUpdate",
-                new SessionStateUpdateViewModel()
-                {
-                    GameSessionPlayers = gameSessionPlayers,
-                    PreviousRoundInfo = currentRoundInfo,
-                });
+            var previousRoundInfo = new SessionStateUpdateViewModel()
+            {
+                GameSessionPlayers = gameSessionPlayers,
+                PreviousRoundInfo = currentRoundInfo,
+            };
+            
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+            {
+                Error = false,
+                Message = "Previous round update and state loaded",
+                MessageType = GameHubMessageType.PreviousRoundInfo,
+                AppendedObject = previousRoundInfo,
+            });
         }
         
         public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)

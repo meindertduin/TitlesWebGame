@@ -38,7 +38,7 @@ namespace TitlesWebGame.Api.Models
             if (gameRoundInfo is MultipleChoiceRoundInfo roundInfo)
             {
                 _currentGameRound =
-                    new MultipleChoiceGameRound(roundInfo.Answer, roundInfo.RewardPoints, roundInfo.RoundTimeMs);
+                    new MultipleChoiceGameRound(roundInfo.Answer.ToString(), roundInfo.RewardPoints, roundInfo.RoundTimeMs);
             }            
             
             // await the game round being played

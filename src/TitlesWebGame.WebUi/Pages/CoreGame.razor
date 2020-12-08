@@ -10,6 +10,7 @@ else
 {
     <div>
         <div>@GameViewModel.NextRoundInfo.RoundStatement</div>
+        <div>@GameViewModel.NextRoundInfo.RoundTimeMs</div>
         @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
         {
             // Rendering multiple choice question

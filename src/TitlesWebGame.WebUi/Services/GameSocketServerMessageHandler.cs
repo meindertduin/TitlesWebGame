@@ -18,7 +18,7 @@ namespace TitlesWebGame.WebUi.Services
         {
             GetMessageCommandHandler(serverMessage).Execute(serverMessage);
         }
-
+        
         private IServerMessageHandler GetMessageCommandHandler(TitlesGameHubMessageModel serverMessage) =>
             serverMessage.MessageType switch
             {
@@ -29,6 +29,7 @@ namespace TitlesWebGame.WebUi.Services
                 GameHubMessageType.SuccessfullyJoinedRoom => new SuccessfullyJoinedRoomHandler(_gameSessionState),
                 GameHubMessageType.SessionStarted => new SessionStartedHandler(_gameSessionState),
                 GameHubMessageType.NextRoundInfo => new NextRoundInfoHandler(_gameSessionState),
+                GameHubMessageType.PreviousRoundInfo => new PreviousRoundInfoHandler(_gameSessionState),
                 _ => throw new ArgumentException(message: "invalid enum value", paramName: nameof(serverMessage.MessageType)),
             };
     }

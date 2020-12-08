@@ -7,5 +7,7 @@ namespace TitlesWebGame.Domain.ViewModels
         public string RoundStatement { get; set; }
         public GameRoundsType GameRoundsType { get; set; }
         public TitleCategory TitleCategory { get; set; }
+        public int RoundTimeMs { get; set; }
+        public int RewardPoints { get; set; }
     }
 }

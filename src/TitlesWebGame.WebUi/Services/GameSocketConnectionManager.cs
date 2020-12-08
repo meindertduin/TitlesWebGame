@@ -8,13 +8,11 @@ namespace TitlesWebGame.WebUi.Services
     public class GameSocketConnectionManager
     {
         private readonly GameSocketServerMessageHandler _gameSocketServerMessageHandler;
-        private readonly GameSessionState _gameSessionState;
         public HubConnection HubConnection { get; private set; }
 
-        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler, GameSessionState gameSessionState)
+        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler)
         {
             _gameSocketServerMessageHandler = gameSocketServerMessageHandler;
-            _gameSessionState = gameSessionState;
         }
         public async Task ConnectSocket()
         {
@@ -30,11 +28,7 @@ namespace TitlesWebGame.WebUi.Services
         private void SetHubConnectionEventHandlers()
         {
             RegisterOnServerMessageUpdateEventHandler();
-
-            RegisterOnNewGameRoundInfoEventHandler();
-
-            RegisterOnUpdateSessionStateEventHandler();
-
+            
             RegisterOnGameEndEventHandler();
         }
 
@@ -42,25 +36,7 @@ namespace TitlesWebGame.WebUi.Services
         {
             HubConnection.On<TitlesGameEndGameResults>("EndGameResultsUpdate", (endGameResults) =>
             {
-                // Todo: handle display for end of game
-            });
-        }
-
-        private void RegisterOnUpdateSessionStateEventHandler()
-        {
-            HubConnection.On<SessionStateUpdateViewModel>("GameSessionStateUpdate", (sessionState) =>
-            {
-                // Todo: handle right answers of previous game
-
-                _gameSessionState.SetPlayerStates(sessionState.GameSessionPlayers);
-            });
-        }
-
-        private void RegisterOnNewGameRoundInfoEventHandler()
-        {
-            HubConnection.On<GameRoundInfoViewModel>("NextRoundInfoUpdate", (GameRoundInfo) =>
-            {
-                // Todo: display info of next round
+                
             });
         }
 
