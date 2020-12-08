@@ -27,12 +27,14 @@ namespace TitlesWebGame.WebUi.ViewModels
             PropertyChanged?.Invoke(this, new ViewModelPropertyChangedEventArgs(propertyName));
         }
         
-        protected void SetValue<T>(ref T backingFiled, T value, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T backingFiled, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(backingFiled, value)) return; 
+            if (EqualityComparer<T>.Default.Equals(backingFiled, value)) return false;  
             backingFiled = value;
             Console.WriteLine(propertyName);
             OnPropertyChanged(propertyName);
+            
+            return true;
         }
     }
 }

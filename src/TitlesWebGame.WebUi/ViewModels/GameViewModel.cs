@@ -9,25 +9,44 @@ namespace TitlesWebGame.WebUi.ViewModels
     public class GameViewModel : BaseViewModel, IDisposable
     {
         private readonly GameSessionState _gameSessionState;
-
+        public event Action OnRoundStart;
+        public event Action OnRoundReview;
+        
         public GameViewModel(GameSessionState gameSessionState)
         {
             _gameSessionState = gameSessionState;
             _gameSessionState.OnSessionStateChanged += LoadUpdatedGameSessionValues;
+
+            
             LoadUpdatedGameSessionValues();
         }
         private void LoadUpdatedGameSessionValues()
         {
+            if (IsPlaying)
+            {
+                Console.WriteLine("changing something");
+                NextRoundInfo = _gameSessionState.NextRoundInfo;
+                PreviousRoundInfo = _gameSessionState.PreviousRoundInfo;
+            }
+            
             IsOwner = _gameSessionState.IsOwner();
             Player = _gameSessionState.GameSessionPlayer;
             SessionPlayers = _gameSessionState.Players;
             HasEnded = _gameSessionState.HasEnded;
-            NextRoundInfo = _gameSessionState.NextRoundInfo;
-            PreviousRoundInfo = _gameSessionState.PreviousRoundInfo;
             RoomKey = _gameSessionState.RoomKey;
             IsPlaying = _gameSessionState.IsPlaying;
-
+            
             OnPropertyChanged();
+        }
+
+        private void NotifyRoundStart()
+        {
+            OnRoundStart?.Invoke();
+        }
+
+        private void NotifyRoundReview()
+        {
+            OnRoundReview?.Invoke();
         }
 
         private bool _isPlaying;
@@ -69,14 +88,26 @@ namespace TitlesWebGame.WebUi.ViewModels
         public GameRoundInfoViewModel NextRoundInfo
         {
             get => _nextRoundInfo;
-            set => SetValue(ref _nextRoundInfo, value);
+            set
+            {
+                if (SetValue(ref _nextRoundInfo, value))
+                {
+                    NotifyRoundStart();
+                }
+            }
         }
 
         private GameRoundInfo _previousRoundInfo;
         public GameRoundInfo PreviousRoundInfo
         {
             get => _previousRoundInfo;
-            set => SetValue(ref _previousRoundInfo, value);
+            set
+            {
+                if (SetValue(ref _previousRoundInfo, value))
+                {
+                    NotifyRoundReview();
+                }
+            }
         }
 
         private string _roomKey;
@@ -85,11 +116,12 @@ namespace TitlesWebGame.WebUi.ViewModels
             get => _roomKey;
             set => SetValue(ref _roomKey, value);
         }
-
+        
         public void Dispose()
         {
             _gameSessionState.OnSessionStateChanged -= LoadUpdatedGameSessionValues;
         }
+        
     }
     
 }

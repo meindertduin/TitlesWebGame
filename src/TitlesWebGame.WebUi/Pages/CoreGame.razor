@@ -1,12 +1,13 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.Entities
 @using TitlesWebGame.Domain.ViewModels
+@implements IDisposable;
 
 @if (GameViewModel.NextRoundInfo == null)
 {
     <h3>Game is starting very soon...</h3>
 }
-else
+else if (_roundStart)
 {
     <div>
         <div>@GameViewModel.NextRoundInfo.RoundStatement</div>
@@ -27,9 +28,43 @@ else
         }
     </div>
 }
+else if(@GameViewModel.PreviousRoundInfo != null)
+{
+    <div>
+        <div>@GameViewModel.PreviousRoundInfo.Answer</div>
+    </div>
+}
 
-@code {
+    @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
-    
+
+    private bool _roundStart;
+
+    protected override void OnInitialized()
+    {
+        GameViewModel.OnRoundStart += StartRoundStart;
+        GameViewModel.OnRoundReview += StartRoundReview;
+        
+        base.OnInitialized();
+    }
+
+    private void StartRoundReview()
+    {
+        _roundStart = false;
+        Console.WriteLine("round review started");
+    }
+
+    private void StartRoundStart()
+    {
+        _roundStart = true;
+        Console.WriteLine("round started");
+    }
+
+    public void Dispose()
+    {
+        GameViewModel.OnRoundStart -= StartRoundStart;
+        GameViewModel.OnRoundReview -= StartRoundReview;
+    }
+
 }

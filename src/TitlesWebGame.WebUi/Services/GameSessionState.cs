@@ -19,10 +19,6 @@ namespace TitlesWebGame.WebUi.Services
         
         public event Action OnSessionStateChanged;
         public event Action OnSessionInit;
-
-        public event Action RoundReview;
-        public event Action RoundStart;
-        
         public void InitializeNewState(GameSessionInitViewModel gameSessionInitModel)
         {
             RoomKey = gameSessionInitModel.RoomKey;
@@ -76,13 +72,12 @@ namespace TitlesWebGame.WebUi.Services
         public void SetNextRoundInfo(GameRoundInfoViewModel gameRoundInfoViewModel)
         {
             NextRoundInfo = gameRoundInfoViewModel;
+            
             NotifyStateChanged();
         }
 
         private void NotifyStateChanged() => OnSessionStateChanged?.Invoke();
         private void NotifyStateInit() => OnSessionInit?.Invoke();
-
-        private void NotifyRoundReview() => RoundReview?.Invoke();
-        private void NotifyRoundStart() => RoundStart?.Invoke();
+        
     }
 }

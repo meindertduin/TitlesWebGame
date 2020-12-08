@@ -99,7 +99,7 @@ namespace TitlesWebGame.Api.Services
                         RewardPoints = 500,
                         GameRoundsType = GameRoundsType.MultipleChoiceRound,
                         RoundStatement = "What animal is primarily known for having stripes",
-                        RoundTimeMs = 100,
+                        RoundTimeMs = 1500,
                         TitleCategory = TitleCategory.Scientist,
                     },
                 };
