@@ -1,0 +1,41 @@
+﻿@page "/GameRoundReviewPreviewPage"
+
+<div class="container">
+        @if (_hadAnswerRight)
+        {
+            <div class="row justify-content-center">
+                <div class="round-title">Who is the most loved of this group</div>
+            </div>
+            <div class="options-container">
+                <div class="option-button option-color-right">
+                    A ) Me myself and i
+                </div>
+            </div>
+        }
+        <div class="row justify-content-center h3">
+            <div>you were awarded 300 points this round!</div>
+        </div>
+        <div class="scores-container">
+            @for (int i = 0; i < 7; i++)
+            {
+                var placeNumber = i;
+                
+                <div class="player-score-container">
+                    <div class="place-num">
+                        @placeNumber )
+                    </div>
+                    <div class="player-name">
+                        Mark
+                    </div>
+                    <div class="player-score">
+                        1200
+                    </div>
+                </div>
+            }
+        </div>
+</div>
+
+
+@code {
+    private bool _hadAnswerRight = true;
+}

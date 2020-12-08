@@ -7,37 +7,80 @@
 {
     <h3>Game is starting very soon...</h3>
 }
-else if (_roundStart)
+@* else if (_roundStart) *@
+@* { *@
+@*     <div> *@
+@*         <div>@GameViewModel.NextRoundInfo.RoundStatement</div> *@
+@*         <div>@GameViewModel.NextRoundInfo.RoundTimeMs</div> *@
+@*         @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo) *@
+@*         { *@
+@*             // Rendering multiple choice question *@
+@*             <ul> *@
+@*                 @foreach (var question in nextRoundInfo.Choices) *@
+@*                 { *@
+@*                     <li>@question</li> *@
+@*                 } *@
+@*             </ul> *@
+@*         } *@
+@*         else *@
+@*         { *@
+@*             <div>its not a multiple choice</div> *@
+@*         } *@
+@*     </div> *@
+@* } *@
+@* else if(@GameViewModel.PreviousRoundInfo != null) *@
+@* { *@
+@*     <div> *@
+@*         <div>@GameViewModel.PreviousRoundInfo.Answer</div> *@
+@*     </div> *@
+@* } *@
+else
 {
-    <div>
-        <div>@GameViewModel.NextRoundInfo.RoundStatement</div>
-        <div>@GameViewModel.NextRoundInfo.RoundTimeMs</div>
-        @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+    <div class="container">
+        @if (_chosenThisRound == false)
         {
-            // Rendering multiple choice question
-            <ul>
-                @foreach (var question in nextRoundInfo.Choices)
-                {
-                    <li>@question</li>
-                }
-            </ul>
+            <div class="row justify-content-center">
+                <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
+            </div>
+            @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+            {
+                <div class="options-container">
+                
+                    @for (int i = 0; i < nextRoundInfo.Choices.Length; i++)
+                    {
+                        var optionNumber = i;
+                        string optionColor = "option-color-" + i;
+                        string marks = "ABCDEFGIJKLMNOP";
+
+                        <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor">
+                            <div class="option-mark">
+                                @marks[i]
+                            </div>
+                            <div class="option-text">
+                                @nextRoundInfo.Choices[i]
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
         }
         else
         {
-            <div>its not a multiple choice</div>
+            <div class="row justify-content-center">
+                <div class="waiting-round-text">
+                    Waiting for the rest of players...
+                </div>
+            </div>
         }
     </div>
-}
-else if(@GameViewModel.PreviousRoundInfo != null)
-{
-    <div>
-        <div>@GameViewModel.PreviousRoundInfo.Answer</div>
-    </div>
-}
+}    
 
-    @code {
+
+@code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
+
+    private bool _chosenThisRound = false;
 
     private bool _roundStart;
 
@@ -60,6 +103,13 @@ else if(@GameViewModel.PreviousRoundInfo != null)
         _roundStart = true;
         Console.WriteLine("round started");
     }
+        
+    private void HandlePlayerChoice(MouseEventArgs e, int number)
+    {
+        Console.WriteLine(number);
+        _chosenThisRound = true;
+
+    }    
 
     public void Dispose()
     {

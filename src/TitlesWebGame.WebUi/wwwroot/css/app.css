@@ -70,6 +70,13 @@ a, .btn-link {
     background: #4e555b;
 }
 
+.option-color-right{
+    background: green;
+}
+
+.option-color-wrong {
+    background: red;
+}
 
 .round-title{
     justify-self: center;
@@ -113,4 +120,35 @@ a, .btn-link {
 .waiting-round-text{
     font-weight: bold;
     font-size: 3rem;
+}
+
+/* --------------------- REVIEW BOARD -------------------------*/
+.round-review-answer{
+    background: green;
+    
+}
+
+.scores-container{
+    
+}
+
+.player-score-container {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    align-items: center;
+    background: blue;
+    color: white;
+    padding-left: 10px;
+}
+
+.player-name{
+    font-weight: bold;
+    margin: 10px;
+    font-size: 20px;
+}
+
+.player-score{
+    font-weight: bold;
+    font-size: 18px;
 }
