@@ -25,10 +25,18 @@ namespace TitlesWebGame.WebUi.ViewModels
             NextRoundInfo = _gameSessionState.NextRoundInfo;
             PreviousRoundInfo = _gameSessionState.PreviousRoundInfo;
             RoomKey = _gameSessionState.RoomKey;
+            IsPlaying = _gameSessionState.IsPlaying;
 
             OnPropertyChanged();
         }
-        
+
+        private bool _isPlaying;
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set => SetValue(ref _isPlaying, value);
+        }
+
         private bool _isOwner;
         public bool IsOwner
         {
@@ -72,7 +80,6 @@ namespace TitlesWebGame.WebUi.ViewModels
         }
 
         private string _roomKey;
-
         public string RoomKey
         {
             get => _roomKey;

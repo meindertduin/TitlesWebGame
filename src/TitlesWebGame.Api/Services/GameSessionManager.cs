@@ -106,6 +106,8 @@ namespace TitlesWebGame.Api.Services
             
                 gameSession.SetRoundInfo(loadedRounds);
                 
+                await UpdatePlayersOfGameStated(gameSession.RoomKey);
+                
                 while (true)
                 {
                     var newRoundInfo = gameSession.GetNextRound();
@@ -123,6 +125,20 @@ namespace TitlesWebGame.Api.Services
                 gameSession.SetPlayingStatus(false);
                 await UpdatePlayersOfEndGame(gameSession);
             }
+        }
+
+        private Task UpdatePlayersOfGameStated(string roomKey)
+        {
+            int startingAfterDelay = 1;
+
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
+                new TitlesGameHubMessageModel()
+                {
+                    Error = false,
+                    Message = "Game starting",
+                    AppendedObject = startingAfterDelay,
+                    MessageType = GameHubMessageType.SessionStarted,
+                });
         }
 
         private Task UpdatePlayersOfEndGame(GameSession gameSession)

@@ -2,14 +2,20 @@
 @inject GameSessionState GameSessionState;
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
-@using System.ComponentModel
 @using TitlesWebGame.WebUi.Models
 @implements IDisposable;
 @inject GameViewModel GameViewModel; 
 
 
 <CascadingValue Value="@GameViewModel" Name="GameViewModel">
-    <GameSessionLobby />
+    @if (GameViewModel.IsPlaying)
+    {
+        <CoreGame />
+    }
+    else
+    {
+        <GameSessionLobby />
+    }
 </CascadingValue>
 
 @code {
