@@ -1,8 +1,34 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
+@using TitlesWebGame.Domain.Entities
+@using TitlesWebGame.Domain.ViewModels
 
-<h3>CoreGame</h3>
+@if (GameViewModel.NextRoundInfo == null)
+{
+    <h3>Game is starting very soon...</h3>
+}
+else
+{
+    <div>
+        <div>@GameViewModel.NextRoundInfo.RoundStatement</div>
+        @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+        {
+            // Rendering multiple choice question
+            <ul>
+                @foreach (var question in nextRoundInfo.Choices)
+                {
+                    <li>@question</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div>its not a multiple choice</div>
+        }
+    </div>
+}
 
 @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
+    
 }

@@ -14,5 +14,7 @@
         SuccessfullyJoinedRoom,
         ErrorConnectingToRoom,
         SessionStarted,
+        NextRoundInfo,
+        PreviousRoundInfo
     }
 }

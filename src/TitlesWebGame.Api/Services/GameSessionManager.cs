@@ -170,7 +170,13 @@ namespace TitlesWebGame.Api.Services
 
             if (newGameRoundInfoVm != null)
             {
-                return _titlesGameHub.Clients.Group(roomKey).SendAsync("NextRoundInfoUpdate", newGameRoundInfoVm);
+                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
+                {
+                    Message = "Next round info",
+                    MessageType = GameHubMessageType.NextRoundInfo,
+                    AppendedObject = newGameRoundInfoVm,
+                    Error = false,
+                });
             }
             else
             {
