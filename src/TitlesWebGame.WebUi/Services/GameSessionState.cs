@@ -54,12 +54,7 @@ namespace TitlesWebGame.WebUi.Services
             IsPlaying = isPlaying;
             NotifyStateChanged();
         }
-
-        public void SetGameEndedStatus(bool hasEnded)
-        {
-            HasEnded = hasEnded;
-            NotifyStateChanged();
-        }
+        
 
         public void SetSessionGameStatUpdateInfo(SessionStateUpdateViewModel sessionStateUpdate)
         {
@@ -77,6 +72,14 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
 
+        public void EndSession(TitlesGameEndSessionResults endSessionResults)
+        {
+            HasEnded = true;
+            Players = endSessionResults.GameSessionPlayers;
+            
+            NotifyStateChanged();
+        }
+        
         private void NotifyStateChanged() => OnSessionStateChanged?.Invoke();
         private void NotifyStateInit() => OnSessionInit?.Invoke();
         

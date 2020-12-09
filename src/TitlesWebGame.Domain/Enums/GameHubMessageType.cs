@@ -15,6 +15,7 @@
         ErrorConnectingToRoom,
         SessionStarted,
         NextRoundInfo,
-        PreviousRoundInfo
+        PreviousRoundInfo,
+        SessionEnded,
     }
 }

@@ -5,7 +5,9 @@
 @using TitlesWebGame.Api.Models
 @implements IDisposable;
 
-@if (GameViewModel.NextRoundInfo == null)
+@if (GameViewModel.HasEnded == false)
+{
+    @if (GameViewModel.NextRoundInfo == null)
 {
     <h3>Game is starting very soon...</h3>
 }
@@ -106,6 +108,13 @@ else
                 }
             }
         </div>
+    </div>
+}
+}
+else
+{
+    <div>
+        Game has ended...
     </div>
 }
 

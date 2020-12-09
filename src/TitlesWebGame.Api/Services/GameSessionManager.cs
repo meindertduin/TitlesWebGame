@@ -19,6 +19,7 @@ namespace TitlesWebGame.Api.Services
         private static ConcurrentDictionary<string, GameSession> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
+        private const int RoundReviewTimeMs = 3000;
 
         private Random _random = new();
 
@@ -122,6 +123,7 @@ namespace TitlesWebGame.Api.Services
                     var scores = gameSession.GetRoundScores();
                     gameSession.AddScores(scores);
                     await UpdatePlayersOfSessionState(gameSession.RoomKey ,newRoundInfo, gameSession.GetPlayers());
+                    await Task.Delay(RoundReviewTimeMs);
                 }
                 gameSession.SetPlayingStatus(false);
                 await UpdatePlayersOfEndGame(gameSession);
@@ -138,12 +140,13 @@ namespace TitlesWebGame.Api.Services
 
         private Task UpdatePlayersOfEndGame(GameSession gameSession)
         {
-            var endGameResults = new TitlesGameEndGameResults()
+            var endGameResults = new TitlesGameEndSessionResults()
             {
                 GameSessionPlayers = gameSession.GetPlayers(),
             };
 
-            return _titlesGameHub.Clients.Group(gameSession.RoomKey).SendAsync("EndGameResultsUpdate", endGameResults);
+            return _titlesGameHub.Clients.Group(gameSession.RoomKey).SendAsync("ServerMessageUpdate",
+                _titlesGameHubMessageFactory.CreateEndSessionMessage(endGameResults));
         }
         
         private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
@@ -165,13 +168,8 @@ namespace TitlesWebGame.Api.Services
 
             if (newGameRoundInfoVm != null)
             {
-                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
-                {
-                    Message = "Next round info",
-                    MessageType = GameHubMessageType.NextRoundInfo,
-                    AppendedObject = newGameRoundInfoVm,
-                    Error = false,
-                });
+                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                    _titlesGameHubMessageFactory.CreateNextRoundInfoMessage(newGameRoundInfoVm));
             }
             else
             {

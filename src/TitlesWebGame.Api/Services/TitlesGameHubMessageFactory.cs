@@ -111,5 +111,27 @@ namespace TitlesWebGame.Api.Services
                 AppendedObject = previousRoundInfo,
             };
         }
+
+        public TitlesGameHubMessageModel CreateNextRoundInfoMessage(GameRoundInfoViewModel multipleChoiceRoundInfo)
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "Next round info",
+                MessageType = GameHubMessageType.NextRoundInfo,
+                AppendedObject = multipleChoiceRoundInfo,
+                Error = false,
+            };
+        }
+
+        public TitlesGameHubMessageModel CreateEndSessionMessage(TitlesGameEndSessionResults endSessionResults)
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "Game ended",
+                Error = false,
+                MessageType = GameHubMessageType.SessionEnded,
+                AppendedObject = endSessionResults,
+            };
+        }
     }
 }

@@ -3,7 +3,7 @@ using TitlesWebGame.Domain.Entities;
 
 namespace TitlesWebGame.Domain.ViewModels
 {
-    public class TitlesGameEndGameResults
+    public class TitlesGameEndSessionResults
     {
         public List<GameSessionPlayer> GameSessionPlayers { get; set; }
     }
