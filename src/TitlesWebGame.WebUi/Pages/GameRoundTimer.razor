@@ -1,0 +1,35 @@
+﻿@using System.Threading
+@using TitlesWebGame.WebUi.Services
+
+<div>
+    <div>@TimeUnits</div>
+</div>
+
+@code {
+    [Parameter]
+    public int TimeUnits { get; set; }
+
+    [Parameter]
+    public int IntervalMs { get; set; }
+
+    private bool _timerFinished = false;
+
+    protected override void OnInitialized()
+    {
+        SetTimer(TimeUnits, IntervalMs);
+        base.OnInitialized();
+    }
+
+    private async Task SetTimer(int secondsAmount, int interValMs)
+    {
+        while (TimeUnits > 0)
+        {
+            await Task.Delay(interValMs);
+            TimeUnits--;
+            StateHasChanged();
+        }
+
+        _timerFinished = true;
+    }
+
+}

@@ -12,6 +12,10 @@
 else if (_roundStart)
 {
     <div class="container">
+        <div>
+            <GameRoundTimer IntervalMs="1000" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 1000)"/>
+        </div>
+        
         @if (_chosenThisRound == false)
         {
             <div class="row justify-content-center">
@@ -53,7 +57,7 @@ else
 {
     <div class="container">
         <div class="row justify-content-center">
-            <div class="round-title">Who is the most loved of this group</div>
+            <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
         </div>
     
         <div class="options-container">
