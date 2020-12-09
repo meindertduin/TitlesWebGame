@@ -12,7 +12,7 @@ namespace TitlesWebGame.WebUi.Services
         public GameSessionPlayer GameSessionPlayer { get; private set; }
         public string RoomKey { get; private set; }
         
-        public TitlesGameState SessionState { get; set; }
+        public TitlesGameState SessionState { get; private set; }
         public bool SessionHasEnded { get; private set; }
         public List<GameSessionPlayer> Players { get; private set; }
         public string OwnerConnectionId { get; private set; }
@@ -52,8 +52,9 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
 
-        public void SetPlayingStatus(bool isPlaying)
+        public void StartGame(bool isPlaying)
         {
+            SessionState = TitlesGameState.RoundLoading;
             IsPlaying = isPlaying;
             NotifyStateChanged();
         }

@@ -1,0 +1,68 @@
+﻿@using TitlesWebGame.WebUi.ViewModels
+@using TitlesWebGame.Domain.ViewModels
+@using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.Api.Models
+
+<div class="container">
+    <div>
+        <GameRoundTimer IntervalMs="1000" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 1000)"/>
+    </div>
+                
+    @if (_chosenThisRound == false)
+    {
+        <div class="row justify-content-center">
+            <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
+        </div>
+        @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+        {
+            <div class="options-container">
+    
+                @for (int i = 0; i < nextRoundInfo.Choices.Length; i++)
+                {
+                    var optionNumber = i.ToString();
+                    string optionColor = "option-color-" + i;
+                    string marks = "ABCDEFGIJKLMNOP";
+    
+                    <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor">
+                        <div class="option-mark">
+                            @marks[i]
+                        </div>
+                        <div class="option-text">
+                            @nextRoundInfo.Choices[i]
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="row justify-content-center">
+            <div class="waiting-round-text">
+                Waiting for the rest of players...
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    [CascadingParameter(Name = "GameViewModel")]
+    protected GameViewModel GameViewModel { get; set; }
+
+    [CascadingParameter(Name = "GameSocketConnectionManager")]
+    protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
+    
+    private bool _chosenThisRound = false;
+    
+    private async Task HandlePlayerChoice(MouseEventArgs e, string answer)
+    {
+        await GameSocketConnectionManager.SendAnswer(GameViewModel.RoomKey, new GameRoundAnswer()
+        {
+            Answer = answer,
+            ConnectionId = GameViewModel.Player.ConnectionId,
+        });
+        
+        _chosenThisRound = true;
+    }  
+}

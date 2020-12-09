@@ -14,7 +14,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            _gameSessionState.SetPlayingStatus(true);
+            _gameSessionState.StartGame(true);
         }
     }
 }

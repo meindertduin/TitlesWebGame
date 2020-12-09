@@ -3,26 +3,45 @@
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.WebUi.Models
+@using TitlesWebGame.Domain.Enums
 @implements IDisposable;
 @inject GameViewModel GameViewModel; 
 @inject GameSocketConnectionManager GameSocketConnectionManager;
 
+@using TitlesWebGame.WebUi.Components
+
+
 <CascadingValue Value="@GameSocketConnectionManager" Name="GameSocketConnectionManager">
     <CascadingValue Value="@GameViewModel" Name="GameViewModel">
-        @if (GameViewModel.IsPlaying)
-        {
-            <CoreGame />
-        }
-        else
+        @if (GameViewModel.SessionState == TitlesGameState.Lobby)
         {
             <GameSessionLobby />
+        }
+        else if (GameViewModel.SessionState == TitlesGameState.RoundLoading)
+        {
+            <RoundLoading />
+        }
+        else if (GameViewModel.SessionState == TitlesGameState.RoundStart)
+        {
+            <SessionRound />
+        }
+        else if(GameViewModel.SessionState == TitlesGameState.RoundReview)
+        {
+            <SessionRoundReview />
+        }
+        else if (GameViewModel.SessionState == TitlesGameState.TitlesRoundReview)
+        {
+            <TitlesRoundReview />
+        }
+        else if (GameViewModel.SessionState == TitlesGameState.GameEnded)
+        {
+            <EndGame />
         }
     </CascadingValue>
 </CascadingValue>
 
 
 @code {
-
     protected override async Task OnInitializedAsync()
     {
         GameViewModel.PropertyChanged += OnPropertyChangedHandler;

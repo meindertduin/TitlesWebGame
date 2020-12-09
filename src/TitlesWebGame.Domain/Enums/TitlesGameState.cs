@@ -3,6 +3,7 @@
     public enum TitlesGameState
     {
         Lobby,
+        RoundLoading,
         RoundStart,
         RoundReview,
         TitlesRoundReview,
