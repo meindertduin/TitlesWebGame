@@ -15,15 +15,17 @@ namespace TitlesWebGame.Api.Services
     public class GameSessionManager : IGameSessionManager
     {
         private readonly IHubContext<TitlesGameHub> _titlesGameHub;
+        private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
         private static ConcurrentDictionary<string, GameSession> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
 
         private Random _random = new();
 
-        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub)
+        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
         {
             _titlesGameHub = titlesGameHub;
+            _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
         }
         
         public GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer)
@@ -63,7 +65,6 @@ namespace TitlesWebGame.Api.Services
                     CurrentPlayer = gameSessionPlayer,
                 };
             }
-
             return null;
         }
         
@@ -132,13 +133,7 @@ namespace TitlesWebGame.Api.Services
             int startingAfterDelay = 1;
 
             return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
-                new TitlesGameHubMessageModel()
-                {
-                    Error = false,
-                    Message = "Game starting",
-                    AppendedObject = startingAfterDelay,
-                    MessageType = GameHubMessageType.SessionStarted,
-                });
+                _titlesGameHubMessageFactory.CreateSessionStartedMessage(startingAfterDelay));
         }
 
         private Task UpdatePlayersOfEndGame(GameSession gameSession)
@@ -192,13 +187,8 @@ namespace TitlesWebGame.Api.Services
                 PreviousRoundInfo = currentRoundInfo,
             };
             
-            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", new TitlesGameHubMessageModel()
-            {
-                Error = false,
-                Message = "Previous round update and state loaded",
-                MessageType = GameHubMessageType.PreviousRoundInfo,
-                AppendedObject = previousRoundInfo,
-            });
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
         }
         
         public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)

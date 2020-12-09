@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TitlesWebGame.Api.Hubs;
 using TitlesWebGame.Api.Services;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api
 {
@@ -34,6 +35,7 @@ namespace TitlesWebGame.Api
             });
 
             services.AddSingleton<IGameSessionManager, GameSessionManager>();
+            services.AddTransient<ITitlesGameHubMessageFactory, TitlesGameHubMessageFactory>();
             
             services.AddSignalR();
 
