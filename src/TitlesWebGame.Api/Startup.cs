@@ -36,6 +36,7 @@ namespace TitlesWebGame.Api
 
             services.AddSingleton<IGameSessionManager, GameSessionManager>();
             services.AddTransient<ITitlesGameHubMessageFactory, TitlesGameHubMessageFactory>();
+            services.AddTransient<IGameSessionControllerService, GameSessionControllerService>();
             
             services.AddSignalR();
 

@@ -1,0 +1,176 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using TitlesWebGame.Api.Hubs;
+using TitlesWebGame.Api.Models;
+using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
+using TitlesWebGame.Domain.ViewModels;
+
+namespace TitlesWebGame.Api.Services
+{
+    public class GameSessionControllerService : IGameSessionControllerService
+    {
+        private readonly IHubContext<TitlesGameHub> _titlesGameHub;
+        private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
+        private const int RoundReviewTimeMs = 3000;
+        private const int TitlesRoundReviewTimeMs = 2000;
+        
+        public GameSessionControllerService(IHubContext<TitlesGameHub> titlesGameHub, ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
+        {
+            _titlesGameHub = titlesGameHub;
+            _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
+        }
+        
+        public async Task PlaySessionGame(GameSessionState gameSessionState, int titleRounds, int roundsPerTitle)
+        {
+            if (gameSessionState.IsPlaying == false)
+            {
+                gameSessionState.SetPlayingStatus(true);
+                await UpdatePlayersOfGameStated(gameSessionState.RoomKey);
+                
+                await PlayTitleRounds(gameSessionState, roundsPerTitle);
+                
+                gameSessionState.SetPlayingStatus(false);
+                await UpdatePlayersOfEndGame(gameSessionState);
+            }
+        }
+
+        private async Task PlayTitleRounds(GameSessionState gameSessionState, int roundsPerTitle)
+        {
+            List<TitleCategory> playedRoundCategories = new();
+
+            for (int i = 0; i < roundsPerTitle; i++)
+            {
+                var titleCategory = TitleCategory.Artist;
+                playedRoundCategories.Add(titleCategory);
+
+                var loadedRounds = GetTitleRoundRounds();
+
+                gameSessionState.SetRoundInfo(loadedRounds);
+
+                await PlayGameRounds(gameSessionState);
+
+                await UpdatePlayersOfTitlesRoundEnded(gameSessionState);
+                await Task.Delay(TitlesRoundReviewTimeMs);
+                gameSessionState.EndTitlesRound(titleCategory);
+            }
+        }
+
+        private List<GameRoundInfo> GetTitleRoundRounds()
+        {
+            var loadedRounds = new List<GameRoundInfo>()
+            {
+                new MultipleChoiceRoundInfo()
+                {
+                    Answer = 1.ToString(),
+                    Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
+                    RewardPoints = 500,
+                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                    RoundStatement = "What animal is primarily known for having stripes",
+                    RoundTimeMs = 3000,
+                    TitleCategory = TitleCategory.Scientist,
+                },
+            };
+            return loadedRounds;
+        }
+
+        private async Task PlayGameRounds(GameSessionState gameSessionState)
+        {
+            while (true)
+            {
+                var newRoundInfo = gameSessionState.GetNextRound();
+                if (newRoundInfo == null)
+                {
+                    break;
+                }
+
+                await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSessionState.RoomKey);
+                await gameSessionState.PlayNewRound(newRoundInfo);
+                var scores = gameSessionState.GetRoundScores();
+                gameSessionState.AddScores(scores);
+                await UpdatePlayersOfSessionState(gameSessionState.RoomKey, newRoundInfo, gameSessionState.GetPlayers());
+                await Task.Delay(RoundReviewTimeMs);
+            }
+        }
+        
+        private Task UpdatePlayersOfGameStated(string roomKey)
+        {
+            int startingAfterDelay = 1;
+
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
+                _titlesGameHubMessageFactory.CreateSessionStartedMessage(startingAfterDelay));
+        }
+        
+        private Task UpdatePlayersOfEndGame(GameSessionState gameSessionState)
+        {
+            var endGameResults = new TitlesGameEndSessionResults()
+            {
+                GameSessionPlayers = gameSessionState.GetPlayers(),
+            };
+
+            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate",
+                _titlesGameHubMessageFactory.CreateEndSessionMessage(endGameResults));
+        }
+        
+        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
+        {
+            GameRoundInfoViewModel newGameRoundInfoVm = null;
+
+            newGameRoundInfoVm = ProjectToRoundInfoViewModel(gameRoundInfo, newGameRoundInfoVm);
+
+            if (newGameRoundInfoVm != null)
+            {
+                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                    _titlesGameHubMessageFactory.CreateNextRoundInfoMessage(newGameRoundInfoVm));
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
+            }
+        }
+
+        private GameRoundInfoViewModel ProjectToRoundInfoViewModel(GameRoundInfo gameRoundInfo,
+            GameRoundInfoViewModel newGameRoundInfoVm)
+        {
+            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
+            {
+                newGameRoundInfoVm = new MultipleChoiceRoundInfoViewModel()
+                {
+                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
+                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
+                    Choices = multipleChoiceRoundInfo.Choices,
+                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
+                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
+                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
+                };
+            }
+
+            return newGameRoundInfoVm;
+        }
+
+        private Task UpdatePlayersOfSessionState(string roomKey, GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
+        {
+            var previousRoundInfo = new SessionStateUpdateViewModel()
+            {
+                GameSessionPlayers = gameSessionPlayers,
+                PreviousRoundInfo = currentRoundInfo,
+            };
+            
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
+        }
+
+        private Task UpdatePlayersOfTitlesRoundEnded(GameSessionState gameSessionState)
+        {
+            var titlesGameRoundResults = new TitlesRoundResults()
+            {
+                Players = gameSessionState.GetPlayers(),
+            };
+            
+            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate", 
+                _titlesGameHubMessageFactory.CreateEndTitlesRoundMessage(titlesGameRoundResults));
+        }
+    }
+}

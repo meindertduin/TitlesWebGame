@@ -16,19 +16,18 @@ namespace TitlesWebGame.Api.Services
     public class GameSessionManager : IGameSessionManager
     {
         private readonly IHubContext<TitlesGameHub> _titlesGameHub;
-        private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
+        private readonly IGameSessionControllerService _gameSessionControllerService;
         private static ConcurrentDictionary<string, GameSessionState> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
-        private const int RoundReviewTimeMs = 3000;
-        private const int TitlesRoundReviewTimeMs = 2000;
+
 
         private Random _random = new();
 
-        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
+        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, IGameSessionControllerService gameSessionControllerService)
         {
             _titlesGameHub = titlesGameHub;
-            _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
+            _gameSessionControllerService = gameSessionControllerService;
         }
         
         public GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer)
@@ -79,8 +78,7 @@ namespace TitlesWebGame.Api.Services
 
         public void StartSession(string roomKey, string connectionId)
         {
-            // Todo: make these values optional
-            
+            // Todo: make this user input
             int titleRounds = 1;
             int roundsPerTitle = 1;
             
@@ -88,138 +86,9 @@ namespace TitlesWebGame.Api.Services
             
             if (gameSession != null && connectionId == gameSession.OwnerConnectionId)
             {
-                Task.Run(() => PlaySessionGame(gameSession, titleRounds, roundsPerTitle));
+                Task.Run(() => _gameSessionControllerService.PlaySessionGame(gameSession, titleRounds, roundsPerTitle));
             }
         }
-        
-        private async Task PlaySessionGame(GameSessionState gameSessionState, int titleRounds, int roundsPerTitle)
-        {
-            if (gameSessionState.IsPlaying == false)
-            {
-                gameSessionState.SetPlayingStatus(true);
-
-                List<TitleCategory> playedRoundCategories = new();
-                
-                await UpdatePlayersOfGameStated(gameSessionState.RoomKey);
-
-                for (int i = 0; i < roundsPerTitle; i++)
-                {
-                    // Todo: make this a factory
-                    var titleCategory = TitleCategory.Artist;
-                    playedRoundCategories.Add(titleCategory);
-                    
-                    var loadedRounds = new List<GameRoundInfo>()
-                    {
-                        new MultipleChoiceRoundInfo()
-                        {
-                            Answer = 1.ToString(),
-                            Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
-                            RewardPoints = 500,
-                            GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                            RoundStatement = "What animal is primarily known for having stripes",
-                            RoundTimeMs = 3000,
-                            TitleCategory = TitleCategory.Scientist,
-                        },
-                    };
-                
-                    gameSessionState.SetRoundInfo(loadedRounds);
-                
-                    while (true)
-                    {
-                        var newRoundInfo = gameSessionState.GetNextRound();
-                        if (newRoundInfo == null)
-                        {
-                            break;
-                        }
-
-                        await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSessionState.RoomKey);
-                        await gameSessionState.PlayNewRound(newRoundInfo);
-                        var scores = gameSessionState.GetRoundScores();
-                        gameSessionState.AddScores(scores);
-                        await UpdatePlayersOfSessionState(gameSessionState.RoomKey ,newRoundInfo, gameSessionState.GetPlayers());
-                        await Task.Delay(RoundReviewTimeMs);
-                    }
-                    
-                    await UpdatePlayersOfTitlesRoundEnded(gameSessionState);
-                    await Task.Delay(TitlesRoundReviewTimeMs);
-                    gameSessionState.EndTitlesRound(titleCategory);
-                }
-                
-                gameSessionState.SetPlayingStatus(false);
-                await UpdatePlayersOfEndGame(gameSessionState);
-            }
-        }
-
-        private Task UpdatePlayersOfGameStated(string roomKey)
-        {
-            int startingAfterDelay = 1;
-
-            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
-                _titlesGameHubMessageFactory.CreateSessionStartedMessage(startingAfterDelay));
-        }
-
-        private Task UpdatePlayersOfEndGame(GameSessionState gameSessionState)
-        {
-            var endGameResults = new TitlesGameEndSessionResults()
-            {
-                GameSessionPlayers = gameSessionState.GetPlayers(),
-            };
-
-            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate",
-                _titlesGameHubMessageFactory.CreateEndSessionMessage(endGameResults));
-        }
-        
-        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
-        {
-            GameRoundInfoViewModel newGameRoundInfoVm = null;
-            
-            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
-            {
-                newGameRoundInfoVm = new MultipleChoiceRoundInfoViewModel()
-                {
-                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
-                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
-                    Choices = multipleChoiceRoundInfo.Choices,
-                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
-                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
-                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
-                };
-            }
-
-            if (newGameRoundInfoVm != null)
-            {
-                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
-                    _titlesGameHubMessageFactory.CreateNextRoundInfoMessage(newGameRoundInfoVm));
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
-            }
-        }
-        
-        private Task UpdatePlayersOfSessionState(string roomKey, GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
-        {
-            var previousRoundInfo = new SessionStateUpdateViewModel()
-            {
-                GameSessionPlayers = gameSessionPlayers,
-                PreviousRoundInfo = currentRoundInfo,
-            };
-            
-            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
-                _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
-        }
-
-        private Task UpdatePlayersOfTitlesRoundEnded(GameSessionState gameSessionState)
-        {
-            var titlesGameRoundResults = new TitlesRoundResults()
-            {
-                Players = gameSessionState.GetPlayers(),
-            };
-            
-            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate", 
-                _titlesGameHubMessageFactory.CreateEndTitlesRoundMessage(titlesGameRoundResults));
-        }
-        
         public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
