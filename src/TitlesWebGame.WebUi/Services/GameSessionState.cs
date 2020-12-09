@@ -58,9 +58,10 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
 
-        public void EndTitleRound()
+        public void EndTitleRound(TitlesRoundResults titleRoundResults)
         {
             SessionState = TitlesGameState.TitlesRoundReview;
+            Players = titleRoundResults.Players;
             NotifyStateChanged();
         }
         

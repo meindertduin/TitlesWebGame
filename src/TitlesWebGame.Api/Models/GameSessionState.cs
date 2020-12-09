@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 
 namespace TitlesWebGame.Api.Models
 {
-    public class GameSession
+    public class GameSessionState
     {
         public string RoomKey { get; set; }
         public string OwnerConnectionId { get; set; }
@@ -16,7 +17,7 @@ namespace TitlesWebGame.Api.Models
         private IGameRound _currentGameRound;
         
         private IEnumerator<GameRoundInfo> _gameRoundInfoIterator;
-        
+
         public void SetRoundInfo(List<GameRoundInfo> gameRoundInfos)
         {
             _gameRoundInfoIterator = gameRoundInfos.GetEnumerator();
@@ -26,6 +27,19 @@ namespace TitlesWebGame.Api.Models
         {
             _gameRoundInfoIterator.MoveNext();
             return _gameRoundInfoIterator.Current;
+        }
+
+        public void EndTitlesRound(TitleCategory contestingCategory)
+        {
+            // calculate player most points
+            var titlesRoundWinner = _players.OrderBy(player => player.CurrentPoints).First();
+            // add title to player
+            titlesRoundWinner.AddTitleCategory(contestingCategory);
+            // reset players points
+            foreach (var player in _players)
+            {
+                player.CurrentPoints = 0;
+            }
         }
         
         public void SetPlayingStatus(bool isPlaying)

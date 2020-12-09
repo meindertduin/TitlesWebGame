@@ -17,5 +17,6 @@
         NextRoundInfo,
         PreviousRoundInfo,
         SessionEnded,
+        TitlesRoundEnded,
     }
 }

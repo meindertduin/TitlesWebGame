@@ -133,5 +133,16 @@ namespace TitlesWebGame.Api.Services
                 AppendedObject = endSessionResults,
             };
         }
+
+        public TitlesGameHubMessageModel CreateEndTitlesRoundMessage(TitlesRoundResults titlesRoundResults)
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "Titles round ended",
+                Error = false,
+                MessageType = GameHubMessageType.TitlesRoundEnded,
+                AppendedObject = titlesRoundResults,
+            };
+        }
     }
 }

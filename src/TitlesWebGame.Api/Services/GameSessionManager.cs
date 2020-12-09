@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Hubs;
@@ -16,10 +17,11 @@ namespace TitlesWebGame.Api.Services
     {
         private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
-        private static ConcurrentDictionary<string, GameSession> _gameSessions = new();
+        private static ConcurrentDictionary<string, GameSessionState> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
         private const int RoundReviewTimeMs = 3000;
+        private const int TitlesRoundReviewTimeMs = 2000;
 
         private Random _random = new();
 
@@ -40,7 +42,7 @@ namespace TitlesWebGame.Api.Services
                     .Select(s => s[_random.Next(s.Length)]).ToArray());
             } while (_gameSessions.ContainsKey(roomKey));
 
-            var newGameSession = new GameSession()
+            var newGameSession = new GameSessionState()
             {
                 RoomKey = roomKey,
                 OwnerConnectionId = ownerSessionPlayer.ConnectionId,
@@ -54,15 +56,15 @@ namespace TitlesWebGame.Api.Services
             return GetGameSessionState(newGameSession, ownerSessionPlayer);
         }
 
-        private GameSessionInitViewModel GetGameSessionState(GameSession gameSession, GameSessionPlayer gameSessionPlayer)
+        private GameSessionInitViewModel GetGameSessionState(GameSessionState gameSessionState, GameSessionPlayer gameSessionPlayer)
         {
-            if (gameSession != null)
+            if (gameSessionState != null)
             {
                 return new GameSessionInitViewModel()
                 {
-                    GameSessionPlayers = gameSession.GetPlayers(),
-                    OwnerConnectionId = gameSession.OwnerConnectionId,
-                    RoomKey = gameSession.RoomKey,
+                    GameSessionPlayers = gameSessionState.GetPlayers(),
+                    OwnerConnectionId = gameSessionState.OwnerConnectionId,
+                    RoomKey = gameSessionState.RoomKey,
                     CurrentPlayer = gameSessionPlayer,
                 };
             }
@@ -71,62 +73,80 @@ namespace TitlesWebGame.Api.Services
         
         public bool DeleteSession(string roomKey)
         {
-            var result = _gameSessions.TryRemove(roomKey, out GameSession session);
+            var result = _gameSessions.TryRemove(roomKey, out GameSessionState session);
             return result;
         }
 
         public void StartSession(string roomKey, string connectionId)
         {
+            // Todo: make these values optional
+            
+            int titleRounds = 1;
+            int roundsPerTitle = 1;
+            
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             
             if (gameSession != null && connectionId == gameSession.OwnerConnectionId)
             {
-                Task.Run(() => PlaySessionGame(gameSession));
+                Task.Run(() => PlaySessionGame(gameSession, titleRounds, roundsPerTitle));
             }
         }
-
-        private async Task PlaySessionGame(GameSession gameSession)
+        
+        private async Task PlaySessionGame(GameSessionState gameSessionState, int titleRounds, int roundsPerTitle)
         {
-            if (gameSession.IsPlaying == false)
+            if (gameSessionState.IsPlaying == false)
             {
-                gameSession.SetPlayingStatus(true);
-                
-                // Todo: make this a factory
-                var loadedRounds = new List<GameRoundInfo>()
-                {
-                    new MultipleChoiceRoundInfo()
-                    {
-                        Answer = 1.ToString(),
-                        Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
-                        RewardPoints = 500,
-                        GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                        RoundStatement = "What animal is primarily known for having stripes",
-                        RoundTimeMs = 3000,
-                        TitleCategory = TitleCategory.Scientist,
-                    },
-                };
-            
-                gameSession.SetRoundInfo(loadedRounds);
-                
-                await UpdatePlayersOfGameStated(gameSession.RoomKey);
-                
-                while (true)
-                {
-                    var newRoundInfo = gameSession.GetNextRound();
-                    if (newRoundInfo == null)
-                    {
-                        break;
-                    }
+                gameSessionState.SetPlayingStatus(true);
 
-                    await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSession.RoomKey);
-                    await gameSession.PlayNewRound(newRoundInfo);
-                    var scores = gameSession.GetRoundScores();
-                    gameSession.AddScores(scores);
-                    await UpdatePlayersOfSessionState(gameSession.RoomKey ,newRoundInfo, gameSession.GetPlayers());
-                    await Task.Delay(RoundReviewTimeMs);
+                List<TitleCategory> playedRoundCategories = new();
+                
+                await UpdatePlayersOfGameStated(gameSessionState.RoomKey);
+
+                for (int i = 0; i < roundsPerTitle; i++)
+                {
+                    // Todo: make this a factory
+                    var titleCategory = TitleCategory.Artist;
+                    playedRoundCategories.Add(titleCategory);
+                    
+                    var loadedRounds = new List<GameRoundInfo>()
+                    {
+                        new MultipleChoiceRoundInfo()
+                        {
+                            Answer = 1.ToString(),
+                            Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
+                            RewardPoints = 500,
+                            GameRoundsType = GameRoundsType.MultipleChoiceRound,
+                            RoundStatement = "What animal is primarily known for having stripes",
+                            RoundTimeMs = 3000,
+                            TitleCategory = TitleCategory.Scientist,
+                        },
+                    };
+                
+                    gameSessionState.SetRoundInfo(loadedRounds);
+                
+                    while (true)
+                    {
+                        var newRoundInfo = gameSessionState.GetNextRound();
+                        if (newRoundInfo == null)
+                        {
+                            break;
+                        }
+
+                        await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSessionState.RoomKey);
+                        await gameSessionState.PlayNewRound(newRoundInfo);
+                        var scores = gameSessionState.GetRoundScores();
+                        gameSessionState.AddScores(scores);
+                        await UpdatePlayersOfSessionState(gameSessionState.RoomKey ,newRoundInfo, gameSessionState.GetPlayers());
+                        await Task.Delay(RoundReviewTimeMs);
+                    }
+                    
+                    await UpdatePlayersOfTitlesRoundEnded(gameSessionState);
+                    await Task.Delay(TitlesRoundReviewTimeMs);
+                    gameSessionState.EndTitlesRound(titleCategory);
                 }
-                gameSession.SetPlayingStatus(false);
-                await UpdatePlayersOfEndGame(gameSession);
+                
+                gameSessionState.SetPlayingStatus(false);
+                await UpdatePlayersOfEndGame(gameSessionState);
             }
         }
 
@@ -138,14 +158,14 @@ namespace TitlesWebGame.Api.Services
                 _titlesGameHubMessageFactory.CreateSessionStartedMessage(startingAfterDelay));
         }
 
-        private Task UpdatePlayersOfEndGame(GameSession gameSession)
+        private Task UpdatePlayersOfEndGame(GameSessionState gameSessionState)
         {
             var endGameResults = new TitlesGameEndSessionResults()
             {
-                GameSessionPlayers = gameSession.GetPlayers(),
+                GameSessionPlayers = gameSessionState.GetPlayers(),
             };
 
-            return _titlesGameHub.Clients.Group(gameSession.RoomKey).SendAsync("ServerMessageUpdate",
+            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate",
                 _titlesGameHubMessageFactory.CreateEndSessionMessage(endGameResults));
         }
         
@@ -187,6 +207,17 @@ namespace TitlesWebGame.Api.Services
             
             return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
                 _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
+        }
+
+        private Task UpdatePlayersOfTitlesRoundEnded(GameSessionState gameSessionState)
+        {
+            var titlesGameRoundResults = new TitlesRoundResults()
+            {
+                Players = gameSessionState.GetPlayers(),
+            };
+            
+            return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate", 
+                _titlesGameHubMessageFactory.CreateEndTitlesRoundMessage(titlesGameRoundResults));
         }
         
         public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
