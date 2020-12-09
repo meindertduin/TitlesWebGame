@@ -66,8 +66,16 @@ namespace TitlesWebGame.Api.Models
                 if (answer.Answer == _answer)
                 {
                     // if answer time is above buffer time, points will be decreased linearly depending on the amount of time
-                    var multiplier = answer.TimeMs > BufferTimeMs ? ((_roundTimeMs - BufferTimeMs) / answer.TimeMs) : 1;
-                    score += _rewardPoints * multiplier;
+                    float multiplier = 1;
+                    
+                    if (answer.TimeMs > BufferTimeMs)
+                    {
+                        float overBufferTimeMs =  answer.TimeMs - BufferTimeMs;
+                        float nonOverlappingBufferTimeMs = _roundTimeMs - BufferTimeMs;
+                        multiplier -= (overBufferTimeMs / nonOverlappingBufferTimeMs);
+                    }
+                    
+                    score += (int) (_rewardPoints * multiplier);
                 }
 
                 scores.Add((answer.ConnectionId, score));
