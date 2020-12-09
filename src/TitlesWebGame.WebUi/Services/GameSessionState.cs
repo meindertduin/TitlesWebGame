@@ -65,7 +65,8 @@ namespace TitlesWebGame.WebUi.Services
         {
             Players = sessionStateUpdate.GameSessionPlayers;
             PreviousRoundInfo = sessionStateUpdate.PreviousRoundInfo;
-            
+            GameSessionPlayer = Players.FirstOrDefault(x => x.ConnectionId == GameSessionPlayer.ConnectionId);
+
             NotifyStateChanged();
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using TitlesWebGame.WebUi.Annotations;
 using TitlesWebGame.WebUi.Models;
 
 namespace TitlesWebGame.WebUi.ViewModels

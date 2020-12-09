@@ -46,7 +46,6 @@ namespace TitlesWebGame.WebUi.ViewModels
 
         private void NotifyRoundReview()
         {
-            Player = SessionPlayers.FirstOrDefault(x => x.ConnectionId == Player.ConnectionId);
             OnRoundReview?.Invoke();
         }
 
