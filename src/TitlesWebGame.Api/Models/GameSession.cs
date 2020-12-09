@@ -60,6 +60,7 @@ namespace TitlesWebGame.Api.Models
                 if (player != null)
                 {
                     player.CurrentPoints += score.Item2;
+                    player.RoundAwardedPoints = score.Item2;
                 }
             }
         }

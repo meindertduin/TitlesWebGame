@@ -16,9 +16,9 @@ namespace TitleWebGame.Api.Tests.Application
             var gameSessionPlayer = getFakeSessionPlayer();
             var gameSessionManager = GetGameSessionManager();
 
-            var roomKey = gameSessionManager.CreateSession(gameSessionPlayer);
+            var gameSessionInitViewModel = gameSessionManager.CreateSession(gameSessionPlayer);
             
-            Assert.Equal(6, roomKey.Length);
+            Assert.Equal(6, gameSessionInitViewModel.RoomKey.Length);
         }
 
         [Fact]
@@ -27,8 +27,8 @@ namespace TitleWebGame.Api.Tests.Application
             var gameSessionPlayer = getFakeSessionPlayer();
             var gameSessionManager = GetGameSessionManager();
 
-            var roomKey = gameSessionManager.CreateSession(gameSessionPlayer);
-            var removeResult = gameSessionManager.DeleteSession(roomKey);
+            var gameSessionInitViewModel = gameSessionManager.CreateSession(gameSessionPlayer);
+            var removeResult = gameSessionManager.DeleteSession(gameSessionInitViewModel.RoomKey);
 
             Assert.True(removeResult);
         }
@@ -38,7 +38,7 @@ namespace TitleWebGame.Api.Tests.Application
         {
             var gameSessionManager = GetGameSessionManager();
             var gameSessionOwner = getFakeSessionPlayer();
-            var roomKey = gameSessionManager.CreateSession(gameSessionOwner);
+            var gameSessionInitViewModel = gameSessionManager.CreateSession(gameSessionOwner);
 
             var newPlayer = new GameSessionPlayer()
             {
@@ -47,7 +47,7 @@ namespace TitleWebGame.Api.Tests.Application
                 DisplayName = "James"
             };
 
-            var joinResult = gameSessionManager.JoinSession(roomKey, newPlayer);
+            var joinResult = gameSessionManager.JoinSession(gameSessionInitViewModel.RoomKey, newPlayer);
             
             Assert.True(joinResult != null);
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using TitlesWebGame.Api.Models;
+using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services
@@ -28,18 +30,8 @@ namespace TitlesWebGame.WebUi.Services
         private void SetHubConnectionEventHandlers()
         {
             RegisterOnServerMessageUpdateEventHandler();
-            
-            RegisterOnGameEndEventHandler();
         }
-
-        private void RegisterOnGameEndEventHandler()
-        {
-            HubConnection.On<TitlesGameEndGameResults>("EndGameResultsUpdate", (endGameResults) =>
-            {
-                
-            });
-        }
-
+        
         private void RegisterOnServerMessageUpdateEventHandler()
         {
             HubConnection.On<TitlesGameHubMessageModel>("ServerMessageUpdate", (message) =>
@@ -59,6 +51,11 @@ namespace TitlesWebGame.WebUi.Services
         public async Task StartGameSession(string roomKey)
         {
             await HubConnection.SendAsync("StartGameSession", roomKey);
+        }
+
+        public async Task SendAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)
+        {
+            await HubConnection.SendAsync("AnswerChoice", roomKey, gameRoundAnswer);
         }
     }
 }

@@ -30,6 +30,8 @@ namespace TitlesWebGame.WebUi.Services
                 GameHubMessageType.SessionStarted => new SessionStartedHandler(_gameSessionState),
                 GameHubMessageType.NextRoundInfo => new NextRoundInfoHandler(_gameSessionState),
                 GameHubMessageType.PreviousRoundInfo => new PreviousRoundInfoHandler(_gameSessionState),
+                GameHubMessageType.AnswerSuccessfullyProcessed => new AnswerSuccessfullyProcessedHandler(),
+                GameHubMessageType.AnswerTooLate => new AnswerTooLateHandler(),
                 _ => throw new ArgumentException(message: "invalid enum value", paramName: nameof(serverMessage.MessageType)),
             };
     }

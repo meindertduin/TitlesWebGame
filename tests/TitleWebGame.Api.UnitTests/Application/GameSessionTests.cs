@@ -20,13 +20,13 @@ namespace TitleWebGame.Api.Tests.Application
             var gameAnswerOne = new MultipleChoiceAnswer()
             {
                 ConnectionId = "jbasdkjaskjha",
-                Answer = 1,
+                Answer = "2",
             };
             
             var gameAnswerTwo = new MultipleChoiceAnswer()
             {
                 ConnectionId = "asdasdvcasdas",
-                Answer = 2,
+                Answer = "2",
             };
             
             // act
@@ -51,7 +51,7 @@ namespace TitleWebGame.Api.Tests.Application
             var gameAnswerOne = new MultipleChoiceAnswer()
             {
                 ConnectionId = "jbasdkjaskjha",
-                Answer = 1,
+                Answer = "1",
             };
             
             // Act
@@ -73,7 +73,7 @@ namespace TitleWebGame.Api.Tests.Application
             var gameAnswerOne = new MultipleChoiceAnswer()
             {
                 ConnectionId = "jbasdkjaskjha",
-                Answer = 1,
+                Answer = "1",
             };
             
             // Act
@@ -90,7 +90,7 @@ namespace TitleWebGame.Api.Tests.Application
         {
             return new()
             {
-                Answer = 1,
+                Answer = "1",
                 Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
                 RewardPoints = 500,
                 GameRoundsType = GameRoundsType.MultipleChoiceRound,
@@ -131,17 +131,17 @@ namespace TitleWebGame.Api.Tests.Application
             {
                 new MultipleChoiceAnswer()
                 {
-                    Answer = 1,
+                    Answer = "1",
                     ConnectionId = "kjhadadlkajsakcm",
                 },
                 new MultipleChoiceAnswer()
                 {
-                    Answer = 2,
+                    Answer = "2",
                     ConnectionId = "aslkcaskcnnaklsc",
                 },
                 new MultipleChoiceAnswer()
                 {
-                    Answer = 0,
+                    Answer = "0",
                     ConnectionId = "jadhasjdhaskdjah",
                 }
             };

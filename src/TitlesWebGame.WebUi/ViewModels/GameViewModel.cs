@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 using TitlesWebGame.WebUi.Services;
@@ -24,7 +25,6 @@ namespace TitlesWebGame.WebUi.ViewModels
         {
             if (IsPlaying)
             {
-                Console.WriteLine("changing something");
                 NextRoundInfo = _gameSessionState.NextRoundInfo;
                 PreviousRoundInfo = _gameSessionState.PreviousRoundInfo;
             }
@@ -46,7 +46,15 @@ namespace TitlesWebGame.WebUi.ViewModels
 
         private void NotifyRoundReview()
         {
+            Player = SessionPlayers.FirstOrDefault(x => x.ConnectionId == Player.ConnectionId);
             OnRoundReview?.Invoke();
+        }
+
+        private int _playerAwardedPoints;
+        public int PlayerAwardedPoints
+        {
+            get => _playerAwardedPoints;
+            set => SetValue(ref _playerAwardedPoints, value);
         }
 
         private bool _isPlaying;
@@ -121,7 +129,6 @@ namespace TitlesWebGame.WebUi.ViewModels
         {
             _gameSessionState.OnSessionStateChanged -= LoadUpdatedGameSessionValues;
         }
-        
     }
     
 }

@@ -14,7 +14,7 @@ namespace TitlesWebGame.Api.Models
 
         private bool _canCommitAnswer;
         
-        private List<MultipleChoiceAnswer> _playerAnswers = new();
+        private List<GameRoundAnswer> _playerAnswers = new();
         private DateTime _startTime;
 
         public MultipleChoiceGameRound(string answer, int rewardPoints, int roundTimeMs)
@@ -31,7 +31,8 @@ namespace TitlesWebGame.Api.Models
                 var elapsedTime = (DateTime.Now - _startTime).TotalMilliseconds;
 
                 answer.TimeMs = (int) elapsedTime;
-                _playerAnswers.Add((MultipleChoiceAnswer) answer);
+                _playerAnswers.Add(answer);
+                
                 return true;
             }
 

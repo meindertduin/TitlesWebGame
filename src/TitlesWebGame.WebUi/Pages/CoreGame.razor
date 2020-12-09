@@ -1,40 +1,15 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.Entities
 @using TitlesWebGame.Domain.ViewModels
+@using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.Api.Models
 @implements IDisposable;
 
 @if (GameViewModel.NextRoundInfo == null)
 {
     <h3>Game is starting very soon...</h3>
 }
-@* else if (_roundStart) *@
-@* { *@
-@*     <div> *@
-@*         <div>@GameViewModel.NextRoundInfo.RoundStatement</div> *@
-@*         <div>@GameViewModel.NextRoundInfo.RoundTimeMs</div> *@
-@*         @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo) *@
-@*         { *@
-@*             // Rendering multiple choice question *@
-@*             <ul> *@
-@*                 @foreach (var question in nextRoundInfo.Choices) *@
-@*                 { *@
-@*                     <li>@question</li> *@
-@*                 } *@
-@*             </ul> *@
-@*         } *@
-@*         else *@
-@*         { *@
-@*             <div>its not a multiple choice</div> *@
-@*         } *@
-@*     </div> *@
-@* } *@
-@* else if(@GameViewModel.PreviousRoundInfo != null) *@
-@* { *@
-@*     <div> *@
-@*         <div>@GameViewModel.PreviousRoundInfo.Answer</div> *@
-@*     </div> *@
-@* } *@
-else
+else if (_roundStart)
 {
     <div class="container">
         @if (_chosenThisRound == false)
@@ -48,7 +23,7 @@ else
                 
                     @for (int i = 0; i < nextRoundInfo.Choices.Length; i++)
                     {
-                        var optionNumber = i;
+                        var optionNumber = i.ToString();
                         string optionColor = "option-color-" + i;
                         string marks = "ABCDEFGIJKLMNOP";
 
@@ -73,14 +48,70 @@ else
             </div>
         }
     </div>
-}    
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="round-title">Who is the most loved of this group</div>
+        </div>
+    
+        <div class="options-container">
+            @{
+                string colorOption = _hadAnswerRight ? "right" : "wrong";
+            }
+            <div class="option-button option-color-@colorOption">
+                A ) Me myself and i
+            </div>
+        </div>
+    
+        <div class="row justify-content-center h3">
+            <div>you were awarded @GameViewModel.Player.RoundAwardedPoints points this round!</div>
+        </div>
+        <div class="scores-container">
+            @{
+                var sortedPlayers = GameViewModel.SessionPlayers;
+                sortedPlayers.Sort((x, y) => x.CurrentPoints.CompareTo(y.CurrentPoints));
+                for (int i = 0; i < sortedPlayers.Count; i++)
+                {
+                    var placeNumber = i;
+
+                    <div class="player-score-container">
+                        <div class="place-num">
+                            @placeNumber )
+                        </div>
+                        <div class="player-name">
+                            @sortedPlayers[i].DisplayName
+                        </div>
+                        <div class="player-score">
+                            @sortedPlayers[i].CurrentPoints
+                        </div>
+                        <div class="player-tiles-container">
+                            @for (int l = 0; l < 3; l++)
+                            {
+                                string title = "scientist";
+                                <div class="player-title">
+                                    @(l != 3 -1 ? title + ", " : title)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
 
 
 @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
 
+    [CascadingParameter(Name = "GameSocketConnectionManager")]
+    protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
+
     private bool _chosenThisRound = false;
+    private bool _hadAnswerRight = true;
 
     private bool _roundStart;
 
@@ -104,11 +135,15 @@ else
         Console.WriteLine("round started");
     }
         
-    private void HandlePlayerChoice(MouseEventArgs e, int number)
+    private async Task HandlePlayerChoice(MouseEventArgs e, string answer)
     {
-        Console.WriteLine(number);
+        await GameSocketConnectionManager.SendAnswer(GameViewModel.RoomKey, new GameRoundAnswer()
+        {
+            Answer = answer,
+            ConnectionId = GameViewModel.Player.ConnectionId,
+        });
+        
         _chosenThisRound = true;
-
     }    
 
     public void Dispose()

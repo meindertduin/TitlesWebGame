@@ -5,5 +5,6 @@
         public string DisplayName { get; set; }
         public string ConnectionId { get; set; }
         public int CurrentPoints { get; set; }
+        public int RoundAwardedPoints { get; set; }
     }
 }
