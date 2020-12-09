@@ -8,7 +8,7 @@ namespace TitlesWebGame.Api.Services
         TitlesGameHubMessageModel CreateCreationRoomSuccessfulMessage(GameSessionInitViewModel gameSessionInitState);
         TitlesGameHubMessageModel CreatePlayerJoinedRoomMessage(GameSessionPlayer newPlayerModel);
         TitlesGameHubMessageModel CreateSuccessfullyJoinedMessage(GameSessionInitViewModel gameSessionInitState);
-        public TitlesGameHubMessageModel CreateErrorConnectingToRoomMessage();
+        TitlesGameHubMessageModel CreateErrorConnectingToRoomMessage();
         TitlesGameHubMessageModel CreatePlayerLeftRoomMessage(string displayName, string connectionId);
         TitlesGameHubMessageModel CreateAnswerSuccessfullyProcessedMessage();
         TitlesGameHubMessageModel CreateAnswerTooLateMessage();

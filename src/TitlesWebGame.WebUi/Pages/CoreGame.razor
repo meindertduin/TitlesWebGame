@@ -58,10 +58,13 @@ else
     
         <div class="options-container">
             @{
-                string colorOption = _hadAnswerRight ? "right" : "wrong";
+                string colorOption = @GameViewModel.Player.RoundAwardedPoints > 0 ? "right" : "wrong";
             }
             <div class="option-button option-color-@colorOption">
-                A ) Me myself and i
+                @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+                {
+                    <MultipleChoiceAnswerDisplay Answer="@GameViewModel.PreviousRoundInfo.Answer" Choices="@nextRoundInfo.Choices" ColorOption="@colorOption"/>
+                }
             </div>
         </div>
     
@@ -111,9 +114,8 @@ else
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
 
     private bool _chosenThisRound = false;
-    private bool _hadAnswerRight = true;
 
-    private bool _roundStart;
+    private bool _roundStart = true;
 
     protected override void OnInitialized()
     {
