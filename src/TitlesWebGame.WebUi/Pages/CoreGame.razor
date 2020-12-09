@@ -3,15 +3,13 @@
 @using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.Api.Models
-@implements IDisposable;
+@using TitlesWebGame.Domain.Enums
 
-@if (GameViewModel.HasEnded == false)
-{
-    @if (GameViewModel.NextRoundInfo == null)
+@if (GameViewModel.SessionState == TitlesGameState.Lobby)
 {
     <h3>Game is starting very soon...</h3>
 }
-else if (_roundStart)
+else if (GameViewModel.SessionState == TitlesGameState.RoundStart)
 {
     <div class="container">
         <div>
@@ -55,7 +53,7 @@ else if (_roundStart)
         }
     </div>
 }
-else
+else if(GameViewModel.SessionState == TitlesGameState.RoundReview)
 {
     <div class="container">
         <div class="row justify-content-center">
@@ -110,8 +108,13 @@ else
         </div>
     </div>
 }
+else if (GameViewModel.SessionState == TitlesGameState.TitlesRoundReview)
+{
+    <div>
+        Titles round review!!!
+    </div>
 }
-else
+else if (GameViewModel.SessionState == TitlesGameState.GameEnded)
 {
     <div>
         Game has ended...
@@ -127,29 +130,7 @@ else
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
 
     private bool _chosenThisRound = false;
-
-    private bool _roundStart = true;
-
-    protected override void OnInitialized()
-    {
-        GameViewModel.OnRoundStart += StartRoundStart;
-        GameViewModel.OnRoundReview += StartRoundReview;
-        
-        base.OnInitialized();
-    }
-
-    private void StartRoundReview()
-    {
-        _roundStart = false;
-        Console.WriteLine("round review started");
-    }
-
-    private void StartRoundStart()
-    {
-        _roundStart = true;
-        Console.WriteLine("round started");
-    }
-        
+    
     private async Task HandlePlayerChoice(MouseEventArgs e, string answer)
     {
         await GameSocketConnectionManager.SendAnswer(GameViewModel.RoomKey, new GameRoundAnswer()
@@ -160,11 +141,4 @@ else
         
         _chosenThisRound = true;
     }    
-
-    public void Dispose()
-    {
-        GameViewModel.OnRoundStart -= StartRoundStart;
-        GameViewModel.OnRoundReview -= StartRoundReview;
-    }
-
 }

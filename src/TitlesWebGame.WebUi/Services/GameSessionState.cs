@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services
@@ -10,13 +11,14 @@ namespace TitlesWebGame.WebUi.Services
     {
         public GameSessionPlayer GameSessionPlayer { get; private set; }
         public string RoomKey { get; private set; }
-        public bool HasEnded { get; private set; }
+        
+        public TitlesGameState SessionState { get; set; }
+        public bool SessionHasEnded { get; private set; }
         public List<GameSessionPlayer> Players { get; private set; }
         public string OwnerConnectionId { get; private set; }
         public bool IsPlaying { get; private set; }
         public GameRoundInfo PreviousRoundInfo { get; private set; }
         public GameRoundInfoViewModel NextRoundInfo { get; private set; }
-        
         public event Action OnSessionStateChanged;
         public event Action OnSessionInit;
         public void InitializeNewState(GameSessionInitViewModel gameSessionInitModel)
@@ -26,9 +28,10 @@ namespace TitlesWebGame.WebUi.Services
             Players = gameSessionInitModel.GameSessionPlayers;
             GameSessionPlayer = gameSessionInitModel.CurrentPlayer;
             IsPlaying = false;
-            HasEnded = false;
+            SessionHasEnded = false;
             PreviousRoundInfo = null;
             NextRoundInfo = null;
+            SessionState = TitlesGameState.Lobby;
             
             NotifyStateInit();
             NotifyStateChanged();
@@ -54,13 +57,19 @@ namespace TitlesWebGame.WebUi.Services
             IsPlaying = isPlaying;
             NotifyStateChanged();
         }
-        
 
+        public void EndTitleRound()
+        {
+            SessionState = TitlesGameState.TitlesRoundReview;
+            NotifyStateChanged();
+        }
+        
         public void SetSessionGameStatUpdateInfo(SessionStateUpdateViewModel sessionStateUpdate)
         {
             Players = sessionStateUpdate.GameSessionPlayers;
             PreviousRoundInfo = sessionStateUpdate.PreviousRoundInfo;
             GameSessionPlayer = Players.FirstOrDefault(x => x.ConnectionId == GameSessionPlayer.ConnectionId);
+            SessionState = TitlesGameState.RoundReview;
 
             NotifyStateChanged();
         }
@@ -68,14 +77,16 @@ namespace TitlesWebGame.WebUi.Services
         public void SetNextRoundInfo(GameRoundInfoViewModel gameRoundInfoViewModel)
         {
             NextRoundInfo = gameRoundInfoViewModel;
+            SessionState = TitlesGameState.RoundStart;
             
             NotifyStateChanged();
         }
 
         public void EndSession(TitlesGameEndSessionResults endSessionResults)
         {
-            HasEnded = true;
+            SessionHasEnded = true;
             Players = endSessionResults.GameSessionPlayers;
+            SessionState = TitlesGameState.GameEnded;
             
             NotifyStateChanged();
         }

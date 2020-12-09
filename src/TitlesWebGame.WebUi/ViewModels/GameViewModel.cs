@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 using TitlesWebGame.WebUi.Services;
 
@@ -10,9 +10,7 @@ namespace TitlesWebGame.WebUi.ViewModels
     public class GameViewModel : BaseViewModel, IDisposable
     {
         private readonly GameSessionState _gameSessionState;
-        public event Action OnRoundStart;
-        public event Action OnRoundReview;
-        
+
         public GameViewModel(GameSessionState gameSessionState)
         {
             _gameSessionState = gameSessionState;
@@ -32,21 +30,23 @@ namespace TitlesWebGame.WebUi.ViewModels
             IsOwner = _gameSessionState.IsOwner();
             Player = _gameSessionState.GameSessionPlayer;
             SessionPlayers = _gameSessionState.Players;
-            HasEnded = _gameSessionState.HasEnded;
+            HasEnded = _gameSessionState.SessionHasEnded;
             RoomKey = _gameSessionState.RoomKey;
             IsPlaying = _gameSessionState.IsPlaying;
+            SessionState = _gameSessionState.SessionState;
             
             OnPropertyChanged();
         }
 
-        private void NotifyRoundStart()
+        private TitlesGameState _sessionState;
+        public TitlesGameState SessionState
         {
-            OnRoundStart?.Invoke();
-        }
-
-        private void NotifyRoundReview()
-        {
-            OnRoundReview?.Invoke();
+            get => _sessionState;
+            set
+            {
+                Console.WriteLine(value.ToString());
+                SetValue(ref _sessionState, value);
+            }
         }
 
         private int _playerAwardedPoints;
@@ -97,10 +97,7 @@ namespace TitlesWebGame.WebUi.ViewModels
             get => _nextRoundInfo;
             set
             {
-                if (SetValue(ref _nextRoundInfo, value))
-                {
-                    NotifyRoundStart();
-                }
+                SetValue(ref _nextRoundInfo, value);
             }
         }
 
@@ -110,10 +107,7 @@ namespace TitlesWebGame.WebUi.ViewModels
             get => _previousRoundInfo;
             set
             {
-                if (SetValue(ref _previousRoundInfo, value))
-                {
-                    NotifyRoundReview();
-                }
+                SetValue(ref _previousRoundInfo, value);
             }
         }
 

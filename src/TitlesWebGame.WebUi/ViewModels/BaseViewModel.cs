@@ -29,7 +29,6 @@ namespace TitlesWebGame.WebUi.ViewModels
         {
             if (EqualityComparer<T>.Default.Equals(backingFiled, value)) return false;  
             backingFiled = value;
-            Console.WriteLine(propertyName);
             OnPropertyChanged(propertyName);
             
             return true;
