@@ -2,41 +2,41 @@
 
 @using TitlesWebGame.WebUi.Components
 
-<div class="container">
-    @if (_chosenThisRound == false)
+@if (_chosenThisRound == false)
     {
-        <div class="row justify-content-center align-content-center">
-            <div class="font-weight-bold h3 mt-4">What color are zebras?</div>
-        </div>
-        <div class="m-3">
-            <GameRoundTimer IntervalMs="100" TimeUnits="100"/>
-        </div>
-        <div class="options-container" style="width: 100%">
-            @for (int i = 0; i < 4; i++)
-            {
-                var optionNumber = i;
-                string optionColor = "option-color-" + i;
+        <div class="container">
+            <div class="round-title">What color are zebras?</div>
+            
 
-                <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor" style="width: 100%">
-                    <div class="font-weight-bold">
-                        A)
+            <div class="m-3">
+                <GameRoundTimer IntervalMs="100" TimeUnits="100"/>
+            </div>
+            
+            <div class="options-container" style="width: 100%">
+                @for (int i = 0; i < 4; i++)
+                {
+                    var optionNumber = i;
+                    string optionColor = "option-color-" + i;
+            
+                    <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor" style="width: 100%">
+                        <div class="font-weight-bold">
+                            A)
+                        </div>
+                        <div class="font-weight-bold ml-4">
+                            Lorem ipsum dolor sit amet.
+                        </div>
                     </div>
-                    <div class="font-weight-bold ml-4">
-                        Lorem ipsum dolor sit amet.
-                    </div>
-                </div>
-            }
+                }
+            </div>
+            
         </div>
     }
     else
     {
-        <div class="row justify-content-center">
-            <div class="waiting-round-text">
-                Waiting for the rest of players...
-            </div>
+        <div class="waiting-round-text">
+            Waiting for end of round...
         </div>
     }
-</div>
 
 @code {
     private bool _chosenThisRound;
