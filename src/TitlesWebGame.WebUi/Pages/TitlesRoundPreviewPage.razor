@@ -1,31 +1,20 @@
-﻿@page "/GameRoundReviewPreviewPage"
+﻿@page "/TitlesRoundPreviewPage"
+@using System.Text
+@using System.Text.Encodings.Web
 
-@using GEmojiSharp.Blazor
+<div class="text-center h1">@((MarkupString)titleEmojiCode) Mark @((MarkupString)titleEmojiCode)</div>
+<div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the title of Scientist!</div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="round-title">What color is a fox</div>
-    </div>
-    
-<div class="options-container">
-    @{
-        string colorOption = _hadAnswerRight ? "right" : "wrong";
-    }
-    <div class="option-button option-color-@colorOption">
-            A ) Me myself and i
-        </div>
-    </div>
-    <div class="row justify-content-center h3">
-    </div>
-    <div class="scores-container">
+<div class="row justify-content-center">
+    <div class="scores-container col-lg-7 col-md-9 col-sm-12">
         @for (int i = 0; i < 7; i++)
         {
             var placeNumber = i + 1;
-
+        
             <ul class="player-score-container">
                 <li class="gen-bg-dark score-mark">
                     <div class="score-item-content">
-                        @placeNumber )
+                        @placeNumber
                     </div>
                 </li>
                 <li class="gen-bg-red score-name">
@@ -51,5 +40,11 @@
 </div>
 
 @code {
-    private bool _hadAnswerRight = true;
+    private string titleEmojiCode = "&#129514;";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
 }

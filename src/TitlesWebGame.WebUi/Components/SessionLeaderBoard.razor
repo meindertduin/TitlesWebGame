@@ -1,41 +1,25 @@
-﻿@page "/GameRoundReviewPreviewPage"
+﻿@using TitlesWebGame.Domain.Entities
 
-@using GEmojiSharp.Blazor
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="round-title">What color is a fox</div>
-    </div>
-    
-<div class="options-container">
-    @{
-        string colorOption = _hadAnswerRight ? "right" : "wrong";
-    }
-    <div class="option-button option-color-@colorOption">
-            A ) Me myself and i
-        </div>
-    </div>
-    <div class="row justify-content-center h3">
-    </div>
-    <div class="scores-container">
-        @for (int i = 0; i < 7; i++)
+<div class="row justify-content-center">
+    <div class="scores-container col-lg-7 col-md-9 col-sm-12">
+        @for (int i = 0; i < SortedPlayers.Count; i++)
         {
             var placeNumber = i + 1;
-
+        
             <ul class="player-score-container">
                 <li class="gen-bg-dark score-mark">
                     <div class="score-item-content">
-                        @placeNumber )
+                        @placeNumber
                     </div>
                 </li>
                 <li class="gen-bg-red score-name">
                     <div class="score-item-content">
-                        Mark
+                        @SortedPlayers[i].DisplayName
                     </div>
                 </li>
                 <li class="gen-bg-blue score-points">
                     <div class="score-item-content">
-                        1200
+                        @SortedPlayers[i].CurrentPoints
                     </div> 
                 </li>
                 <li class="gen-bg-yellow score-titles">
@@ -51,5 +35,6 @@
 </div>
 
 @code {
-    private bool _hadAnswerRight = true;
+    [Parameter]
+    public List<GameSessionPlayer> SortedPlayers { get; set; }
 }

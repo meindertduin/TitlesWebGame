@@ -2,6 +2,8 @@
 @using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Services
 
+@using GEmojiSharp.Blazor
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
@@ -22,38 +24,15 @@
     <div class="row justify-content-center h3">
         <div>you were awarded @GameViewModel.Player.RoundAwardedPoints points this round!</div>
     </div>
-    <div class="scores-container">
-        @{
-            var sortedPlayers = GameViewModel.SessionPlayers;
-            sortedPlayers.Sort((x, y) => x.CurrentPoints.CompareTo(y.CurrentPoints));
-            for (int i = 0; i < sortedPlayers.Count; i++)
-            {
-                var placeNumber = i;
-        
-                <div class="player-score-container">
-                    <div class="place-num">
-                        @placeNumber )
-                    </div>
-                    <div class="player-name">
-                        @sortedPlayers[i].DisplayName
-                    </div>
-                    <div class="player-score">
-                        @sortedPlayers[i].CurrentPoints
-                    </div>
-                    <div class="player-tiles-container">
-                        @for (int l = 0; l < 3; l++)
-                        {
-                            string title = "scientist";
-                            <div class="player-title">
-                                @(l != 3 -1 ? title + ", " : title)
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-        }
-    </div>
 </div>
+
+@{
+    var sortedPlayers = GameViewModel.SessionPlayers;
+    sortedPlayers.Sort((x, y) => x.CurrentPoints.CompareTo(y.CurrentPoints));
+    
+    <SessionLeaderBoard SortedPlayers="@sortedPlayers" />
+}
+
 
 
 @code {

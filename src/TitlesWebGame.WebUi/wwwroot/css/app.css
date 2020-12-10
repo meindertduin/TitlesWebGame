@@ -1,7 +1,7 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 :root{
-    --app-blue: #8FBC94;
+    --app-blue: #008CAD;
     --app-green: #8FBC94;
     --app-red: #931621;
     --app-yellow: #FFCB47;
@@ -169,33 +169,50 @@ a, .btn-link {
     
 }
 
-.player-score-container {
-    display: flex;
-    flex-direction: row;
+.scores-container ul {
+    list-style-type: none;
     margin: 5px;
-    align-items: center;
-    background: blue;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.scores-container li {
+    float: left;
+}
+
+.score-item-content{
+    display: block;
     color: white;
-    padding-left: 10px;
+    text-align: start;
+    padding: 5px 7px;
+    text-decoration: none;
 }
 
-.player-name{
-    font-weight: bold;
-    margin: 10px;
-    font-size: 20px;
+.score-mark{
+    width: 10%;
+    white-space: nowrap;
+    align-self: start;
 }
 
-.player-score{
-    font-weight: bold;
-    font-size: 18px;
+.score-name {
+    width: 35%;
+    white-space: nowrap;
 }
 
-.player-tiles-container{
-    flex-direction: row;
+.score-points{
+    width: 20%;
+    white-space: nowrap;
+}
+
+.score-titles{
+    width: 35%;
+}
+
+.score-titles-items {
     display: flex;
-    margin-left: 10px;
+    flex-direction: row;
 }
 
-.player-title{
-    margin: 5px;
-}
+/* --------------------- TITLES ROUND REVIEW PAGE -------------------------*/
+.titles-round-winner-title
