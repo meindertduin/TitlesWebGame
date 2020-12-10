@@ -91,6 +91,22 @@ a, .btn-link {
     padding: 30px;
 }
 
+.players-lobby-container{
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    -webkit-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+}
+
+.player-lobby-list{
+    background: var(--app-grey);
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px black solid;
+}
     
 /* --------------------- GAME STYLES -------------------------*/
 .option-color-0{

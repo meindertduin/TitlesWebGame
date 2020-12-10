@@ -1,0 +1,48 @@
+﻿@page "/LobbyPreviewPage"
+@using TitlesWebGame.Domain.Entities
+
+<div class="text-center h2 font-weight-bolder" style="margin-top: 40px;">Session Lobby</div>
+
+<div class="row justify-content-center" style="margin-top: 40px;">
+    <div class="players-lobby-container gen-bg-red col-lg-6 col-md-8 col-sm-10  ">
+        <div class="font-weight-bold mb-3 ml-3 h3">Joined Players: </div>
+        <div class="player-lobby-list">
+            @foreach (var player in GameSessionPlayers)
+            {
+                <div>
+                    @player.DisplayName
+                </div>
+                <hr>
+                        
+            }
+        </div>
+        @if (_isOwner)
+        {
+            <div class="row justify-content-center mt-3">
+                <button type="button" class="btn btn-success font-weight-bold">Start Game!</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _isOwner = true;
+    private string _roomKey = "ASJD21";
+
+    private List<GameSessionPlayer> GameSessionPlayers = new List<GameSessionPlayer>()
+    {
+        new ()
+        {
+            DisplayName = "Mark",
+        },
+        new ()
+        {
+            DisplayName = "Bert",
+        },
+        new()
+        {
+            DisplayName = "Bob"
+        }
+    };
+
+}
