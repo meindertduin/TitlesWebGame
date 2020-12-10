@@ -4,6 +4,7 @@
 @{
     var sortedPlayers = GameViewModel.SessionPlayers;
     sortedPlayers.Sort((x, y) => x.CurrentPoints.CompareTo(y.CurrentPoints));
+    
     <div class="text-center h1">@((MarkupString)titleEmojiCode) @sortedPlayers[0].DisplayName @((MarkupString)titleEmojiCode)</div>
     <div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the title of @GameViewModel.NextRoundInfo.TitleCategory.ToString().ToLower()!</div>
     

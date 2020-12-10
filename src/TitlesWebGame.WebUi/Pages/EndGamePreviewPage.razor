@@ -1,9 +1,8 @@
-﻿@page "/TitlesRoundPreviewPage"
-@using System.Text
-@using System.Text.Encodings.Web
+﻿@page "/EndGamePreviewPage"
 
-<div class="text-center h1">@((MarkupString)titleEmojiCode) Mark @((MarkupString)titleEmojiCode)</div>
-<div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the title of Scientist!</div>
+
+<div class="text-center h1">👑 Mark 👑</div>
+<div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the most titles!!!</div>
 
 <div class="row justify-content-center">
     <div class="scores-container col-lg-7 col-md-9 col-sm-12">
@@ -14,18 +13,13 @@
             <ul class="player-score-container">
                 <li class="gen-bg-dark score-mark">
                     <div class="score-item-content">
-                        @placeNumber
+                        @placeNumber )
                     </div>
                 </li>
                 <li class="gen-bg-red score-name">
                     <div class="score-item-content">
                         Mark
                     </div>
-                </li>
-                <li class="gen-bg-blue score-points">
-                    <div class="score-item-content">
-                        1200
-                    </div> 
                 </li>
                 <li class="gen-bg-yellow score-titles">
                     <div class="score-item-content score-titles-items">
@@ -38,8 +32,16 @@
         }
     </div>
 </div>
+@if (_isGameOwner)
+{
+    <div class="row justify-content-center">
+        <div class="text-center play-again-button">
+            Play again!
+        </div>
+    </div>
+}
+
 
 @code {
-    private string titleEmojiCode = "&#129514;";
-    
+    private bool _isGameOwner = true;
 }

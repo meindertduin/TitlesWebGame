@@ -6,6 +6,7 @@
     --app-red: #931621;
     --app-yellow: #FFCB47;
     --app-dark: #080708;
+    --app-grey: #333;
 }
 
 
@@ -214,5 +215,21 @@ a, .btn-link {
     flex-direction: row;
 }
 
+
 /* --------------------- TITLES ROUND REVIEW PAGE -------------------------*/
-.titles-round-winner-title
+
+/* --------------------- END GAME PAGE -------------------------*/
+.play-again-button{
+    background-color: var(--app-grey);
+    color: white;
+    font-size: 30px;
+    padding: 30px 50px;
+    margin-top: 50px;
+    font-weight: bolder;
+}
+
+.play-again-button:hover{
+    background-color: var(--app-yellow);
+    border: var(--app-grey) 3px solid;
+    cursor: pointer;
+}

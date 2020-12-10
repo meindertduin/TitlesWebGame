@@ -1,8 +1,64 @@
-﻿<div>
-    Game has ended...
-</div>
+﻿@using TitlesWebGame.WebUi.ViewModels
+@using TitlesWebGame.WebUi.Services
+
+
+
+@{
+    var sortedPlayers = GameViewModel.SessionPlayers;
+    sortedPlayers.Sort((x, y) => x.WonTitles.Count.CompareTo(y.WonTitles.Count));
+    
+    <div class="text-center h1">👑 @sortedPlayers[0].DisplayName 👑</div>
+    <div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the most titles!!!</div>
+    
+    <div class="row justify-content-center">
+        <div class="scores-container col-lg-7 col-md-9 col-sm-12">
+            @for (int i = 0; i < sortedPlayers.Count; i++)
+            {
+                var placeNumber = i + 1;
+        
+                <ul class="player-score-container">
+                    <li class="gen-bg-dark score-mark">
+                        <div class="score-item-content">
+                            @placeNumber )
+                        </div>
+                    </li>
+                    <li class="gen-bg-red score-name">
+                        <div class="score-item-content">
+                            @sortedPlayers[i].DisplayName
+                        </div>
+                    </li>
+                    <li class="gen-bg-yellow score-titles">
+                        <div class="score-item-content score-titles-items">
+                            <Emoji>:tada:</Emoji>
+                            <Emoji>:tada:</Emoji>
+                            <Emoji>:tada:</Emoji>
+                        </div> 
+                    </li>
+                </ul>
+            }
+        </div>
+    </div>
+}
+@if (GameViewModel.IsOwner)
+{
+    <div class="row justify-content-center">
+        <div class="text-center play-again-button" @onclick="PlayAgain">
+            Play again!
+        </div>
+    </div>
+}
 
 
 @code {
-    
+    [CascadingParameter(Name = "GameViewModel")]
+    protected GameViewModel GameViewModel { get; set; }
+
+    [CascadingParameter(Name = "GameSocketConnectionManager")]
+    protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
+
+    private void PlayAgain()
+    {
+        // Todo: add play again functionality
+        Console.WriteLine("playing again");
+    }
 }
