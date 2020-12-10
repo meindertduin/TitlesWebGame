@@ -1,16 +1,18 @@
-﻿
+﻿@using System.Diagnostics
+
 
 <div class="progress" style="height: 40px;">
     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
-         style="@($"width: {progressPercentage}%")" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="@TimeUnits"></div>
+         style="@($"width: {_progressPercentage}%")" aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="@TimeUnits"></div>
 </div>
+
 
 @code {
     [Parameter]
     public int TimeUnits { get; set; }
 
-    private float progress;
-    private float progressPercentage;
+    private float _progress;
+    private float _progressPercentage;
     
     [Parameter]
     public int IntervalMs { get; set; }
@@ -19,8 +21,8 @@
 
     protected override void OnInitialized()
     {
-        progress = TimeUnits;
-        progressPercentage = 100;
+        _progress = TimeUnits;
+        _progressPercentage = 100;
         
         SetTimer(TimeUnits, IntervalMs);
         base.OnInitialized();
@@ -28,11 +30,11 @@
 
     private async Task SetTimer(int secondsAmount, int interValMs)
     {
-        while (TimeUnits > 0)
+        while (_progress > 0)
         {
             await Task.Delay(interValMs);
-            progress--;
-            progressPercentage = ((progress / TimeUnits) * 100);
+            _progress--;
+            _progressPercentage = ((_progress / TimeUnits) * 100);
             StateHasChanged();
         }
 
