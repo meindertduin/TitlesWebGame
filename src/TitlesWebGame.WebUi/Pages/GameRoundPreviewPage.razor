@@ -1,23 +1,28 @@
 ﻿@page "/GameRoundPreviewPage"
 
+@using TitlesWebGame.WebUi.Components
+
 <div class="container">
     @if (_chosenThisRound == false)
     {
-        <div class="row justify-content-center">
-            <div class="round-title">Who is the most loved of this group</div>
+        <div class="row justify-content-center align-content-center">
+            <div class="font-weight-bold h3 mt-4">What color are zebras?</div>
         </div>
-        <div class="options-container">
+        <div class="m-3">
+            <GameRoundTimer IntervalMs="100" TimeUnits="100"/>
+        </div>
+        <div class="options-container" style="width: 100%">
             @for (int i = 0; i < 4; i++)
             {
                 var optionNumber = i;
                 string optionColor = "option-color-" + i;
 
-                <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor">
-                    <div class="option-mark">
+                <div @onclick="@(e => HandlePlayerChoice(e, optionNumber))" class="option-button @optionColor" style="width: 100%">
+                    <div class="font-weight-bold">
                         A)
                     </div>
-                    <div class="option-text">
-                        Me myself and I
+                    <div class="font-weight-bold ml-4">
+                        Lorem ipsum dolor sit amet.
                     </div>
                 </div>
             }

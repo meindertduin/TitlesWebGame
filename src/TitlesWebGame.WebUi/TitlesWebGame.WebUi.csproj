@@ -16,4 +16,10 @@
       <ProjectReference Include="..\TitlesWebGame.Domain\TitlesWebGame.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Watch Include="..\**\*.razor" />
+        <Watch Include="..\**\*.scss" />
+        <Watch Include="..\**\*.cs" />
+    </ItemGroup>
+
 </Project>
