@@ -59,7 +59,7 @@ a, .btn-link {
         top: 0.5rem;
     }
 
-/* --------------------- APP STYLES -------------------------*/
+/* --------------------- General -------------------------*/
 
 
 .gen-bg-blue{
@@ -82,6 +82,15 @@ a, .btn-link {
     background: var(--app-dark);
 }
     
+.join-session-card{
+    color: white;
+    border-radius: 20px;
+    -webkit-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    padding: 30px;
+}
+
     
 /* --------------------- GAME STYLES -------------------------*/
 .option-color-0{
@@ -215,8 +224,6 @@ a, .btn-link {
     flex-direction: row;
 }
 
-
-/* --------------------- TITLES ROUND REVIEW PAGE -------------------------*/
 
 /* --------------------- END GAME PAGE -------------------------*/
 .play-again-button{
