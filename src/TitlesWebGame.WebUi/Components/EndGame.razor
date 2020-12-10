@@ -56,9 +56,8 @@
     [CascadingParameter(Name = "GameSocketConnectionManager")]
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
 
-    private void PlayAgain()
+    private async Task PlayAgain()
     {
-        // Todo: add play again functionality
-        Console.WriteLine("playing again");
+        await GameSocketConnectionManager.PlayAgain(GameViewModel.RoomKey);
     }
 }

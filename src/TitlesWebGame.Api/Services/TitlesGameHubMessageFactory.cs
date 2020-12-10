@@ -144,5 +144,15 @@ namespace TitlesWebGame.Api.Services
                 AppendedObject = titlesRoundResults,
             };
         }
+
+        public TitlesGameHubMessageModel CreateRejoiningLobbyMessage()
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "Playing again!",
+                Error = false,
+                MessageType = GameHubMessageType.RejoiningLobby,
+            };
+        }
     }
 }

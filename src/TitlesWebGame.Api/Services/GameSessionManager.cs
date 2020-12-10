@@ -17,6 +17,7 @@ namespace TitlesWebGame.Api.Services
     {
         private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         private readonly IGameSessionControllerService _gameSessionControllerService;
+        private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
         private static ConcurrentDictionary<string, GameSessionState> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
@@ -24,10 +25,12 @@ namespace TitlesWebGame.Api.Services
 
         private Random _random = new();
 
-        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, IGameSessionControllerService gameSessionControllerService)
+        public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, IGameSessionControllerService gameSessionControllerService,
+            ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
         {
             _titlesGameHub = titlesGameHub;
             _gameSessionControllerService = gameSessionControllerService;
+            _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
         }
         
         public GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer)
@@ -88,6 +91,20 @@ namespace TitlesWebGame.Api.Services
             {
                 Task.Run(() => _gameSessionControllerService.PlaySessionGame(gameSession, titleRounds, roundsPerTitle));
             }
+        }
+
+        public bool PlayAgain(string roomKey, string connectionId)
+        {
+            var getSessionSucceeded =  _gameSessions.TryGetValue(roomKey, out GameSessionState gameSession);
+
+            if (getSessionSucceeded)
+            {
+                // Todo: only session owner should be able to initialize play again
+                
+                return true;
+            }
+
+            return false;
         }
         public GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer)
         {

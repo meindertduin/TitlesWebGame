@@ -53,6 +53,11 @@ namespace TitlesWebGame.WebUi.Services
             await HubConnection.SendAsync("StartGameSession", roomKey);
         }
 
+        public async Task PlayAgain(string roomKey)
+        {
+            await HubConnection.SendAsync("PlayAgain", roomKey);
+        }
+
         public async Task SendAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)
         {
             await HubConnection.SendAsync("AnswerChoice", roomKey, gameRoundAnswer);

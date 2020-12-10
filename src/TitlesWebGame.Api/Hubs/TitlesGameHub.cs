@@ -60,10 +60,19 @@ namespace TitlesWebGame.Api.Hubs
                     _titlesGameHubMessageFactory.CreateErrorConnectingToRoomMessage());
             }
         }
-
         public void StartGameSession(string roomKey)
         {
             _gameSessionManager.StartSession(roomKey, Context.ConnectionId);
+        }
+
+        public async Task PlayAgain(string roomKey)
+        {
+            var canPlayAgain = _gameSessionManager.PlayAgain(roomKey, Context.ConnectionId);
+            if (canPlayAgain)
+            {
+                await Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
+                    _titlesGameHubMessageFactory.CreateRejoiningLobbyMessage());
+            }
         }
         
         public async Task DisconnectFromRoom(string roomKey, string displayName)

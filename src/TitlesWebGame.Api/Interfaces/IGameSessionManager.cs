@@ -12,5 +12,6 @@ namespace TitlesWebGame.Api.Services
         GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer);
         void StartSession(string roomKey, string connectionId);
         bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer);
+        bool PlayAgain(string roomKey, string connectionId);
     }
 }

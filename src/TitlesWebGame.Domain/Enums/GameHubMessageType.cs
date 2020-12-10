@@ -18,5 +18,6 @@
         PreviousRoundInfo,
         SessionEnded,
         TitlesRoundEnded,
+        RejoiningLobby,
     }
 }

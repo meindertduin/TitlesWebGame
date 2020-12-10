@@ -17,7 +17,7 @@ namespace TitlesWebGame.Api.Services
         TitlesGameHubMessageModel CreatePreviousRoundInfoMessage(SessionStateUpdateViewModel previousRoundInfo);
         TitlesGameHubMessageModel CreateNextRoundInfoMessage(GameRoundInfoViewModel multipleChoiceRoundInfo);
         TitlesGameHubMessageModel CreateEndSessionMessage(TitlesGameEndSessionResults endSessionResults);
-
         TitlesGameHubMessageModel CreateEndTitlesRoundMessage(TitlesRoundResults titlesRoundResults);
+        TitlesGameHubMessageModel CreateRejoiningLobbyMessage();
     }
 }
