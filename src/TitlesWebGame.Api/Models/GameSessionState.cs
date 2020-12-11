@@ -35,7 +35,10 @@ namespace TitlesWebGame.Api.Models
             var titlesRoundWinner = _players.OrderByDescending(player => player.CurrentPoints).First();
             // add title to player
             titlesRoundWinner.AddTitleCategory(contestingCategory);
-            // reset players points
+        }
+
+        public void ResetPlayerPoints()
+        {
             foreach (var player in _players)
             {
                 player.CurrentPoints = 0;

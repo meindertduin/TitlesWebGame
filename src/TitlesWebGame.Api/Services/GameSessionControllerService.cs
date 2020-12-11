@@ -51,10 +51,11 @@ namespace TitlesWebGame.Api.Services
                 gameSessionState.SetRoundInfo(loadedRounds);
 
                 await PlayGameRounds(gameSessionState);
-
+                
+                gameSessionState.EndTitlesRound(titleCategory);
                 await UpdatePlayersOfTitlesRoundEnded(gameSessionState);
                 await Task.Delay(TitlesRoundReviewTimeMs);
-                gameSessionState.EndTitlesRound(titleCategory);
+                gameSessionState.ResetPlayerPoints();
             }
         }
 
