@@ -4,8 +4,7 @@
 
 
 @{
-    var sortedPlayers = GameViewModel.SessionPlayers;
-    sortedPlayers.Sort((x, y) => x.WonTitles.Count.CompareTo(y.WonTitles.Count));
+    var sortedPlayers = GameViewModel.SessionPlayers.OrderByDescending(player => player.WonTitles.Count).ToList();
     
     <div class="text-center h1">👑 @sortedPlayers[0].DisplayName 👑</div>
     <div class="text-center font-weight-bold h3 mt-4 mb-4" >has won the most titles!!!</div>

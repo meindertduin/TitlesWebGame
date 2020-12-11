@@ -27,8 +27,7 @@
 </div>
 
 @{
-    var sortedPlayers = GameViewModel.SessionPlayers;
-    sortedPlayers.Sort((x, y) => x.CurrentPoints.CompareTo(y.CurrentPoints));
+    var sortedPlayers = GameViewModel.SessionPlayers.OrderByDescending(player => player.CurrentPoints).ToList();
     
     <SessionLeaderBoard SortedPlayers="@sortedPlayers" />
 }

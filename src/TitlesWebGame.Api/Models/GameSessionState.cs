@@ -32,7 +32,7 @@ namespace TitlesWebGame.Api.Models
         public void EndTitlesRound(TitleCategory contestingCategory)
         {
             // calculate player most points
-            var titlesRoundWinner = _players.OrderBy(player => player.CurrentPoints).First();
+            var titlesRoundWinner = _players.OrderByDescending(player => player.CurrentPoints).First();
             // add title to player
             titlesRoundWinner.AddTitleCategory(contestingCategory);
             // reset players points
