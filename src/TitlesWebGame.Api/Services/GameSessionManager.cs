@@ -99,9 +99,10 @@ namespace TitlesWebGame.Api.Services
 
             if (getSessionSucceeded)
             {
-                // Todo: only session owner should be able to initialize play again
-                
-                return true;
+                if (gameSession.OwnerConnectionId == connectionId)
+                {
+                    return true;
+                }
             }
 
             return false;
