@@ -43,7 +43,7 @@ namespace TitlesWebGame.Api.Services
 
             for (int i = 0; i < roundsPerTitle; i++)
             {
-                var titleCategory = TitleCategory.Artist;
+                var titleCategory = TitleCategory.Scientist;
                 playedRoundCategories.Add(titleCategory);
 
                 var loadedRounds = GetTitleRoundRounds();

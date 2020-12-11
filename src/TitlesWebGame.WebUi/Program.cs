@@ -19,8 +19,9 @@ namespace TitlesWebGame.WebUi
             builder.Services.AddScoped<GameViewModel>();
             builder.Services.AddTransient<GameSocketServerMessageHandler>();
             builder.Services.AddSingleton<GameSessionState>();
+            builder.Services.AddTransient<ITitlesCategoryEmojiFactory, TitlesCategoryEmojiFactory>();
 
-            builder.Services.AddScoped(
+                builder.Services.AddScoped(
                 sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
 
             await builder.Build().RunAsync();

@@ -1,4 +1,8 @@
 ﻿@using TitlesWebGame.Domain.Entities
+@using TitlesWebGame.Domain.Enums
+@using TitlesWebGame.WebUi.Services
+@inject ITitlesCategoryEmojiFactory TitlesCategoryEmojiFactory;
+
 
 <div class="row justify-content-center">
     <div class="scores-container col-lg-7 col-md-9 col-sm-12">
@@ -24,9 +28,12 @@
                 </li>
                 <li class="gen-bg-yellow score-titles">
                     <div class="score-item-content score-titles-items">
-                        <Emoji>:tada:</Emoji>
-                        <Emoji>:tada:</Emoji>
-                        <Emoji>:tada:</Emoji>
+                        @foreach (var wonTitle in SortedPlayers[i].WonTitles)
+                        {
+                            <div>
+                                @((MarkupString)GetUnicodeHtmlString(wonTitle))
+                            </div>
+                        }
                     </div> 
                 </li>
             </ul>
@@ -37,4 +44,9 @@
 @code {
     [Parameter]
     public List<GameSessionPlayer> SortedPlayers { get; set; }
+
+    private string GetUnicodeHtmlString(TitleCategory titleCategory)
+    {
+        return TitlesCategoryEmojiFactory.GetUniCodeEmojiString(titleCategory);
+    }
 }

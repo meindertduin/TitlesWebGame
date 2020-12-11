@@ -1,5 +1,7 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.Enums
+@using TitlesWebGame.WebUi.Services
+@inject ITitlesCategoryEmojiFactory TitlesCategoryEmojiFactory;
 
 @{
     var sortedPlayers = GameViewModel.SessionPlayers.OrderByDescending(player => player.CurrentPoints).ToList();
@@ -19,16 +21,7 @@
     
     protected override void OnInitialized()
     {
-        titleEmojiCode = GetTitlesEmojiCode(GameViewModel.PreviousRoundInfo.TitleCategory);
-        
+        titleEmojiCode = TitlesCategoryEmojiFactory.GetUniCodeEmojiString(GameViewModel.PreviousRoundInfo.TitleCategory);
         base.OnInitialized();
-        
     }
-
-    private string GetTitlesEmojiCode(TitleCategory titleCategory) =>
-        titleCategory switch
-        {
-           TitleCategory.Scientist => "&#129514;",
-            _ => "&#129514;",
-            };
 }

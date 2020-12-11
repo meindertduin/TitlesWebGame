@@ -1,6 +1,7 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.WebUi.Services
-
+@using TitlesWebGame.Domain.Enums
+@inject ITitlesCategoryEmojiFactory TitlesCategoryEmojiFactory;
 
 
 @{
@@ -28,9 +29,12 @@
                     </li>
                     <li class="gen-bg-yellow score-titles">
                         <div class="score-item-content score-titles-items">
-                            <Emoji>:tada:</Emoji>
-                            <Emoji>:tada:</Emoji>
-                            <Emoji>:tada:</Emoji>
+                            @foreach (var wonTitle in sortedPlayers[i].WonTitles)
+                            {
+                                <div>
+                                    @((MarkupString)GetUnicodeHtmlString(wonTitle))
+                                </div>                                                        
+                            }
                         </div> 
                     </li>
                 </ul>
@@ -58,5 +62,10 @@
     private async Task PlayAgain()
     {
         await GameSocketConnectionManager.PlayAgain(GameViewModel.RoomKey);
+    }
+    
+    private string GetUnicodeHtmlString(TitleCategory titleCategory)
+    {
+        return TitlesCategoryEmojiFactory.GetUniCodeEmojiString(titleCategory);
     }
 }
