@@ -1,5 +1,6 @@
 ﻿@using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.Domain.Entities
+@using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
 @inject GameSocketConnectionManager GameSocketConnectionManager;
@@ -34,8 +35,14 @@
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
 
+    private GameSessionStartOptions _selectedStartOptions = new()
+    {
+        TitleRoundsAmount = 1,
+        RoundsPerTitleAmount = 1,
+    };
+
     private async Task StartGame()
     {
-        await GameSocketConnectionManager.StartGameSession(GameViewModel.RoomKey);
+        await GameSocketConnectionManager.StartGameSession(GameViewModel.RoomKey, _selectedStartOptions);
     }
 }

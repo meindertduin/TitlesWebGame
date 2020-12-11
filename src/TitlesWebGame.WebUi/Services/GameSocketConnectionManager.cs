@@ -48,9 +48,9 @@ namespace TitlesWebGame.WebUi.Services
             await HubConnection.SendAsync("CreateRoom", displayName);
         }
 
-        public async Task StartGameSession(string roomKey)
+        public async Task StartGameSession(string roomKey, GameSessionStartOptions gameSessionStartOptions)
         {
-            await HubConnection.SendAsync("StartGameSession", roomKey);
+            await HubConnection.SendAsync("StartGameSession", roomKey, gameSessionStartOptions);
         }
 
         public async Task PlayAgain(string roomKey)

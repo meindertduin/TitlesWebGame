@@ -79,17 +79,13 @@ namespace TitlesWebGame.Api.Services
             return result;
         }
 
-        public void StartSession(string roomKey, string connectionId)
+        public void StartSession(string roomKey, string connectionId, GameSessionStartOptions gameSessionStartOptions)
         {
-            // Todo: make this user input
-            int titleRounds = 1;
-            int roundsPerTitle = 1;
-            
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             
             if (gameSession != null && connectionId == gameSession.OwnerConnectionId)
             {
-                Task.Run(() => _gameSessionControllerService.PlaySessionGame(gameSession, titleRounds, roundsPerTitle));
+                Task.Run(() => _gameSessionControllerService.PlaySessionGame(gameSession, gameSessionStartOptions));
             }
         }
 

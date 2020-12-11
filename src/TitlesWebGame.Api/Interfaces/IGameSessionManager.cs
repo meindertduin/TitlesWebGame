@@ -10,7 +10,7 @@ namespace TitlesWebGame.Api.Services
         GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer);
         bool DeleteSession(string roomKey);
         GameSessionInitViewModel JoinSession(string roomKey, GameSessionPlayer gameSessionPlayer);
-        void StartSession(string roomKey, string connectionId);
+        void StartSession(string roomKey, string connectionId, GameSessionStartOptions gameSessionStartOptions);
         bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer);
         bool PlayAgain(string roomKey, string connectionId);
     }

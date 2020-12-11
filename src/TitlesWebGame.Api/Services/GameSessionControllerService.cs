@@ -23,30 +23,30 @@ namespace TitlesWebGame.Api.Services
             _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
         }
         
-        public async Task PlaySessionGame(GameSessionState gameSessionState, int titleRounds, int roundsPerTitle)
+        public async Task PlaySessionGame(GameSessionState gameSessionState, GameSessionStartOptions gameSessionStartOptions)
         {
             if (gameSessionState.IsPlaying == false)
             {
                 gameSessionState.SetPlayingStatus(true);
                 await UpdatePlayersOfGameStated(gameSessionState.RoomKey);
                 
-                await PlayTitleRounds(gameSessionState, roundsPerTitle);
+                await PlayTitleRounds(gameSessionState, gameSessionStartOptions);
                 
                 gameSessionState.SetPlayingStatus(false);
                 await UpdatePlayersOfEndGame(gameSessionState);
             }
         }
 
-        private async Task PlayTitleRounds(GameSessionState gameSessionState, int roundsPerTitle)
+        private async Task PlayTitleRounds(GameSessionState gameSessionState, GameSessionStartOptions gameSessionStartOptions)
         {
             List<TitleCategory> playedRoundCategories = new();
 
-            for (int i = 0; i < roundsPerTitle; i++)
+            for (int i = 0; i < gameSessionStartOptions.TitleRoundsAmount; i++)
             {
                 var titleCategory = TitleCategory.Scientist;
                 playedRoundCategories.Add(titleCategory);
 
-                var loadedRounds = GetTitleRoundRounds();
+                var loadedRounds = GetTitleRoundRounds(gameSessionStartOptions.RoundsPerTitleAmount);
 
                 gameSessionState.SetRoundInfo(loadedRounds);
 
@@ -59,7 +59,7 @@ namespace TitlesWebGame.Api.Services
             }
         }
 
-        private List<GameRoundInfo> GetTitleRoundRounds()
+        private List<GameRoundInfo> GetTitleRoundRounds(int amount)
         {
             var loadedRounds = new List<GameRoundInfo>()
             {

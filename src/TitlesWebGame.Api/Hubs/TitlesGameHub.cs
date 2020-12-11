@@ -60,9 +60,9 @@ namespace TitlesWebGame.Api.Hubs
                     _titlesGameHubMessageFactory.CreateErrorConnectingToRoomMessage());
             }
         }
-        public void StartGameSession(string roomKey)
+        public void StartGameSession(string roomKey, GameSessionStartOptions gameSessionStartOptions)
         {
-            _gameSessionManager.StartSession(roomKey, Context.ConnectionId);
+            _gameSessionManager.StartSession(roomKey, Context.ConnectionId, gameSessionStartOptions);
         }
 
         public async Task PlayAgain(string roomKey)
