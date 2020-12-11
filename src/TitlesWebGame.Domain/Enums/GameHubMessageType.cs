@@ -9,7 +9,7 @@
         AnswerSuccessfullyProcessed,
         AnswerTooLate,
         ErrorCreatingRoom,
-        ErrorStartingRoom,
+        FailedStartingSession,
         ServerError,
         SuccessfullyJoinedRoom,
         ErrorConnectingToRoom,

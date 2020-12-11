@@ -19,5 +19,6 @@ namespace TitlesWebGame.Api.Services
         TitlesGameHubMessageModel CreateEndSessionMessage(TitlesGameEndSessionResults endSessionResults);
         TitlesGameHubMessageModel CreateEndTitlesRoundMessage(TitlesRoundResults titlesRoundResults);
         TitlesGameHubMessageModel CreateRejoiningLobbyMessage();
+        TitlesGameHubMessageModel CreateFailedToStartSessionMessage(string message);
     }
 }

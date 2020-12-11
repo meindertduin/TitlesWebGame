@@ -11,7 +11,10 @@ namespace TitlesWebGame.Api.Hubs
     {
         private readonly IGameSessionManager _gameSessionManager;
         private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
-
+        
+        private const int MaxRoundsPerTitleAmount = 20;
+        private const int MaxTitleRoundsPerSessionAmount = 20;
+        
         public TitlesGameHub(IGameSessionManager gameSessionManager, ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
         {
             _gameSessionManager = gameSessionManager;
@@ -62,7 +65,17 @@ namespace TitlesWebGame.Api.Hubs
         }
         public void StartGameSession(string roomKey, GameSessionStartOptions gameSessionStartOptions)
         {
-            _gameSessionManager.StartSession(roomKey, Context.ConnectionId, gameSessionStartOptions);
+            if (gameSessionStartOptions.TitleRoundsAmount > 0 && gameSessionStartOptions.TitleRoundsAmount <= MaxTitleRoundsPerSessionAmount &&
+                gameSessionStartOptions.RoundsPerTitleAmount > 0 && gameSessionStartOptions.RoundsPerTitleAmount <= MaxRoundsPerTitleAmount)   
+            {
+                _gameSessionManager.StartSession(roomKey, Context.ConnectionId, gameSessionStartOptions);
+            }
+            else
+            {
+                Clients.Caller.SendAsync("ServerMessageUpdate",
+                    _titlesGameHubMessageFactory.CreateFailedToStartSessionMessage(
+                        "Couldn't start session due to invalid options selected"));
+            }
         }
 
         public async Task PlayAgain(string roomKey)

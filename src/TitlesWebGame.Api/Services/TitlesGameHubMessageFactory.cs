@@ -154,5 +154,15 @@ namespace TitlesWebGame.Api.Services
                 MessageType = GameHubMessageType.RejoiningLobby,
             };
         }
+
+        public TitlesGameHubMessageModel CreateFailedToStartSessionMessage(string message)
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "Failed to start session",
+                Error = true,
+                MessageType = GameHubMessageType.FailedStartingSession,
+            };
+        }
     }
 }
