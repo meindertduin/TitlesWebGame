@@ -10,7 +10,18 @@ namespace TitlesWebGame.WebUi.ViewModels
         public string ErrorMessage
         {
             get => _errorMessage;
-            set => SetValue(ref _errorMessage, value);
+            set
+            {
+                if (SetValue(ref _errorMessage, value))
+                {
+                    NotifyOfErrorMessageChange();
+                }
+            }
+        }
+
+        private void NotifyOfErrorMessageChange()
+        {
+            OnErrorOccured?.Invoke();
         }
     }
 }

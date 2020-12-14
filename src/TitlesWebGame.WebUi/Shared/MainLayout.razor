@@ -51,9 +51,12 @@
     
     private void DisplayError()
     {
-        if (_currentDisplayTask.IsCompleted)
+        if (_currentDisplayTask != null)
         {
-            _currentDisplayTokenSource.Cancel();
+            if (_currentDisplayTask.IsCompleted)
+            {
+                _currentDisplayTokenSource.Cancel();
+            }
         }
 
         _currentDisplayTokenSource = new CancellationTokenSource();

@@ -2,26 +2,28 @@
 using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 using TitlesWebGame.WebUi.Services.ServerMessageCommands;
+using TitlesWebGame.WebUi.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services
 {
     public class GameSocketServerMessageHandler
     {
         private readonly GameSessionState _gameSessionState;
-        
-        public GameSocketServerMessageHandler(GameSessionState gameSessionState)
+        private readonly ApplicationViewModel _applicationViewModel;
+
+        public GameSocketServerMessageHandler(GameSessionState gameSessionState, ApplicationViewModel applicationViewModel)
         {
             _gameSessionState = gameSessionState;
+            _applicationViewModel = applicationViewModel;
         }
         
         public void Handle(TitlesGameHubMessageModel serverMessage)
         {
             if (serverMessage.Error)
             {
-                // notify user of error
-                
+                _applicationViewModel.ErrorMessage = serverMessage.Message;
             }
-            
+
             GetMessageCommandHandler(serverMessage).Execute(serverMessage);
         }
         
@@ -41,8 +43,7 @@ namespace TitlesWebGame.WebUi.Services
                 GameHubMessageType.SessionEnded => new SessionEndedHandler(_gameSessionState),
                 GameHubMessageType.TitlesRoundEnded => new TitlesRoundEndedHandler(_gameSessionState),
                 GameHubMessageType.RejoiningLobby => new RejoiningLobbyMessageHandler(_gameSessionState),
-                
-                _ => throw new ArgumentException(message: "invalid enum value", paramName: nameof(serverMessage.MessageType)),
+                _ => new EmptyMessageHandler(),
             };
     }
 }
