@@ -1,9 +1,13 @@
 ﻿@inject GameSocketConnectionManager GameSocketConnectionManager
 @using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.WebUi.ViewModels
+@using TitlesWebGame.WebUi.Models
+@using System.Threading
 @inherits LayoutComponentBase
 @implements IDisposable;
 @inject GameSessionState GameSessionState;
 @inject NavigationManager NavManager;
+@inject ApplicationViewModel ApplicationViewModel;
 
 
 
@@ -12,14 +16,31 @@
         <div class="content px-4">
             @Body
         </div>
+        <div id="errorSnackbar" class="@(_showErrorSnackbar?_showClassName:String.Empty)">
+            <div class="mx-2">
+                @ApplicationViewModel.ErrorMessage
+            </div>
+            <button @onclick="(() => _showErrorSnackbar = false)" class="mx-2 btn btn-outline-info">Close</button>
+        </div>
     </div>
 </div>
 
 @code
 {
+    private string _showClassName = "show";
+    private bool _showErrorSnackbar;
+
+        private const int ErrorDisplayTime = 10;
+
+    private Task _currentDisplayTask;
+    private CancellationTokenSource _currentDisplayTokenSource;
+    
     protected override async Task OnInitializedAsync()
     {
         await GameSocketConnectionManager.ConnectSocket();
+        
+        ApplicationViewModel.PropertyChanged += OnPropertyChangedHandler;
+        ApplicationViewModel.OnErrorOccured += DisplayError;
         GameSessionState.OnSessionInit += InitGameSession;
     }
 
@@ -28,8 +49,37 @@
         NavManager.NavigateTo("game");   
     }
     
+    private void DisplayError()
+    {
+        if (_currentDisplayTask.IsCompleted)
+        {
+            _currentDisplayTokenSource.Cancel();
+        }
+
+        _currentDisplayTokenSource = new CancellationTokenSource();
+        
+        _showErrorSnackbar = true;
+        _currentDisplayTask = Task.Run((() => CloseMessageAfterDisplayTime(_currentDisplayTokenSource.Token)), _currentDisplayTokenSource.Token);
+        
+    }
+
+    private async Task CloseMessageAfterDisplayTime(CancellationToken cancellationToken)
+    {
+        await Task.Delay(ErrorDisplayTime, cancellationToken);
+        _showErrorSnackbar = false;
+    }
+    
+    public async void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
     public void Dispose()
     {
-        throw new NotImplementedException();
+        ApplicationViewModel.PropertyChanged -= OnPropertyChangedHandler;
+        ApplicationViewModel.OnErrorOccured -= DisplayError;
+        GameSessionState.OnSessionInit -= InitGameSession;
+
+        _currentDisplayTokenSource?.Dispose();
     }
 }

@@ -16,6 +16,12 @@ namespace TitlesWebGame.WebUi.Services
         
         public void Handle(TitlesGameHubMessageModel serverMessage)
         {
+            if (serverMessage.Error)
+            {
+                // notify user of error
+                
+            }
+            
             GetMessageCommandHandler(serverMessage).Execute(serverMessage);
         }
         

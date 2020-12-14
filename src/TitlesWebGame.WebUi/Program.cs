@@ -21,6 +21,8 @@ namespace TitlesWebGame.WebUi
             builder.Services.AddSingleton<GameSessionState>();
             builder.Services.AddTransient<ITitlesCategoryEmojiFactory, TitlesCategoryEmojiFactory>();
 
+            builder.Services.AddSingleton<ApplicationViewModel>();
+
                 builder.Services.AddScoped(
                 sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
 

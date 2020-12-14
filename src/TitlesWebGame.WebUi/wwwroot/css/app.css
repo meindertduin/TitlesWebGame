@@ -61,7 +61,6 @@ a, .btn-link {
 
 /* --------------------- General -------------------------*/
 
-
 .gen-bg-blue{
     background: var(--app-blue);
 }
@@ -256,3 +255,4 @@ a, .btn-link {
     border: var(--app-grey) 3px solid;
     cursor: pointer;
 }
+
