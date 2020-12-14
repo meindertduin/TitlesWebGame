@@ -194,6 +194,22 @@ a, .btn-link {
     min-height: 34px;
 }
 
+.scores-container{
+    -webkit-animation: fadein 0.5s;
+    animation: fadein 0.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: -100px; opacity: 0;}
+    to {bottom: 0; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: -100px; opacity: 0;}
+    to {bottom: 0; opacity: 1;}
+}
+
+
 .scores-container ul {
     list-style-type: none;
     margin: 5px;
