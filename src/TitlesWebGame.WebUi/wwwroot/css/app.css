@@ -190,8 +190,8 @@ a, .btn-link {
     
 }
 
-.scores-container{
-    
+.player-score-container{
+    min-height: 34px;
 }
 
 .scores-container ul {
@@ -232,6 +232,7 @@ a, .btn-link {
 
 .score-titles{
     width: 35%;
+    min-height: 34px;
 }
 
 .score-titles-items {
