@@ -21,12 +21,12 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
                                                                       String.Empty).GameRoundsType;
 
             GameRoundInfoViewModel nextRoundInfo = null;
+            
             if (nextRoundType == GameRoundsType.MultipleChoiceRound)
             {
                 nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
                     hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
-            
             
             if (nextRoundInfo != null)
             {
