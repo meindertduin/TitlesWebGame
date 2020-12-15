@@ -1,7 +1,7 @@
 ﻿
 
 window.drawing = {
-    initializeCanvas: function (){
+    initializeCanvas: function (sizeY, sizeX){
         // SETTING ALL VARIABLES
 
         let isMouseDown=false;
@@ -13,18 +13,15 @@ window.drawing = {
         let currentColor = "rgb(200,20,100)";
         let currentBg = "white";
 
-        // INITIAL LAUNCH
-
         createCanvas();
-
-        // BUTTON EVENT HANDLERS
-
+        
         document.getElementById('canvasUpdate').addEventListener('click', () => {
             createCanvas();
             redraw();
         });
         document.getElementById('colorpicker').addEventListener('change', () => {
-            currentColor = this.value;
+            console.log("color changed");
+            currentColor = document.getElementById('colorpicker').value;
         });
         document.getElementById('bgcolorpicker').addEventListener('change', () => {
             ctx.fillStyle = this.value;
@@ -33,8 +30,9 @@ window.drawing = {
             currentBg = ctx.fillStyle;
         });
         document.getElementById('controlSize').addEventListener('change', () => {
-            currentSize = this.value;
-            document.getElementById("showSize").innerHTML = this.value;
+            console.log("size change")
+            currentSize = document.getElementById('controlSize').value;
+            document.getElementById("showSize").innerHTML = currentSize;
         });
         document.getElementById('saveToImage').addEventListener('click', () => {
             const dataUrl = document.getElementById("canvas").toDataURL();
@@ -43,13 +41,6 @@ window.drawing = {
 
         document.getElementById('eraser').addEventListener('click', eraser);
         document.getElementById('clear').addEventListener('click', createCanvas);
-        document.getElementById('save').addEventListener('click', save);
-        document.getElementById('load').addEventListener('click', load);
-        document.getElementById('clearCache').addEventListener('click', () => {
-            localStorage.removeItem("savedCanvas");
-            linesArray = [];
-            console.log("Cache cleared!");
-        });
 
         // REDRAW 
 
@@ -75,8 +66,8 @@ window.drawing = {
 
         function createCanvas() {
             canvas.id = "canvas";
-            canvas.width = parseInt(document.getElementById("sizeX").value);
-            canvas.height = parseInt(document.getElementById("sizeY").value);
+            canvas.width = sizeX;
+            canvas.height = sizeY;
             canvas.style.zIndex = "8";
             canvas.style.position = "absolute";
             canvas.style.border = "1px solid";
@@ -85,37 +76,6 @@ window.drawing = {
             body.appendChild(canvas);
         }
         
-
-        // SAVE FUNCTION
-
-        function save() {
-            localStorage.removeItem("savedCanvas");
-            localStorage.setItem("savedCanvas", JSON.stringify(linesArray));
-            console.log("Saved canvas!");
-        }
-
-        // LOAD FUNCTION
-
-        function load() {
-            if (localStorage.getItem("savedCanvas") != null) {
-                linesArray = JSON.parse(localStorage.savedCanvas);
-                let lines = JSON.parse(localStorage.getItem("savedCanvas"));
-                for (let i = 1; i < lines.length; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(linesArray[i-1].x, linesArray[i-1].y);
-                    ctx.lineWidth  = linesArray[i].size;
-                    ctx.lineCap = "round";
-                    ctx.strokeStyle = linesArray[i].color;
-                    ctx.lineTo(linesArray[i].x, linesArray[i].y);
-                    ctx.stroke();
-                }
-                console.log("Canvas loaded.");
-            }
-            else {
-                console.log("No canvas in memory!");
-            }
-        }
-
         // ERASER HANDLING
 
         function eraser () {
@@ -144,9 +104,8 @@ window.drawing = {
             ctx.lineWidth  = currentSize;
             ctx.lineCap = "round";
             ctx.strokeStyle = currentColor;
-
         }
-
+        
         // ON MOUSE MOVE
 
         function mousemove(canvas, evt) {
