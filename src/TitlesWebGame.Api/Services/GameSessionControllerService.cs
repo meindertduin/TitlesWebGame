@@ -91,7 +91,8 @@ namespace TitlesWebGame.Api.Services
                 await gameSessionState.PlayNewRound(newRoundInfo);
                 var scores = gameSessionState.GetRoundScores();
                 gameSessionState.AddScores(scores);
-                await UpdatePlayersOfSessionState(gameSessionState.RoomKey, newRoundInfo, gameSessionState.GetPlayers());
+                await UpdatePlayersOfPreviousRoundInfo(gameSessionState.RoomKey, newRoundInfo);
+                await UpdatePlayersOfRoundReview(gameSessionState.RoomKey, gameSessionState.GetPlayers());
                 await Task.Delay(RoundReviewTimeMs);
             }
         }
@@ -151,16 +152,21 @@ namespace TitlesWebGame.Api.Services
             return newGameRoundInfoVm;
         }
 
-        private Task UpdatePlayersOfSessionState(string roomKey, GameRoundInfo currentRoundInfo, List<GameSessionPlayer> gameSessionPlayers)
+        private Task UpdatePlayersOfPreviousRoundInfo(string roomKey, GameRoundInfo previousRoundInfo)
         {
-            var previousRoundInfo = new SessionStateUpdateViewModel()
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
+                _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
+        }
+        
+        private Task UpdatePlayersOfRoundReview(string roomKey, List<GameSessionPlayer> gameSessionPlayers)
+        {
+            var previousRoundInfo = new RoundReviewMessageModel()
             {
                 GameSessionPlayers = gameSessionPlayers,
-                PreviousRoundInfo = currentRoundInfo,
             };
             
             return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
-                _titlesGameHubMessageFactory.CreatePreviousRoundInfoMessage(previousRoundInfo));
+                _titlesGameHubMessageFactory.CreateRoundReviewMessage(previousRoundInfo));
         }
 
         private Task UpdatePlayersOfTitlesRoundEnded(GameSessionState gameSessionState)

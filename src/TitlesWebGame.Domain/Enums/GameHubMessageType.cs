@@ -16,6 +16,7 @@
         SessionStarted,
         NextRoundInfo,
         PreviousRoundInfo,
+        RoundReview,
         SessionEnded,
         TitlesRoundEnded,
         RejoiningLobby,

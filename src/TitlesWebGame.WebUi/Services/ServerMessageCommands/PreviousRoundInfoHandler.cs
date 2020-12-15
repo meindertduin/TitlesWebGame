@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
@@ -14,12 +15,12 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         }
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            var sessionStateUpdateInfo =
-                JsonConvert.DeserializeObject<SessionStateUpdateViewModel>(hubMessageModel.AppendedObject.ToString() ??
+            var previousRoundInfo =
+                JsonConvert.DeserializeObject<GameRoundInfo>(hubMessageModel.AppendedObject.ToString() ??
                                                                            String.Empty);
-            if (sessionStateUpdateInfo != null)
+            if (previousRoundInfo != null)
             {
-                _gameSessionState.SetSessionGameStatUpdateInfo(sessionStateUpdateInfo);
+                _gameSessionState.UpdatePreviousRound(previousRoundInfo);
             }
         }
     }

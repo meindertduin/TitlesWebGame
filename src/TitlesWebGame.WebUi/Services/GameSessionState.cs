@@ -77,13 +77,17 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
         
-        public void SetSessionGameStatUpdateInfo(SessionStateUpdateViewModel sessionStateUpdate)
+        public void UpdatePreviousRound(GameRoundInfo previousRoundInfo)
         {
-            Players = sessionStateUpdate.GameSessionPlayers;
-            PreviousRoundInfo = sessionStateUpdate.PreviousRoundInfo;
-            GameSessionPlayer = Players.FirstOrDefault(x => x.ConnectionId == GameSessionPlayer.ConnectionId);
-            SessionState = TitlesGameState.RoundReview;
+            PreviousRoundInfo = previousRoundInfo;
+        }
 
+        public void SetRoundReviewStates(RoundReviewMessageModel roundReviewInfo)
+        {
+            Players = roundReviewInfo.GameSessionPlayers;
+            GameSessionPlayer = Players.FirstOrDefault(x => x.ConnectionId == GameSessionPlayer.ConnectionId);
+            
+            SessionState = TitlesGameState.RoundReview;
             NotifyStateChanged();
         }
 

@@ -3,6 +3,7 @@
 @using TitlesWebGame.WebUi.Services
 
 @using GEmojiSharp.Blazor
+@using TitlesWebGame.Domain.Entities
 
 <div class="container">
     <div class="row justify-content-center">
@@ -14,9 +15,9 @@
             string colorOption = @GameViewModel.Player.RoundAwardedPoints > 0 ? "right" : "wrong";
         }
         <div class="option-button option-color-@colorOption">
-            @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+            @if (GameViewModel.PreviousRoundInfo is MultipleChoiceRoundInfo previousRoundInfo)
             {
-                <MultipleChoiceAnswerDisplay Answer="@GameViewModel.PreviousRoundInfo.Answer" Choices="@nextRoundInfo.Choices" ColorOption="@colorOption"/>
+                <MultipleChoiceAnswerDisplay Answer="@(previousRoundInfo.Answer)" Choices="@previousRoundInfo.Choices" ColorOption="@colorOption"/>
             }
         </div>
     </div>

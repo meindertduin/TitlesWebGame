@@ -101,14 +101,25 @@ namespace TitlesWebGame.Api.Services
             };
         }
 
-        public TitlesGameHubMessageModel CreatePreviousRoundInfoMessage(SessionStateUpdateViewModel previousRoundInfo)
+        public TitlesGameHubMessageModel CreateRoundReviewMessage(RoundReviewMessageModel previousRoundInfo)
         {
             return new TitlesGameHubMessageModel()
             {
                 Error = false,
+                Message = "Round review info has been loaded",
+                MessageType = GameHubMessageType.RoundReview,
+                AppendedObject = previousRoundInfo,
+            };
+        }
+
+        public TitlesGameHubMessageModel CreatePreviousRoundInfoMessage(GameRoundInfo gameRoundInfo)
+        {
+            return new()
+            {
+                Error = false,
                 Message = "Previous round update and state loaded",
                 MessageType = GameHubMessageType.PreviousRoundInfo,
-                AppendedObject = previousRoundInfo,
+                AppendedObject = gameRoundInfo,
             };
         }
 

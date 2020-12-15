@@ -14,7 +14,8 @@ namespace TitlesWebGame.Api.Services
         TitlesGameHubMessageModel CreateAnswerTooLateMessage();
         TitlesGameHubMessageModel CreateServerErrorMessage();
         TitlesGameHubMessageModel CreateSessionStartedMessage(int startingAfterDelay);
-        TitlesGameHubMessageModel CreatePreviousRoundInfoMessage(SessionStateUpdateViewModel previousRoundInfo);
+        TitlesGameHubMessageModel CreateRoundReviewMessage(RoundReviewMessageModel previousRoundInfo);
+        TitlesGameHubMessageModel CreatePreviousRoundInfoMessage(GameRoundInfo gameRoundInfo);
         TitlesGameHubMessageModel CreateNextRoundInfoMessage(GameRoundInfoViewModel multipleChoiceRoundInfo);
         TitlesGameHubMessageModel CreateEndSessionMessage(TitlesGameEndSessionResults endSessionResults);
         TitlesGameHubMessageModel CreateEndTitlesRoundMessage(TitlesRoundResults titlesRoundResults);

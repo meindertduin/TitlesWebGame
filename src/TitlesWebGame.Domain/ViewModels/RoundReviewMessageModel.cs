@@ -3,9 +3,8 @@ using TitlesWebGame.Domain.Entities;
 
 namespace TitlesWebGame.Domain.ViewModels
 {
-    public class SessionStateUpdateViewModel
+    public class RoundReviewMessageModel
     {
         public List<GameSessionPlayer> GameSessionPlayers { get; set; }
-        public GameRoundInfo PreviousRoundInfo { get; set; }
     }
 }
