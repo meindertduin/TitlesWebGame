@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
@@ -15,9 +16,18 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         }
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            var previousRoundInfo =
+            var previousRoundType =
                 JsonConvert.DeserializeObject<GameRoundInfo>(hubMessageModel.AppendedObject.ToString() ??
-                                                                           String.Empty);
+                                                                           String.Empty).GameRoundsType;
+
+            GameRoundInfo previousRoundInfo = null;
+
+            if (previousRoundType == GameRoundsType.MultipleChoiceRound)
+            {
+                previousRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfo>(
+                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
+            }
+            
             if (previousRoundInfo != null)
             {
                 _gameSessionState.UpdatePreviousRound(previousRoundInfo);
