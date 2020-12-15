@@ -8,25 +8,20 @@
 		<h3>Colour</h3>
 		<input type="color" id="colorpicker" value="#c81464" class="colorpicker">
 	</div>
-	<div class="colorButtons">
-		<h3>Bg Color</h3>
-		<input type="color" value="#ffffff" id="bgcolorpicker" class="colorpicker">
+	<button id="clear" class="btn btn-danger">Clear</button>
+	
+	<div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active" id="pencilButtonLabel">
+        <input type="radio" name="options" id="pencilButton" autocomplete="off" checked> Pencil
+      </label>
+      <label class="btn btn-secondary" id="eraserButtonLabel">
+	      <input type="radio" name="options" id="eraserButton" autocomplete="off"> Eraser
+      </label>
 	</div>
-
-	<div class="toolsButtons">
-		<h3>Tools</h3>
-		<button id="eraser" class="btn btn-danger">Erase</button>
-		<button id="clear" class="btn btn-danger">Clear</button>
-	</div>
-
+	
 	<div class="buttonSize">
 		<h3>Size (<span id="showSize">5</span>)</h3>
 		<input type="range" min="1" max="50" value="5" step="1" id="controlSize">
-	</div>
-
-	<div class="canvasSize">
-		<h3>Canvas</h3>
-		<input type="button" class="updateSize btn btn-success" value="Update" id="canvasUpdate">
 	</div>
 	<div class="extra">
 		<h3>Extra</h3>

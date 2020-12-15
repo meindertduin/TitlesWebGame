@@ -2,8 +2,6 @@
 
 window.drawing = {
     initializeCanvas: function (sizeY, sizeX){
-        // SETTING ALL VARIABLES
-
         let isMouseDown=false;
         let canvas = document.createElement('canvas');
         let body = document.getElementsByTagName("body")[0];
@@ -13,21 +11,13 @@ window.drawing = {
         let currentColor = "rgb(200,20,100)";
         let currentBg = "white";
 
+        let cachedSize = null;
+        let cachedColor = null;
+        
         createCanvas();
         
-        document.getElementById('canvasUpdate').addEventListener('click', () => {
-            createCanvas();
-            redraw();
-        });
         document.getElementById('colorpicker').addEventListener('change', () => {
-            console.log("color changed");
             currentColor = document.getElementById('colorpicker').value;
-        });
-        document.getElementById('bgcolorpicker').addEventListener('change', () => {
-            ctx.fillStyle = this.value;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            redraw();
-            currentBg = ctx.fillStyle;
         });
         document.getElementById('controlSize').addEventListener('change', () => {
             console.log("size change")
@@ -39,23 +29,11 @@ window.drawing = {
             this.returnDataLink(dataUrl);
         }, false);
 
-        document.getElementById('eraser').addEventListener('click', eraser);
         document.getElementById('clear').addEventListener('click', createCanvas);
-
-        // REDRAW 
-
-        function redraw() {
-            for (let i = 1; i < linesArray.length; i++) {
-                ctx.beginPath();
-                ctx.moveTo(linesArray[i-1].x, linesArray[i-1].y);
-                ctx.lineWidth  = linesArray[i].size;
-                ctx.lineCap = "round";
-                ctx.strokeStyle = linesArray[i].color;
-                ctx.lineTo(linesArray[i].x, linesArray[i].y);
-                ctx.stroke();
-            }
-        }
-
+        
+        document.getElementById('pencilButton').addEventListener('click', activatePencil)
+        document.getElementById('eraserButton').addEventListener('click', activateEraser)
+        
         // DRAWING EVENT HANDLERS
 
         canvas.addEventListener('mousedown', () => {mousedown(canvas, event);});
@@ -76,14 +54,39 @@ window.drawing = {
             body.appendChild(canvas);
         }
         
-        // ERASER HANDLING
+        function activatePencil() {
+            if (cachedColor !== null){
+                currentColor = cachedColor;
+            }
+            if (cachedSize !== null) {
+                currentSize = cachedSize;
+            }
+            let pencilLabel = document.getElementById('pencilButtonLabel');
+            let eraserLabel = document.getElementById('eraserButtonLabel');
 
-        function eraser () {
+            if (pencilLabel.classList.contains("active") === false) {
+                pencilLabel.classList.add("active");
+                eraserLabel.classList.remove("active");
+            }
+        }
+        
+        function activateEraser() {
+            console.log("activating eraser");
+            cachedSize = currentSize;
+            cachedColor = currentColor;
+            
+            let pencilLabel = document.getElementById('pencilButtonLabel');
+            let eraserLabel = document.getElementById('eraserButtonLabel');
+
+            if (eraserLabel.classList.contains("active") === false) {
+                eraserLabel.classList.add("active");
+                pencilLabel.classList.remove("active");
+            }
+
             currentSize = 50;
             currentColor = ctx.fillStyle
         }
 
-        // GET MOUSE POSITION
 
         function getMousePos(canvas, evt) {
             let rect = canvas.getBoundingClientRect();
@@ -92,9 +95,7 @@ window.drawing = {
                 y: evt.clientY - rect.top
             };
         }
-
-        // ON MOUSE DOWN
-
+        
         function mousedown(canvas, evt) {
             let mousePos = getMousePos(canvas, evt);
             isMouseDown=true
@@ -106,8 +107,6 @@ window.drawing = {
             ctx.strokeStyle = currentColor;
         }
         
-        // ON MOUSE MOVE
-
         function mousemove(canvas, evt) {
 
             if(isMouseDown){
