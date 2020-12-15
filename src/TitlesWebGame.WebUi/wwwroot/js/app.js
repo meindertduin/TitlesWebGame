@@ -13,6 +13,7 @@ window.drawing = {
 
         let cachedSize = null;
         let cachedColor = null;
+        let pencilActive = true;
         
         createCanvas();
         
@@ -20,7 +21,6 @@ window.drawing = {
             currentColor = document.getElementById('colorpicker').value;
         });
         document.getElementById('controlSize').addEventListener('change', () => {
-            console.log("size change")
             currentSize = document.getElementById('controlSize').value;
             document.getElementById("showSize").innerHTML = currentSize;
         });
@@ -68,6 +68,8 @@ window.drawing = {
                 pencilLabel.classList.add("active");
                 eraserLabel.classList.remove("active");
             }
+            
+            pencilActive = true;
         }
         
         function activateEraser() {
@@ -85,6 +87,8 @@ window.drawing = {
 
             currentSize = 50;
             currentColor = ctx.fillStyle
+
+            pencilActive = false;
         }
 
 
@@ -97,6 +101,10 @@ window.drawing = {
         }
         
         function mousedown(canvas, evt) {
+            if (pencilActive){
+                currentColor = document.getElementById('colorpicker').value;
+            }
+            
             let mousePos = getMousePos(canvas, evt);
             isMouseDown=true
             let currentPosition = getMousePos(canvas, evt);

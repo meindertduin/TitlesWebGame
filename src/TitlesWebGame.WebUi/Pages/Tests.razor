@@ -11,12 +11,12 @@
 	<button id="clear" class="btn btn-danger">Clear</button>
 	
 	<div class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-secondary active" id="pencilButtonLabel">
-        <input type="radio" name="options" id="pencilButton" autocomplete="off" checked> Pencil
-      </label>
-      <label class="btn btn-secondary" id="eraserButtonLabel">
-	      <input type="radio" name="options" id="eraserButton" autocomplete="off"> Eraser
-      </label>
+		<label class="btn btn-secondary active" id="pencilButtonLabel">
+			<input type="radio" name="options" id="pencilButton" autocomplete="off" checked> Pencil
+		</label>
+		<label class="btn btn-secondary" id="eraserButtonLabel">
+			<input type="radio" name="options" id="eraserButton" autocomplete="off"> Eraser
+		</label>
 	</div>
 	
 	<div class="buttonSize">
@@ -28,6 +28,8 @@
 		<a id="saveToImage" class="btn btn-warning">Download</a>
 	</div>
 </div>
+
+
 
 @code {
 	protected override void OnAfterRender(bool firstRender)
