@@ -1,4 +1,5 @@
 ﻿@page "/Tests"
+@using System.Text.RegularExpressions
 @inject IJSRuntime JS;
 
 
@@ -14,8 +15,8 @@
 
 	<div class="toolsButtons">
 		<h3>Tools</h3>
-		<button id="eraser" class="btn btn-default"><span class="glyphicon glyphicon-erase" aria-hidden="true"></span></button>
-		<button id="clear" class="btn btn-danger"> <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+		<button id="eraser" class="btn btn-default"><span class="glyphicon glyphicon-erase" aria-hidden="true">Erase</span></button>
+		<button id="clear" class="btn btn-danger"> <span class="glyphicon glyphicon-repeat" aria-hidden="true">Clear</span></button>
 	</div>
 
 	<div class="buttonSize">
@@ -51,7 +52,14 @@
 	protected override void OnAfterRender(bool firstRender)
 	{
 		Console.WriteLine("render");
-		JS.InvokeAsync<string>("initializeCanvas", "data");	
+		JS.InvokeVoidAsync("drawing.initializeCanvas");	
 		base.OnAfterRender(firstRender);
+	}
+
+	[JSInvokable]
+	public static void UploadDrawnImage(string dataUrl)
+	{
+		var base64Data = Regex.Match(dataUrl,  @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+		var binData = Convert.FromBase64String(base64Data);
 	}
 }
