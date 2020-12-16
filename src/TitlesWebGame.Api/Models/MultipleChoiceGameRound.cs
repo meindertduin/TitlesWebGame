@@ -56,7 +56,7 @@ namespace TitlesWebGame.Api.Models
             return scores;
         }
 
-        public List<string> GetRoundAnswersData()
+        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
         {
             throw new NotImplementedException();
         }

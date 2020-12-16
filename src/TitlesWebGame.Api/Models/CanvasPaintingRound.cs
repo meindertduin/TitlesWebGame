@@ -38,9 +38,9 @@ namespace TitlesWebGame.Api.Models
             return new List<(string, int)>();
         }
 
-        public List<string> GetRoundAnswersData()
+        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
         {
-            return _answers.Select(x => x.Answer).ToList();
+            return _answers.Select(x => (x.ConnectionId, x.Answer)).ToList();
         }
     }
 }

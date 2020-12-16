@@ -98,12 +98,33 @@ namespace TitlesWebGame.Api.Models
             return false;
         }
 
+        public void AddBot()
+        {
+            _players.Add(new GameSessionPlayer()
+            {
+                ConnectionId = "bot",
+                DisplayName = "Mr Bot",
+            });
+        }
+
+        public bool TryRemoveBot()
+        {
+            var bot = _players.FirstOrDefault(x => x.ConnectionId == "bot");
+            if (bot != null)
+            {
+                _players.Remove(bot);
+                return true;
+            }
+
+            return false;
+        }
+
         public List<GameSessionPlayer> GetPlayers()
         {
             return _players;
         }
 
-        public List<string> GetRoundAnswersData()
+        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
         {
             return _currentGameRound.GetRoundAnswersData();
         }

@@ -3,6 +3,7 @@
     public enum GameRoundsType
     {
         MultipleChoiceRound = 0,
-        CompetitiveArtistRound = 1,
+        CanvasPaintingRound = 1,
+        CompetitiveArtistVotingRound = 2,
     }
 }
