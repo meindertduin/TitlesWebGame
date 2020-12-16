@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Models
 {
@@ -8,5 +9,6 @@ namespace TitlesWebGame.Api.Models
         bool AddAnswer(GameRoundAnswer answer);
         Task PlayRound();
         List<(string, int)> StopRound();
+        List<string> GetRoundAnswersData();
     }
 }

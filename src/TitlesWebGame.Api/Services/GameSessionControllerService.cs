@@ -88,12 +88,61 @@ namespace TitlesWebGame.Api.Services
                 }
 
                 await UpdatePlayersOfNewRoundInfo(newRoundInfo, gameSessionState.RoomKey);
-                await gameSessionState.PlayNewRound(newRoundInfo);
-                var scores = gameSessionState.GetRoundScores();
-                gameSessionState.AddScores(scores);
+                await PlayGameRound(gameSessionState, newRoundInfo);
                 await UpdatePlayersOfPreviousRoundInfo(gameSessionState.RoomKey, newRoundInfo);
                 await UpdatePlayersOfRoundReview(gameSessionState.RoomKey, gameSessionState.GetPlayers());
                 await Task.Delay(RoundReviewTimeMs);
+            }
+        }
+        
+        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
+        {
+            GameRoundInfoViewModel newGameRoundInfoVm = null;
+
+            newGameRoundInfoVm = ProjectToRoundInfoViewModel(gameRoundInfo, newGameRoundInfoVm);
+
+            if (newGameRoundInfoVm != null)
+            {
+                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                    _titlesGameHubMessageFactory.CreateNextRoundInfoMessage(newGameRoundInfoVm));
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
+            }
+        }
+        private async Task PlayGameRound(GameSessionState gameSessionState, GameRoundInfo newRoundInfo)
+        {
+            if (newRoundInfo is CompetitiveArtistRoundInfo competitiveArtistRound)
+            {
+                // play the painting round first
+                await gameSessionState.PlayNewRound(new CanvasPaintingRound(competitiveArtistRound.PaintingRoundTimeMs));
+                // get the painting answers
+                var answerData = gameSessionState.GetRoundAnswersData();
+                // play voting rounds
+                var players = gameSessionState.GetPlayers();
+                
+                var roundsAmount = players.Count % 2 == 0 ? players.Count / 2 : players.Count / 2 + 1;
+                
+                for (int i = 0; i < roundsAmount; i++)
+                {
+                    // give players voting round info
+                    
+                    // play new voting round
+                    await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(competitiveArtistRound.VotingRoundTimeMs));
+                    
+                    // voting round review
+                    
+                }
+                
+                // get winner
+            }
+
+            if (newRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
+            {
+                await gameSessionState.PlayNewRound(new MultipleChoiceGameRound(multipleChoiceRoundInfo.Answer.ToString(), multipleChoiceRoundInfo.RewardPoints, multipleChoiceRoundInfo.RoundTimeMs));
+                var scores = gameSessionState.GetRoundScores();
+                gameSessionState.AddScores(scores);
             }
         }
         
@@ -114,23 +163,6 @@ namespace TitlesWebGame.Api.Services
 
             return _titlesGameHub.Clients.Group(gameSessionState.RoomKey).SendAsync("ServerMessageUpdate",
                 _titlesGameHubMessageFactory.CreateEndSessionMessage(endGameResults));
-        }
-        
-        private Task UpdatePlayersOfNewRoundInfo(GameRoundInfo gameRoundInfo, string roomKey)
-        {
-            GameRoundInfoViewModel newGameRoundInfoVm = null;
-
-            newGameRoundInfoVm = ProjectToRoundInfoViewModel(gameRoundInfo, newGameRoundInfoVm);
-
-            if (newGameRoundInfoVm != null)
-            {
-                return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
-                    _titlesGameHubMessageFactory.CreateNextRoundInfoMessage(newGameRoundInfoVm));
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(newGameRoundInfoVm));
-            }
         }
 
         private GameRoundInfoViewModel ProjectToRoundInfoViewModel(GameRoundInfo gameRoundInfo,

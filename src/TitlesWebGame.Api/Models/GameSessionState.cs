@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.Enums;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Models
 {
@@ -50,14 +51,9 @@ namespace TitlesWebGame.Api.Models
             IsPlaying = isPlaying;
         }
         
-        public Task PlayNewRound(GameRoundInfo gameRoundInfo)
+        public Task PlayNewRound(IGameRound gameRound)
         {
-            if (gameRoundInfo is MultipleChoiceRoundInfo roundInfo)
-            {
-                _currentGameRound =
-                    new MultipleChoiceGameRound(roundInfo.Answer.ToString(), roundInfo.RewardPoints, roundInfo.RoundTimeMs);
-            }            
-            
+            _currentGameRound = gameRound;
             // await the game round being played
             return _currentGameRound.PlayRound();
         }
@@ -105,6 +101,11 @@ namespace TitlesWebGame.Api.Models
         public List<GameSessionPlayer> GetPlayers()
         {
             return _players;
+        }
+
+        public List<string> GetRoundAnswersData()
+        {
+            return _currentGameRound.GetRoundAnswersData();
         }
     }
 }

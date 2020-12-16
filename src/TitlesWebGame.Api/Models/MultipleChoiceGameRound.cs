@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Models
 {
@@ -53,6 +54,11 @@ namespace TitlesWebGame.Api.Models
             var scores = CalculatePlayersPoints();
 
             return scores;
+        }
+
+        public List<string> GetRoundAnswersData()
+        {
+            throw new NotImplementedException();
         }
 
         private List<(string, int)> CalculatePlayersPoints()
