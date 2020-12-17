@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
-using TitlesWebGame.Api.Models;
-using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services
