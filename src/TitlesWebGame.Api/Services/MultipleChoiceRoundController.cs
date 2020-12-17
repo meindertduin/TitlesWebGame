@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Domain.Entities;
-using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Services
 {
