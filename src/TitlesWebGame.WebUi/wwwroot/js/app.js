@@ -36,9 +36,28 @@ window.drawing = {
         
         // DRAWING EVENT HANDLERS
 
-        canvas.addEventListener('mousedown', () => {mousedown(canvas, event);});
-        canvas.addEventListener('mousemove',() => {mousemove(canvas, event);});
-        canvas.addEventListener('mouseup',mouseup);
+        canvas.addEventListener('mousedown', () => {startDraw(canvas, event);});
+        canvas.addEventListener('mousemove',() => {draw(canvas, event);});
+        document.addEventListener('mouseup',endDraw);
+
+        
+        canvas.ontouchstart =  (e) => {
+            if (e.touches) e = e.touches[0];
+            startDraw(canvas, e);
+            return false;
+        }
+        
+        canvas.ontouchmove = (e) => {
+            if (e.touches) e = e.touches[0];
+            draw(canvas, e);
+            return false;
+        }
+        
+        canvas.ontouchend = (e) => {
+            if (e.touches) e = e.touches[0];
+            endDraw(canvas, e)
+            return false;
+        }
 
         // CREATE CANVAS
 
@@ -73,7 +92,6 @@ window.drawing = {
         }
         
         function activateEraser() {
-            console.log("activating eraser");
             cachedSize = currentSize;
             cachedColor = currentColor;
             
@@ -100,12 +118,12 @@ window.drawing = {
             };
         }
         
-        function mousedown(canvas, evt) {
+        
+        function startDraw(canvas, evt) {
             if (pencilActive){
                 currentColor = document.getElementById('colorpicker').value;
             }
             
-            let mousePos = getMousePos(canvas, evt);
             isMouseDown=true
             let currentPosition = getMousePos(canvas, evt);
             ctx.moveTo(currentPosition.x, currentPosition.y)
@@ -115,8 +133,7 @@ window.drawing = {
             ctx.strokeStyle = currentColor;
         }
         
-        function mousemove(canvas, evt) {
-
+        function draw(canvas, evt) {
             if(isMouseDown){
                 let currentPosition = getMousePos(canvas, evt);
                 ctx.lineTo(currentPosition.x, currentPosition.y)
@@ -124,8 +141,6 @@ window.drawing = {
                 store(currentPosition.x, currentPosition.y, currentSize, currentColor);
             }
         }
-
-        // STORE DATA
 
         function store(x, y, s, c) {
             let line = {
@@ -137,9 +152,7 @@ window.drawing = {
             linesArray.push(line);
         }
 
-        // ON MOUSE UP
-
-        function mouseup() {
+        function endDraw() {
             isMouseDown=false
             store()
         }
