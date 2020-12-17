@@ -37,6 +37,11 @@ namespace TitlesWebGame.Api
             services.AddSingleton<IGameSessionManager, GameSessionManager>();
             services.AddTransient<ITitlesGameHubMessageFactory, TitlesGameHubMessageFactory>();
             services.AddTransient<IGameSessionControllerService, GameSessionControllerService>();
+
+            
+            // Game session round controllers
+            services.AddTransient<MultipleChoiceRoundController>();
+            services.AddTransient<CompetitiveArtistRoundController>();
             
             services.AddSignalR();
 
