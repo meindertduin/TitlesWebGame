@@ -1,6 +1,8 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.ViewModels
+@using TitlesWebGame.WebUi.Interfaces
 @using TitlesWebGame.WebUi.Services
+@implements IDisposable;
 
 <div class="container">
     @if (_chosenThisRound == false)
@@ -9,7 +11,7 @@
             <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
         </div>
         <div>
-            <GameRoundTimer IntervalMs="100" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 100)"/>
+            <GameRoundTimer @ref="_gameRoundTimer" IntervalMs="100" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 100)"/>
         </div>
         @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel multipleChoiceRoundInfoViewModel)
         {
@@ -32,9 +34,9 @@
                 }
             </div>
         }
-        @else if (GameViewModel.NextRoundInfo is CanvasPaintingRoundInfoViewModel canvasPaintingRoundInfo)
+        else if (GameViewModel.NextRoundInfo is CanvasPaintingRoundInfoViewModel canvasPaintingRoundInfo)
         {
-            <CanvasDrawingRound />
+            <CanvasPaintingRound @ref="_gameRoundComponent" />
         }
         
     }
@@ -54,7 +56,25 @@
     [CascadingParameter(Name = "GameSocketConnectionManager")]
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
 
+    GameRoundTimer _gameRoundTimer;
+    IGameRoundComponent _gameRoundComponent;
+
     private bool _chosenThisRound = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _gameRoundTimer.TimerDone += HandleTimerDone;
+        }
+        
+        base.OnAfterRender(firstRender);
+    }
+
+    private void HandleTimerDone()
+    {
+        Task.Run(async () => await _gameRoundComponent.HandleTimerDone());
+    }
     
     private async Task HandlePlayerChoice(MouseEventArgs e, string answer)
     {
@@ -65,5 +85,11 @@
         });
         
         _chosenThisRound = true;
-    }  
+    }
+
+    public void Dispose()
+    {
+        _gameRoundTimer.TimerDone -= HandleTimerDone;
+    }
+
 }

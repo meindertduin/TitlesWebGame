@@ -33,7 +33,7 @@ namespace TitlesWebGame.Api.Services
             }
         }
         
-        public Task UpdatePlayersOfGameStated(string roomKey)
+        public Task UpdatePlayersOfGameStarted(string roomKey)
         {
             int startingAfterDelay = 1;
 
@@ -83,7 +83,7 @@ namespace TitlesWebGame.Api.Services
 
     public interface IGameSessionClientMessageService
     {
-        Task UpdatePlayersOfGameStated(string roomKey);
+        Task UpdatePlayersOfGameStarted(string roomKey);
         Task UpdatePlayersOfEndGame(string roomKey, List<GameSessionPlayer> players);
         Task UpdatePlayersOfPreviousRoundInfo(string roomKey, GameRoundInfo previousRoundInfo);
         Task UpdatePlayersOfRoundReview(string roomKey, List<GameSessionPlayer> gameSessionPlayers);

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Services
 {
@@ -22,9 +23,30 @@ namespace TitlesWebGame.Api.Services
                 throw new InvalidCastException(nameof(roundInfo));
             }
             
-            await gameSessionState.PlayNewRound(new MultipleChoiceGameRound(roundInfo.Answer.ToString(), roundInfo.RewardPoints, roundInfo.RoundTimeMs));
+            var newGameRoundInfoVm = ProjectToRoundInfoViewModel(gameRoundInfo);
+            await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, newGameRoundInfoVm);
+            
+            await gameSessionState.PlayNewRound(new MultipleChoiceGameRound(roundInfo.Answer, roundInfo.RewardPoints, roundInfo.RoundTimeMs));
             var scores = gameSessionState.GetRoundScores();
             gameSessionState.AddScores(scores);
+        }
+        
+        private GameRoundInfoViewModel ProjectToRoundInfoViewModel(GameRoundInfo gameRoundInfo)
+        {
+            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
+            {
+                return new MultipleChoiceRoundInfoViewModel()
+                {
+                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
+                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
+                    Choices = multipleChoiceRoundInfo.Choices,
+                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
+                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
+                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿@using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.ViewModels
+@using System.Text.RegularExpressions
 @inject IJSRuntime JS;
+@implements TitlesWebGame.WebUi.Interfaces.IGameRoundComponent
+@inject GameSocketConnectionManager GameSocketConnectionManager
 
 <div class="row justify-content-center">
 		<canvas id="canvas"></canvas>
@@ -41,9 +44,6 @@
 	[CascadingParameter(Name = "GameViewModel")]
 	protected GameViewModel GameViewModel { get; set; }
 
-	[CascadingParameter(Name = "GameSocketConnectionManager")]
-	protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
-	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await JS.InvokeVoidAsync("drawing.initializeCanvas", 800, 800);
@@ -53,11 +53,19 @@
 	public async Task UploadDrawnImage()
 	{
 		var dataUrl = await JS.InvokeAsync<string>("drawing.getDataLink");
+		var base64Data = Regex.Match(dataUrl, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+		var binData = Convert.FromBase64String(base64Data);
 		
-		await GameSocketConnectionManager.SendAnswer(GameViewModel.RoomKey, new GameRoundAnswer()
+		await GameSocketConnectionManager.SendAnswerWithData(GameViewModel.RoomKey, new GameRoundAnswer()
 		{
-			Answer = dataUrl,
+			Answer = String.Empty,
 			ConnectionId = GameViewModel.Player.ConnectionId,
+			Data = binData,
 		});
+	}
+
+	public Task HandleTimerDone()
+	{
+		return UploadDrawnImage();
 	}
 }

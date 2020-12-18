@@ -153,7 +153,7 @@ window.drawing = {
             store()
         }
     },
-    returnDataLink: function (){
+    getDataLink: function (){
         return document.getElementById("canvas").toDataURL();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using TitlesWebGame.Domain.ViewModels;
 
@@ -58,6 +59,12 @@ namespace TitlesWebGame.WebUi.Services
         public async Task SendAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)
         {
             await HubConnection.SendAsync("AnswerChoice", roomKey, gameRoundAnswer);
+        }
+
+        public async Task SendAnswerWithData(string roomKey, GameRoundAnswer gameRoundAnswer)
+        {
+            // send answer with data via Restfull api
+            
         }
     }
 }

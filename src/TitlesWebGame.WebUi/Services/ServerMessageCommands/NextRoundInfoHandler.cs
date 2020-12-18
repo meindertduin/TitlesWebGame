@@ -27,6 +27,12 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
                 nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
                     hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
+            else if(nextRoundType == GameRoundsType.CanvasPaintingRound)
+            {
+                nextRoundInfo =
+                    JsonConvert.DeserializeObject<CanvasPaintingRoundInfoViewModel>(
+                        hubMessageModel.AppendedObject.ToString() ?? String.Empty);
+            }
             
             if (nextRoundInfo != null)
             {

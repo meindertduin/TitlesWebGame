@@ -28,7 +28,7 @@ namespace TitlesWebGame.Api.Services
             if (gameSessionState.IsPlaying == false)
             {
                 gameSessionState.SetPlayingStatus(true);
-                await _clientMessageService.UpdatePlayersOfGameStated(gameSessionState.RoomKey);
+                await _clientMessageService.UpdatePlayersOfGameStarted(gameSessionState.RoomKey);
                 
                 await PlayTitleRounds(gameSessionState, gameSessionStartOptions);
                 
@@ -43,7 +43,9 @@ namespace TitlesWebGame.Api.Services
 
             for (int i = 0; i < gameSessionStartOptions.TitleRoundsAmount; i++)
             {
-                var titleCategory = TitleCategory.Scientist;
+                // Todo: show clients a loading page of the title rounds with a description
+                
+                var titleCategory = TitleCategory.Artist;
                 playedRoundCategories.Add(titleCategory);
 
                 var loadedRounds = GetTitleRoundRounds(gameSessionStartOptions.RoundsPerTitleAmount);
@@ -63,16 +65,16 @@ namespace TitlesWebGame.Api.Services
         {
             var loadedRounds = new List<GameRoundInfo>()
             {
-                new MultipleChoiceRoundInfo()
+                new CompetitiveArtistRoundInfo()
                 {
-                    Answer = 1.ToString(),
-                    Choices = new[] {"bear", "zebra", "giraffe", "crocodile"},
                     RewardPoints = 500,
-                    GameRoundsType = GameRoundsType.MultipleChoiceRound,
-                    RoundStatement = "What animal is primarily known for having stripes",
+                    GameRoundsType = GameRoundsType.CompetitiveArtistRound,
+                    RoundStatement = "Welcome to competitive artist",
                     RoundTimeMs = 3000,
-                    TitleCategory = TitleCategory.Scientist,
-                },
+                    TitleCategory = TitleCategory.Artist,
+                    PaintingRoundTimeMs = 3000,
+                    VotingRoundTimeMs = 2000,
+                }
             };
             return loadedRounds;
         }
@@ -87,11 +89,6 @@ namespace TitlesWebGame.Api.Services
                     break;
                 }
 
-                GameRoundInfoViewModel newGameRoundInfoVm = null;
-
-                newGameRoundInfoVm = ProjectToRoundInfoViewModel(newRoundInfo);
-                
-                await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, newGameRoundInfoVm);
                 await PlayGameRound(gameSessionState, newRoundInfo);
                 await _clientMessageService.UpdatePlayersOfPreviousRoundInfo(gameSessionState.RoomKey, newRoundInfo);
                 await _clientMessageService.UpdatePlayersOfRoundReview(gameSessionState.RoomKey, gameSessionState.GetPlayers());
@@ -123,24 +120,6 @@ namespace TitlesWebGame.Api.Services
             {
                 throw new NullReferenceException(nameof(_currentRoundController));
             }
-        }
-        
-        private GameRoundInfoViewModel ProjectToRoundInfoViewModel(GameRoundInfo gameRoundInfo)
-        {
-            if (gameRoundInfo is MultipleChoiceRoundInfo multipleChoiceRoundInfo)
-            {
-                return new MultipleChoiceRoundInfoViewModel()
-                {
-                    RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
-                    RewardPoints = multipleChoiceRoundInfo.RewardPoints,
-                    Choices = multipleChoiceRoundInfo.Choices,
-                    RoundStatement = multipleChoiceRoundInfo.RoundStatement,
-                    GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
-                    TitleCategory = multipleChoiceRoundInfo.TitleCategory,
-                };
-            }
-
-            return null;
         }
     }
 }

@@ -18,11 +18,14 @@
     public int IntervalMs { get; set; }
 
     private bool _timerFinished = false;
+    
+    public event Action TimerDone;
 
     protected override void OnInitialized()
     {
         _progress = TimeUnits;
         _progressPercentage = 100;
+        Console.WriteLine("setting timer");
         
         SetTimer(TimeUnits, IntervalMs);
         base.OnInitialized();
@@ -39,6 +42,7 @@
         }
 
         _timerFinished = true;
+        TimerDone?.Invoke();
     }
 
 }
