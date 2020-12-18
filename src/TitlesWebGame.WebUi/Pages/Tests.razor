@@ -3,40 +3,48 @@
 @inject IJSRuntime JS;
 
 
-<div id="sidebar">
-	<div class="colorButtons">
-		<h3>Colour</h3>
-		<input type="color" id="colorpicker" value="#c81464" class="colorpicker">
+<div class="container">
+	<div class="row justify-content-center">
+		<canvas id="canvas"></canvas>
 	</div>
-	<button id="clear" class="btn btn-danger">Clear</button>
-	
-	<div class="btn-group btn-group-toggle" data-toggle="buttons">
-		<label class="btn btn-secondary active" id="pencilButtonLabel">
-			<input type="radio" name="options" id="pencilButton" autocomplete="off" checked> Pencil
-		</label>
-		<label class="btn btn-secondary" id="eraserButtonLabel">
-			<input type="radio" name="options" id="eraserButton" autocomplete="off"> Eraser
-		</label>
-	</div>
-	
-	<div class="buttonSize">
-		<h3>Size (<span id="showSize">5</span>)</h3>
-		<input type="range" min="1" max="50" value="5" step="1" id="controlSize">
-	</div>
-	<div class="extra">
-		<h3>Extra</h3>
-		<a id="saveToImage" class="btn btn-warning">Download</a>
+	<div class="row justify-content-center">
+		<div class="colorButtons">
+			<h3>Colour</h3>
+			<input type="color" id="colorpicker" value="#c81464" class="colorpicker">
+		</div>
+		<button id="clear" class="btn btn-danger">Clear</button>
+
+
+		<div class="btn-group btn-group-toggle" data-toggle="buttons">
+			<label class="btn btn-secondary active" id="pencilButtonLabel">
+				<input type="radio" name="options" id="pencilButton" autocomplete="off" checked> Pencil
+			</label>
+			<label class="btn btn-secondary" id="eraserButtonLabel">
+				<input type="radio" name="options" id="eraserButton" autocomplete="off"> Eraser
+			</label>
+		</div>
+
+
+		<div class="buttonSize">
+			<h3>Size (<span id="showSize">5</span>)</h3>
+			<input type="range" min="1" max="50" value="5" step="1" id="controlSize">
+		</div>
+
+		<div class="extra">
+			<h3>Extra</h3>
+			<a id="saveToImage" class="btn btn-warning">Download</a>
+		</div>
 	</div>
 </div>
 
 
 
+
 @code {
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		Console.WriteLine("render");
-		JS.InvokeVoidAsync("drawing.initializeCanvas", 800, 800);	
-		base.OnAfterRender(firstRender);
+		await JS.InvokeVoidAsync("drawing.initializeCanvas", 800, 800);
+		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	[JSInvokable]

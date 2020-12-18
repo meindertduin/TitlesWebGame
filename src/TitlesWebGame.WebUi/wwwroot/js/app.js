@@ -3,9 +3,10 @@
 window.drawing = {
     initializeCanvas: function (sizeY, sizeX){
         let isMouseDown=false;
-        let canvas = document.createElement('canvas');
+        let canvas = document.getElementById('canvas');
         let body = document.getElementsByTagName("body")[0];
         let ctx = canvas.getContext('2d');
+
         let linesArray = [];
         let currentSize = 5;
         let currentColor = "rgb(200,20,100)";
@@ -34,7 +35,6 @@ window.drawing = {
         document.getElementById('pencilButton').addEventListener('click', activatePencil)
         document.getElementById('eraserButton').addEventListener('click', activateEraser)
         
-        // DRAWING EVENT HANDLERS
 
         canvas.addEventListener('mousedown', () => {startDraw(canvas, event);});
         canvas.addEventListener('mousemove',() => {draw(canvas, event);});
@@ -59,18 +59,17 @@ window.drawing = {
             return false;
         }
 
-        // CREATE CANVAS
 
         function createCanvas() {
-            canvas.id = "canvas";
-            canvas.width = sizeX;
-            canvas.height = sizeY;
-            canvas.style.zIndex = "8";
-            canvas.style.position = "absolute";
-            canvas.style.border = "1px solid";
+            let maxHeight =  window.innerHeight < 800 ? window.innerHeight * 0.8 : 750;
+            let maxWidth =  window.innerWidth < 800 ? window.innerWidth * 0.9 : 800;
+            let canvasSize = maxHeight > maxWidth? maxWidth: maxHeight;
+            
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+            
             ctx.fillStyle = currentBg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            body.appendChild(canvas);
         }
         
         function activatePencil() {
