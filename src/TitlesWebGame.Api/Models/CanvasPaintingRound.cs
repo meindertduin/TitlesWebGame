@@ -9,7 +9,7 @@ namespace TitlesWebGame.Api.Models
     {
         private readonly int _roundTimeMs;
         private bool _canCommitAnswer;
-        private List<CanvasPaintingAnswer> _answers = new();
+        private List<GameRoundAnswer> _answers = new();
 
         public CanvasPaintingRound(int roundTimeMs)
         {
@@ -19,7 +19,7 @@ namespace TitlesWebGame.Api.Models
         {
             if (_canCommitAnswer)
             {
-                _answers.Add(answer as CanvasPaintingAnswer);
+                _answers.Add(answer);
                 return true;   
             }
 

@@ -11,11 +11,11 @@
         <div>
             <GameRoundTimer IntervalMs="100" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 100)"/>
         </div>
-        @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel nextRoundInfo)
+        @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel multipleChoiceRoundInfoViewModel)
         {
             <div class="options-container">
     
-                @for (int i = 0; i < nextRoundInfo.Choices.Length; i++)
+                @for (int i = 0; i < multipleChoiceRoundInfoViewModel.Choices.Length; i++)
                 {
                     var optionNumber = i.ToString();
                     string optionColor = "option-color-" + i;
@@ -26,12 +26,17 @@
                             @marks[i] )  
                         </div>
                         <div class="font-weight-bold">
-                            @nextRoundInfo.Choices[i]
+                            @multipleChoiceRoundInfoViewModel.Choices[i]
                         </div>
                     </div>
                 }
             </div>
         }
+        @else if (GameViewModel.NextRoundInfo is CanvasPaintingRoundInfoViewModel canvasPaintingRoundInfo)
+        {
+            <CanvasDrawingRound />
+        }
+        
     }
     else
     {
@@ -48,7 +53,7 @@
 
     [CascadingParameter(Name = "GameSocketConnectionManager")]
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
-    
+
     private bool _chosenThisRound = false;
     
     private async Task HandlePlayerChoice(MouseEventArgs e, string answer)

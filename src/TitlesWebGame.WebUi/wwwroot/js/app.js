@@ -25,10 +25,7 @@ window.drawing = {
             currentSize = document.getElementById('controlSize').value;
             document.getElementById("showSize").innerHTML = currentSize;
         });
-        document.getElementById('saveToImage').addEventListener('click', () => {
-            const dataUrl = document.getElementById("canvas").toDataURL();
-            this.returnDataLink(dataUrl);
-        }, false);
+
 
         document.getElementById('clear').addEventListener('click', createCanvas);
         
@@ -156,7 +153,7 @@ window.drawing = {
             store()
         }
     },
-    returnDataLink: function (dataUrl){
-        DotNet.invokeMethodAsync("TitlesWebGame.WebUi", "UploadDrawnImage", dataUrl);
+    returnDataLink: function (){
+        return document.getElementById("canvas").toDataURL();
     }
 }
