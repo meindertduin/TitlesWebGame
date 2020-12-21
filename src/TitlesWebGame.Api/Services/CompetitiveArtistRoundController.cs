@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Api.Extensions;
 using TitlesWebGame.Api.Models;
@@ -26,25 +25,27 @@ namespace TitlesWebGame.Api.Services
             {
                 throw new InvalidCastException(nameof(roundInfo));
             }
-            
+
             var players = gameSessionState.GetPlayers();
             var roundStatement = "Draw a car with only triangles";
-            
+
             var matchUps = GenerateMatchUps(gameSessionState, players, roundStatement);
-            
+
             await InitializePaintingRound(gameSessionState, roundStatement, roundInfo);
 
             // play the painting round first
             await gameSessionState.PlayNewRound(new CanvasPaintingRound(roundInfo.PaintingRoundTimeMs));
 
             await PlayVotingRounds(gameSessionState, matchUps, roundInfo, roundStatement);
-            
+
             // voting round review
             await _clientMessageService.UpdatePlayersOfPreviousRoundInfo(gameSessionState.RoomKey, roundInfo);
-            await _clientMessageService.UpdatePlayersOfRoundReview(gameSessionState.RoomKey, gameSessionState.GetPlayers());
+            await _clientMessageService.UpdatePlayersOfRoundReview(gameSessionState.RoomKey,
+                gameSessionState.GetPlayers());
         }
 
-        private List<(string PlayerOne, string PlayerTwo, string roundStatement)> GenerateMatchUps(GameSessionState gameSessionState,
+        private List<(string PlayerOne, string PlayerTwo, string roundStatement)> GenerateMatchUps(
+            GameSessionState gameSessionState,
             List<GameSessionPlayer> players, string roundStatement)
         {
             // make match ups for everyone
@@ -65,7 +66,7 @@ namespace TitlesWebGame.Api.Services
 
             return matchUps;
         }
-        
+
         private Task InitializePaintingRound(GameSessionState gameSessionState, string roundStatement,
             CompetitiveArtistRoundInfo roundInfo)
         {
@@ -81,40 +82,34 @@ namespace TitlesWebGame.Api.Services
             // Todo: change this into individual sending of viewModels depending on roundStatement and matchUps
             return _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, paintingRoundInfoVm);
         }
-        
-        private async Task PlayVotingRounds(GameSessionState gameSessionState, List<(string PlayerOne, string PlayerTwo, string roundStatement)> matchUps,
+
+        private async Task PlayVotingRounds(GameSessionState gameSessionState,
+            List<(string PlayerOne, string PlayerTwo, string roundStatement)> matchUps,
             CompetitiveArtistRoundInfo roundInfo, string roundStatement)
         {
-            // get the painting answers
-            var answerData = gameSessionState.GetRoundAnswers();
-            
             // play voting rounds
             for (int i = 0; i < matchUps.Count; i++)
             {
-                var answerDataPlayerOne = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerOne);
-                var answerDataPlayerTwo = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerTwo);
-            
                 // give players voting round info
                 var votingRoundInfoVm = new CompetitiveArtistVotingRoundInfoViewModel()
                 {
                     RoundTimeMs = roundInfo.VotingRoundTimeMs,
                     RoundStatement = roundStatement,
                     GameRoundsType = GameRoundsType.CompetitiveArtistVotingRound,
-                    Choices = new[] {answerDataPlayerOne, answerDataPlayerTwo},
+                    Choices = new [] {matchUps[i].PlayerOne, matchUps[i].PlayerTwo}
                 };
-            
+
                 await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
-            
+
                 // play new voting round
                 await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,
                     roundInfo.RewardPoints));
                 var scores = gameSessionState.GetRoundScores();
                 gameSessionState.AddScores(scores);
+
+                // notify players of winner
+
             }
         }
     }
-
-    public interface IGameRoundController
-    {
-        Task PlayGameRound(GameSessionState gameSessionState, GameRoundInfo gameRoundInfo);
-    }
+}
