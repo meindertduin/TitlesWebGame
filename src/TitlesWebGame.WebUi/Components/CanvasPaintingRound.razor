@@ -52,16 +52,23 @@
 
 	public async Task UploadDrawnImage()
 	{
-		var dataUrl = await JS.InvokeAsync<string>("drawing.getDataLink");
-		var base64Data = Regex.Match(dataUrl, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
-		var binData = Convert.FromBase64String(base64Data);
-		
-		await GameSocketConnectionManager.SendAnswerWithData(GameViewModel.RoomKey, new GameRoundAnswer()
+		try
 		{
-			Answer = String.Empty,
-			ConnectionId = GameViewModel.Player.ConnectionId,
-			Data = binData,
-		});
+			var dataUrl = await JS.InvokeAsync<string>("drawing.getDataLink");
+			var base64Data = Regex.Match(dataUrl, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+			var binData = Convert.FromBase64String(base64Data);
+		
+			await GameSocketConnectionManager.SendAnswerWithData(GameViewModel.RoomKey, new GameRoundAnswer()
+			{
+				Answer = String.Empty,
+				ConnectionId = GameViewModel.Player.ConnectionId,
+				Data = binData,
+			});
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
 	}
 
 	public Task HandleTimerDone()

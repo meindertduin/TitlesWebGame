@@ -23,7 +23,7 @@ namespace TitlesWebGame.WebUi
 
             builder.Services.AddSingleton<ApplicationViewModel>();
 
-                builder.Services.AddScoped(
+            builder.Services.AddScoped(
                 sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
 
             await builder.Build().RunAsync();

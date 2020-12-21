@@ -1,4 +1,6 @@
-﻿namespace TitlesWebGame.Domain.ViewModels
+﻿using Microsoft.AspNetCore.Http;
+
+namespace TitlesWebGame.Domain.ViewModels
 {
     public class GameRoundAnswer
     {

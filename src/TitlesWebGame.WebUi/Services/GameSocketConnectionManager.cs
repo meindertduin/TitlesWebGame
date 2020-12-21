@@ -1,6 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services
@@ -8,11 +13,13 @@ namespace TitlesWebGame.WebUi.Services
     public class GameSocketConnectionManager
     {
         private readonly GameSocketServerMessageHandler _gameSocketServerMessageHandler;
+        private readonly HttpClient _httpClient;
         public HubConnection HubConnection { get; private set; }
 
-        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler)
+        public GameSocketConnectionManager(GameSocketServerMessageHandler gameSocketServerMessageHandler, HttpClient httpClient)
         {
             _gameSocketServerMessageHandler = gameSocketServerMessageHandler;
+            _httpClient = httpClient;
         }
         public async Task ConnectSocket()
         {
@@ -64,7 +71,15 @@ namespace TitlesWebGame.WebUi.Services
         public async Task SendAnswerWithData(string roomKey, GameRoundAnswer gameRoundAnswer)
         {
             // send answer with data via Restfull api
-            
+            var message = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($@"https://localhost:5001/api/titlesGame/dataAnswer/{roomKey}"),
+                Content = new StringContent(JsonConvert.SerializeObject(gameRoundAnswer, Formatting.Indented), Encoding.UTF8, "application/json"),
+            };
+
+            await _httpClient.SendAsync(message);
+            Console.WriteLine("sending...");
         }
     }
 }
