@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Domain.ViewModels;
 
@@ -88,6 +89,11 @@ namespace TitlesWebGame.Api.Models
             }
 
             return scores;
+        }
+        
+        public List<GameRoundAnswer> GetRoundAnswers(string[] connections)
+        {
+            return _answers.Where(x => connections.Contains(x.ConnectionId)).ToList();
         }
     }
 }

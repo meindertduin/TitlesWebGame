@@ -10,5 +10,6 @@ namespace TitlesWebGame.Api.Models
         Task PlayRound();
         List<(string, int)> StopRound();
         List<GameRoundAnswer> GetRoundAnswers();
+        List<GameRoundAnswer> GetRoundAnswers(string[] connections);
     }
 }

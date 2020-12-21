@@ -23,9 +23,9 @@ namespace TitlesWebGame.Api.Controllers
         }
 
         [HttpGet("dataAnswer/{roomKey")]
-        public IActionResult GetGameRoundAnswers([FromRoute] string roomKey)
+        public IActionResult GetGameRoundAnswers([FromRoute] string roomKey, [FromQuery] string[] connections)
         {
-            _gameSessionManager.GetGameRoundAnswers(roomKey);
+            _gameSessionManager.GetGameRoundAnswers(roomKey, connections);
             return Ok();
         }
 

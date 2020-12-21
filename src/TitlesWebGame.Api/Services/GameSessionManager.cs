@@ -127,5 +127,11 @@ namespace TitlesWebGame.Api.Services
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             return gameSession.GetRoundAnswers();
         }
+
+        public List<GameRoundAnswer> GetGameRoundAnswers(string roomKey, string[] connections)
+        {
+            var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
+            return gameSession.GetRoundAnswers(connections);
+        }
     }
 }

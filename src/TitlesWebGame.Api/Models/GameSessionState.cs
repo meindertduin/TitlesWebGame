@@ -128,5 +128,10 @@ namespace TitlesWebGame.Api.Models
         {
             return _currentGameRound.GetRoundAnswers();
         }
+
+        public List<GameRoundAnswer> GetRoundAnswers(string[] connections)
+        {
+            return _currentGameRound.GetRoundAnswers(connections);
+        }
     }
 }

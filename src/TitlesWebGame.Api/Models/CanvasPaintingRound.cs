@@ -42,5 +42,10 @@ namespace TitlesWebGame.Api.Models
         {
             return _answers;
         }
+
+        public List<GameRoundAnswer> GetRoundAnswers(string[] connections)
+        {
+            return _answers.Where(x => connections.Contains(x.ConnectionId)).ToList();
+        }
     }
 }

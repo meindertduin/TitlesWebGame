@@ -85,31 +85,31 @@ namespace TitlesWebGame.Api.Services
         private async Task PlayVotingRounds(GameSessionState gameSessionState, List<(string PlayerOne, string PlayerTwo, string roundStatement)> matchUps,
             CompetitiveArtistRoundInfo roundInfo, string roundStatement)
         {
-            // // get the painting answers
-            // var answerData = gameSessionState.GetRoundAnswers();
-            //
-            // // play voting rounds
-            // for (int i = 0; i < matchUps.Count; i++)
-            // {
-            //     var answerDataPlayerOne = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerOne);
-            //     var answerDataPlayerTwo = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerTwo);
-            //
-            //     // give players voting round info
-            //     var votingRoundInfoVm = new CompetitiveArtistVotingRoundInfoViewModel()
-            //     {
-            //         RoundTimeMs = roundInfo.VotingRoundTimeMs,
-            //         RoundStatement = roundStatement,
-            //         GameRoundsType = GameRoundsType.CompetitiveArtistVotingRound,
-            //         Choices = new[] {answerDataPlayerOne, answerDataPlayerTwo},
-            //     };
-            //
-            //     await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
-            //
-            //     // play new voting round
-            //     await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,
-            //         roundInfo.RewardPoints));
-            //     var scores = gameSessionState.GetRoundScores();
-            //     gameSessionState.AddScores(scores);
+            // get the painting answers
+            var answerData = gameSessionState.GetRoundAnswers();
+            
+            // play voting rounds
+            for (int i = 0; i < matchUps.Count; i++)
+            {
+                var answerDataPlayerOne = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerOne);
+                var answerDataPlayerTwo = answerData.FirstOrDefault(x => x.ConnectionId == matchUps[i].PlayerTwo);
+            
+                // give players voting round info
+                var votingRoundInfoVm = new CompetitiveArtistVotingRoundInfoViewModel()
+                {
+                    RoundTimeMs = roundInfo.VotingRoundTimeMs,
+                    RoundStatement = roundStatement,
+                    GameRoundsType = GameRoundsType.CompetitiveArtistVotingRound,
+                    Choices = new[] {answerDataPlayerOne, answerDataPlayerTwo},
+                };
+            
+                await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
+            
+                // play new voting round
+                await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,
+                    roundInfo.RewardPoints));
+                var scores = gameSessionState.GetRoundScores();
+                gameSessionState.AddScores(scores);
             }
         }
     }
