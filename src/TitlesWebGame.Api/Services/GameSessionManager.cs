@@ -2,13 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Hubs;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Domain.Entities;
-using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Services
@@ -122,6 +120,12 @@ namespace TitlesWebGame.Api.Services
         {
             var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
             return gameSession.AddAnswer(gameRoundAnswer);
+        }
+
+        public List<GameRoundAnswer> GetGameRoundAnswers(string roomKey)
+        {
+            var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
+            return gameSession.GetRoundAnswers();
         }
     }
 }

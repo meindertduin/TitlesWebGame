@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Models
@@ -16,7 +15,7 @@ namespace TitlesWebGame.Api.Models
 
         private bool _canCommitAnswer;
         
-        private List<GameRoundAnswer> _playerAnswers = new();
+        private List<GameRoundAnswer> _answers = new();
         private DateTime _startTime;
 
         public MultipleChoiceGameRound(string answer, int rewardPoints, int roundTimeMs)
@@ -33,7 +32,7 @@ namespace TitlesWebGame.Api.Models
                 var elapsedTime = (DateTime.Now - _startTime).TotalMilliseconds;
 
                 answer.TimeMs = (int) elapsedTime;
-                _playerAnswers.Add(answer);
+                _answers.Add(answer);
                 
                 return true;
             }
@@ -57,9 +56,9 @@ namespace TitlesWebGame.Api.Models
             return scores;
         }
 
-        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
+        public List<GameRoundAnswer> GetRoundAnswers()
         {
-            throw new NotImplementedException();
+            return _answers;
         }
 
         private List<(string, int)> CalculatePlayersPoints()
@@ -67,7 +66,7 @@ namespace TitlesWebGame.Api.Models
             List<(string, int)> scores = new List<(string, int)>();
 
             // iterate throug each answer and get the score
-            foreach (var answer in _playerAnswers)
+            foreach (var answer in _answers)
             {
                 int score = 0;
                 if (answer.Answer == _answer)

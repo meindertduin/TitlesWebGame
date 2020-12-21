@@ -124,9 +124,9 @@ namespace TitlesWebGame.Api.Models
             return _players;
         }
 
-        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
+        public List<GameRoundAnswer> GetRoundAnswers()
         {
-            return _currentGameRound.GetRoundAnswersData();
+            return _currentGameRound.GetRoundAnswers();
         }
     }
 }

@@ -13,5 +13,6 @@ namespace TitlesWebGame.Api.Services
         void StartSession(string roomKey, string connectionId, GameSessionStartOptions gameSessionStartOptions);
         bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer);
         bool PlayAgain(string roomKey, string connectionId);
+        List<GameRoundAnswer> GetGameRoundAnswers(string roomKey);
     }
 }

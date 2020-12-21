@@ -10,7 +10,7 @@ namespace TitlesWebGame.Api.Models
         private readonly int _roundTimeMs;
         private readonly int _rewardPoints;
         private bool _canCommitAnswer;
-        private List<CompetitiveArtistVotingRoundAnswer> _answers = new();
+        private List<GameRoundAnswer> _answers = new();
 
         public CompetitiveArtistVotingRound(int roundTimeMs, int rewardPoints)
         {
@@ -22,7 +22,7 @@ namespace TitlesWebGame.Api.Models
         {
             if (_canCommitAnswer)
             {
-                _answers.Add(answer as CompetitiveArtistVotingRoundAnswer);
+                _answers.Add(answer);
                 return true;   
             }
 
@@ -61,9 +61,9 @@ namespace TitlesWebGame.Api.Models
             };
         }
 
-        public List<(string ConnectionId, string Data)> GetRoundAnswersData()
+        public List<GameRoundAnswer> GetRoundAnswers()
         {
-            throw new System.NotImplementedException();
+            return _answers;
         }
     }
 }

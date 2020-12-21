@@ -81,5 +81,6 @@ namespace TitlesWebGame.WebUi.Services
             await _httpClient.SendAsync(message);
             Console.WriteLine("sending...");
         }
+        
     }
 }
