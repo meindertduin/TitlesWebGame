@@ -39,7 +39,8 @@
         {
             <CanvasPaintingRound @ref="_gameRoundComponent" />
         }
-        else if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel competitiveArtistVotingRoundAnswer)
+        else if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel ||
+                 GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel)
         {
             <CompetitiveArtistVotingRound />
         }

@@ -8,19 +8,43 @@
 @implements IDisposable;
 
 <div>
-    @if (_isVoting && _isReviewing == false)
+    @if (_isVoting)
     {
+        var votingRoundInfo = GameViewModel.NextRoundInfo as CompetitiveArtistVotingRoundInfoViewModel;
         <div>
-            Its voting round
+            <div class="row justify-content-center "></div>
+            <div class="row justify-content-center">
+                @if (votingRoundInfo != null)
+                {
+                    foreach (var choice in votingRoundInfo.Choices)
+                    {
+                        var displayName = GameViewModel.SessionPlayers.FirstOrDefault(x => x.ConnectionId == choice)?.DisplayName;
+                        var data = _answers.FirstOrDefault(x => x.ConnectionId == choice)?.Data;
+
+                        var dataUrl = String.Empty;
+                        if (data != null)
+                        {
+                            dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(data);
+                        }
+                        
+                        <div class="col-6 artist-option">
+                            <div class="text-center font-weight-bold">
+                                @displayName
+                            </div>
+                            <div class="text-center">
+                                <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         </div>
-    }
-    else if (_isVoting == false && _isReviewing)
-    {
-        <div>It's reviewing round</div>
     }
     else
     {
-        <div>Loading your beautifull creations...</div>
+        <div>
+            It's reviewing round
+        </div>
     }
 </div>
 
@@ -30,7 +54,7 @@
 
     private int roundTimer = 0;
 
-    private bool _isVoting = true;
+    private bool _isVoting = false;
     private bool _isReviewing;
 
     private List<GameRoundAnswer> _answers;
@@ -41,6 +65,8 @@
         var responseJson = await responseMessage.Content.ReadAsStringAsync();
         _answers = JsonConvert.DeserializeObject<List<GameRoundAnswer>>(responseJson);
 
+        _isVoting = true;
+
         GameViewModel.PropertyChanged += OnPropertyChangedHandler;
 
         Console.WriteLine(_answers[0]);
@@ -50,18 +76,15 @@
     
     public void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)
     {
-        if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel votingRoundInfoViewModel)
+        if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel)
         {
-            _isReviewing = false;
             _isVoting = true;
             StateHasChanged();
         }
-        if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel reviewRoundInfoViewModel)
+        if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel)
         {
-            _isReviewing = true;
             _isVoting = false;
             StateHasChanged();
-            Console.WriteLine(reviewRoundInfoViewModel.Winner.ConnectionId);
         }
     }
 
@@ -69,5 +92,4 @@
     {
         GameViewModel.PropertyChanged -= OnPropertyChangedHandler;
     }
-
 }

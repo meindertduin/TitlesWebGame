@@ -136,7 +136,7 @@ namespace TitlesWebGame.Api.Services
 
                 var reviewInfoVm = new CompetitiveArtistReviewRoundInfoViewModel()
                 {
-                    RoundTimeMs = roundInfo.VotingRoundTimeMs,
+                    RoundTimeMs = 2000,
                     RoundStatement = roundInfo.RoundStatement,
                     GameRoundsType = GameRoundsType.CompetitiveArtistReviewRound,
                     Winner = winner,
@@ -145,6 +145,8 @@ namespace TitlesWebGame.Api.Services
                 await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, reviewInfoVm);
                 await Task.Delay(3000);
             }
+
+            gameSessionState.TryRemoveBot();
         }
     }
 }

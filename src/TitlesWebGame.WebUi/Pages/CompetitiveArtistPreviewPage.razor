@@ -1,0 +1,27 @@
+﻿@page "/CompetitiveArtistPreviewPage"
+
+@if (_isVoting)
+{
+    <div class="container">
+        <div class="row justify-content-center "></div>
+        <div class="row justify-content-center">
+            <div class="col-6 artist-option">
+                <div class="text-center font-weight-bold">
+                    Player 1
+                </div>
+                <div class="text-center">
+                    <img src="" alt="image could not be loaded" class="img-thumbnail">
+                </div>
+            </div>
+            <div class="col-6 artist-option">B</div>
+        </div>
+    </div>
+}
+else
+{
+    <div></div>
+}
+
+@code {
+    private bool _isVoting = true;
+}
