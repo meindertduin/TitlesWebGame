@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Api.Extensions;
 using TitlesWebGame.Api.Models;
@@ -106,19 +107,43 @@ namespace TitlesWebGame.Api.Services
                 {
                     await Task.Delay(3000);
                 }
+
+                List<GameRoundAnswer> defaultScores = new()
+                {
+                    new()
+                    {
+                        Answer = votingRoundInfoVm.Choices[0],
+                    },
+                    new()
+                    {
+                        Answer = votingRoundInfoVm.Choices[1],
+                    },
+                };
                 
                 // play new voting round
                 await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,
-                    roundInfo.RewardPoints));
-
-                // wait for extra time, for players with slower latency
-                await Task.Delay(LatencyBufferTimeMs);
+                    roundInfo.RewardPoints, defaultScores));
                 
                 var scores = gameSessionState.GetRoundScores();
                 gameSessionState.AddScores(scores);
 
                 // notify players of winner
+                var highestScore = scores.OrderByDescending(x => x.Item2).ToArray()[0];
 
+                var winner = gameSessionState
+                    .GetPlayers()
+                    .FirstOrDefault(x => x.ConnectionId == highestScore.Item1);
+
+                var reviewInfoVm = new CompetitiveArtistReviewRoundInfoViewModel()
+                {
+                    RoundTimeMs = roundInfo.VotingRoundTimeMs,
+                    RoundStatement = roundInfo.RoundStatement,
+                    GameRoundsType = GameRoundsType.CompetitiveArtistReviewRound,
+                    Winner = winner,
+                };
+
+                await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, reviewInfoVm);
+                await Task.Delay(3000);
             }
         }
     }

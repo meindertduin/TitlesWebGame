@@ -1,16 +1,37 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.WebUi.Services
 @using Newtonsoft.Json
+@using TitlesWebGame.Domain.Entities
 @using TitlesWebGame.Domain.ViewModels
+@using TitlesWebGame.WebUi.Models
 @inject GameSocketConnectionManager GameSocketConnectionManager
+@implements IDisposable;
 
 <div>
-    
+    @if (_isVoting && _isReviewing == false)
+    {
+        <div>
+            Its voting round
+        </div>
+    }
+    else if (_isVoting == false && _isReviewing)
+    {
+        <div>It's reviewing round</div>
+    }
+    else
+    {
+        <div>Loading your beautifull creations...</div>
+    }
 </div>
 
 @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
+
+    private int roundTimer = 0;
+
+    private bool _isVoting = true;
+    private bool _isReviewing;
 
     private List<GameRoundAnswer> _answers;
     
@@ -20,9 +41,33 @@
         var responseJson = await responseMessage.Content.ReadAsStringAsync();
         _answers = JsonConvert.DeserializeObject<List<GameRoundAnswer>>(responseJson);
 
-        Console.WriteLine(_answers[0].ConnectionId);
+        GameViewModel.PropertyChanged += OnPropertyChangedHandler;
+
+        Console.WriteLine(_answers[0]);
         
         await base.OnInitializedAsync();
+    }
+    
+    public void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)
+    {
+        if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel votingRoundInfoViewModel)
+        {
+            _isReviewing = false;
+            _isVoting = true;
+            StateHasChanged();
+        }
+        if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel reviewRoundInfoViewModel)
+        {
+            _isReviewing = true;
+            _isVoting = false;
+            StateHasChanged();
+            Console.WriteLine(reviewRoundInfoViewModel.Winner.ConnectionId);
+        }
+    }
+
+    public void Dispose()
+    {
+        GameViewModel.PropertyChanged -= OnPropertyChangedHandler;
     }
 
 }

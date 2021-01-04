@@ -24,7 +24,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
             GameRoundInfoViewModel nextRoundInfo = null;
             
             // Todo: Set this into a factory class
-            
+
             if (nextRoundType == GameRoundsType.MultipleChoiceRound)
             {
                 nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
@@ -39,6 +39,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
             else if (nextRoundType == GameRoundsType.CompetitiveArtistVotingRound)
             {
                 nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistVotingRoundInfoViewModel>(
+                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
+            }
+            else if (nextRoundType == GameRoundsType.CompetitiveArtistReviewRound)
+            {
+                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistReviewRoundInfoViewModel>(
                     hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
             

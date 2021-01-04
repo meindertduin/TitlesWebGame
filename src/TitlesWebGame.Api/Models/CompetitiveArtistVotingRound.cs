@@ -12,10 +12,11 @@ namespace TitlesWebGame.Api.Models
         private bool _canCommitAnswer;
         private List<GameRoundAnswer> _answers = new();
 
-        public CompetitiveArtistVotingRound(int roundTimeMs, int rewardPoints)
+        public CompetitiveArtistVotingRound(int roundTimeMs, int rewardPoints, List<GameRoundAnswer> defaultScores)
         {
             _roundTimeMs = roundTimeMs;
             _rewardPoints = rewardPoints;
+            _answers.AddRange(defaultScores);
         }
         
         public bool AddAnswer(GameRoundAnswer answer)
