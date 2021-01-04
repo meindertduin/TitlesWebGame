@@ -2,6 +2,7 @@
 @using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Interfaces
 @using TitlesWebGame.WebUi.Services
+@using TitlesWebGame.Domain.Entities
 @implements IDisposable;
 
 <div class="container">
@@ -38,7 +39,10 @@
         {
             <CanvasPaintingRound @ref="_gameRoundComponent" />
         }
-        
+        else if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel competitiveArtistVotingRoundAnswer)
+        {
+            <CompetitiveArtistVotingRound Choices="@competitiveArtistVotingRoundAnswer.Choices" />
+        }
     }
     else
     {

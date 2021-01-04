@@ -79,7 +79,32 @@ namespace TitlesWebGame.WebUi.Services
             };
 
             await _httpClient.SendAsync(message);
-            Console.WriteLine("sending...");
+        }
+
+        public async Task<HttpResponseMessage> GetAnswerWithData(string roomKey, string[] connections)
+        {
+            // returns a ready answer with data from the roomkey
+            var requestUriString = $@"https://localhost:5001/api/titlesGame/dataAnswer/{roomKey}";
+
+            for (int i = 0; i < connections.Length; i++)
+            {
+                if (i == 0)
+                {
+                    requestUriString += $"?connections={connections[i]}";
+                }
+                else
+                {
+                    requestUriString += $"&connections={connections[i]}";
+                }
+            }
+            
+            var message = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUriString),
+            };
+
+            return await _httpClient.SendAsync(message);
         }
         
     }

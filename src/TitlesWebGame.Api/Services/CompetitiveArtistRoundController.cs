@@ -12,6 +12,7 @@ namespace TitlesWebGame.Api.Services
     public class CompetitiveArtistRoundController : IGameRoundController
     {
         private readonly IGameSessionClientMessageService _clientMessageService;
+        private const int LatencyBufferTimeMs = 1500;
 
         public CompetitiveArtistRoundController(IGameSessionClientMessageService clientMessageService)
         {
@@ -99,11 +100,18 @@ namespace TitlesWebGame.Api.Services
                     Choices = new [] {matchUps[i].PlayerOne, matchUps[i].PlayerTwo}
                 };
 
-                await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
+                await Task.Delay(5000);
 
+                
+                await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
+                
                 // play new voting round
                 await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,
                     roundInfo.RewardPoints));
+
+                // wait for extra time, for players with slower latency
+                await Task.Delay(LatencyBufferTimeMs);
+                
                 var scores = gameSessionState.GetRoundScores();
                 gameSessionState.AddScores(scores);
 

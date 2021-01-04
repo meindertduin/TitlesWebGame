@@ -15,6 +15,7 @@ namespace TitlesWebGame.Api.Controllers
             _gameSessionManager = gameSessionManager;
         }
         
+
         [HttpPost("dataAnswer/{roomKey}")]
         public IActionResult UploadAnswerWithData([FromRoute] string roomKey,[FromBody] GameRoundAnswer answer)
         {
@@ -25,8 +26,8 @@ namespace TitlesWebGame.Api.Controllers
         [HttpGet("dataAnswer/{roomKey}")]
         public IActionResult GetGameRoundAnswers([FromRoute] string roomKey, [FromQuery] string[] connections)
         {
-            _gameSessionManager.GetGameRoundAnswers(roomKey, connections);
-            return Ok();
+            var answers = _gameSessionManager.GetGameRoundAnswers(roomKey, connections);
+            return Ok(answers);
         }
 
     }

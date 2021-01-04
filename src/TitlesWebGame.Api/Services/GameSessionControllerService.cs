@@ -73,7 +73,7 @@ namespace TitlesWebGame.Api.Services
                     RoundTimeMs = 3000,
                     TitleCategory = TitleCategory.Artist,
                     PaintingRoundTimeMs = 3000,
-                    VotingRoundTimeMs = 2000,
+                    VotingRoundTimeMs = 5000,
                 }
             };
             return loadedRounds;

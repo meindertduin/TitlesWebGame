@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.Enums;
 using TitlesWebGame.Domain.ViewModels;
 
@@ -22,6 +23,8 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
 
             GameRoundInfoViewModel nextRoundInfo = null;
             
+            // Todo: Set this into a factory class
+            
             if (nextRoundType == GameRoundsType.MultipleChoiceRound)
             {
                 nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
@@ -32,6 +35,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
                 nextRoundInfo =
                     JsonConvert.DeserializeObject<CanvasPaintingRoundInfoViewModel>(
                         hubMessageModel.AppendedObject.ToString() ?? String.Empty);
+            }
+            else if (nextRoundType == GameRoundsType.CompetitiveArtistVotingRound)
+            {
+                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistVotingRoundInfoViewModel>(
+                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
             
             if (nextRoundInfo != null)

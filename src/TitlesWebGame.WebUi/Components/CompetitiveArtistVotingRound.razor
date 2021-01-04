@@ -1,0 +1,30 @@
+﻿@using TitlesWebGame.WebUi.ViewModels
+@using TitlesWebGame.WebUi.Services
+@using Newtonsoft.Json
+@using TitlesWebGame.Domain.ViewModels
+@inject GameSocketConnectionManager GameSocketConnectionManager
+
+<div>
+    
+</div>
+
+@code {
+    [CascadingParameter(Name = "GameViewModel")]
+    protected GameViewModel GameViewModel { get; set; }
+    
+    [Parameter]
+    public string[] Choices { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(3000);
+        var responseMessage = await GameSocketConnectionManager.GetAnswerWithData(GameViewModel.RoomKey, Choices);
+        var responseJson = await responseMessage.Content.ReadAsStringAsync();
+        var answers = JsonConvert.DeserializeObject<List<GameRoundAnswer>>(responseJson);
+
+        Console.WriteLine(answers[0].Data);
+        
+        await base.OnInitializedAsync();
+    }
+
+}
