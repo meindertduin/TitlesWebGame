@@ -129,7 +129,7 @@ namespace TitlesWebGame.Api.Services
 
                 // notify players of winner
                 var highestScore = scores.OrderByDescending(x => x.Item2).ToArray()[0];
-
+                
                 var winner = gameSessionState
                     .GetPlayers()
                     .FirstOrDefault(x => x.ConnectionId == highestScore.Item1);

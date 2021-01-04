@@ -4,6 +4,7 @@
 @using TitlesWebGame.Domain.Entities
 @using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Models
+@using System.Runtime.InteropServices
 @inject GameSocketConnectionManager GameSocketConnectionManager
 @implements IDisposable;
 
@@ -12,32 +13,38 @@
     {
         var votingRoundInfo = GameViewModel.NextRoundInfo as CompetitiveArtistVotingRoundInfoViewModel;
         <div>
-            <div class="row justify-content-center "></div>
             <div class="row justify-content-center">
                 @if (votingRoundInfo != null)
                 {
-                    foreach (var choice in votingRoundInfo.Choices)
+                    if (_hasVoted && votingRoundInfo.Choices.Any(id => id != GameViewModel.Player.ConnectionId))
                     {
-                        var displayName = GameViewModel.SessionPlayers.FirstOrDefault(x => x.ConnectionId == choice)?.DisplayName;
-                        var data = _answers.FirstOrDefault(x => x.ConnectionId == choice)?.Data;
-
-                        var dataUrl = String.Empty;
-                        if (data != null)
+                        foreach (var choice in votingRoundInfo.Choices)
                         {
-                            dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(data);
+                            var displayName = GameViewModel.SessionPlayers.FirstOrDefault(x => x.ConnectionId == choice)?.DisplayName;
+                            var data = _answers.FirstOrDefault(x => x.ConnectionId == choice)?.Data;
+
+                            var dataUrl = String.Empty;
+                            if (data != null)
+                            {
+                                dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(data);
+                            }
+
+                            <div class="col-6 artist-option">
+                                <div class="text-center font-weight-bold">
+                                    @displayName
+                                </div>
+                                <div class="text-center">
+                                    <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                                </div>
+                                <div class="row justify-content-center">
+                                    <button @onclick="() => HandlePlayerChoice(choice)" class="btn btn-success text-center mt-2" style="width: 80%">Vote</button>
+                                </div>
+                            </div>
                         }
-                        
-                        <div class="col-6 artist-option">
-                            <div class="text-center font-weight-bold">
-                                @displayName
-                            </div>
-                            <div class="text-center">
-                                <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
-                            </div>
-                            <div class="row justify-content-center">
-                                <button @onclick="() => HandlePlayerChoice(choice)" class="btn btn-success text-center mt-2" style="width: 80%">Vote</button>
-                            </div>
-                        </div>
+                    }
+                    else
+                    {
+                        <div>Waiting for the rest of players...</div>
                     }
                 }
             </div>
@@ -51,12 +58,14 @@
             var winnerPaintingData = _answers.FirstOrDefault(x => x.ConnectionId == reviewRoundInfo.Winner.ConnectionId)?.Data;
             var dataUrl = String.Empty;
 
-            if (winnerPaintingData)
+            if (winnerPaintingData != null)
             {
                 dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(winnerPaintingData);
             }
             <div class="container">
-                <div class="round-title">@(winnerDisplayName == "You"? "you have": winnerDisplayName + " has") won the most votes!</div>
+                <div class="round-title">
+                    @(winnerDisplayName == "You" ? "you have" : winnerDisplayName + " has") won the match!
+                </div>
                 <div class="row justify-content-center">
                     <div class="col-6 artist-option">
                         <div class="text-center font-weight-bold">
@@ -79,7 +88,7 @@
     private int roundTimer = 0;
 
     private bool _isVoting = false;
-    private bool _isReviewing;
+    private bool _hasVoted = false;
 
     private List<GameRoundAnswer> _answers;
     
@@ -105,6 +114,9 @@
             Answer = connectionId,
             ConnectionId = GameViewModel.Player.ConnectionId,
         });
+
+        _hasVoted = true;
+        StateHasChanged();
     }
     
     public void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)
@@ -117,6 +129,7 @@
         if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel)
         {
             _isVoting = false;
+            _hasVoted = false;
             StateHasChanged();
         }
     }
