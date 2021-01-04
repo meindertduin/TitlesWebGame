@@ -11,18 +11,16 @@
 @code {
     [CascadingParameter(Name = "GameViewModel")]
     protected GameViewModel GameViewModel { get; set; }
-    
-    [Parameter]
-    public string[] Choices { get; set; }
+
+    private List<GameRoundAnswer> _answers;
     
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(3000);
-        var responseMessage = await GameSocketConnectionManager.GetAnswerWithData(GameViewModel.RoomKey, Choices);
+        var responseMessage = await GameSocketConnectionManager.GetAnswerWithData(GameViewModel.RoomKey);
         var responseJson = await responseMessage.Content.ReadAsStringAsync();
-        var answers = JsonConvert.DeserializeObject<List<GameRoundAnswer>>(responseJson);
+        _answers = JsonConvert.DeserializeObject<List<GameRoundAnswer>>(responseJson);
 
-        Console.WriteLine(answers[0].Data);
+        Console.WriteLine(_answers[0].ConnectionId);
         
         await base.OnInitializedAsync();
     }

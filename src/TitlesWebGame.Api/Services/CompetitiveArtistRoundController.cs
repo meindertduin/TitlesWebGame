@@ -36,7 +36,7 @@ namespace TitlesWebGame.Api.Services
 
             // play the painting round first
             await gameSessionState.PlayNewRound(new CanvasPaintingRound(roundInfo.PaintingRoundTimeMs));
-
+            
             await PlayVotingRounds(gameSessionState, matchUps, roundInfo, roundStatement);
 
             // voting round review
@@ -100,10 +100,12 @@ namespace TitlesWebGame.Api.Services
                     Choices = new [] {matchUps[i].PlayerOne, matchUps[i].PlayerTwo}
                 };
 
-                await Task.Delay(5000);
-
-                
                 await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, votingRoundInfoVm);
+
+                if (i == 0)
+                {
+                    await Task.Delay(3000);
+                }
                 
                 // play new voting round
                 await gameSessionState.PlayNewRound(new CompetitiveArtistVotingRound(roundInfo.VotingRoundTimeMs,

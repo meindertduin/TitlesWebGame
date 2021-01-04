@@ -78,30 +78,17 @@ namespace TitlesWebGame.WebUi.Services
                 Content = new StringContent(JsonConvert.SerializeObject(gameRoundAnswer, Formatting.Indented), Encoding.UTF8, "application/json"),
             };
 
+            Console.WriteLine("sending answer with data");
             await _httpClient.SendAsync(message);
         }
 
-        public async Task<HttpResponseMessage> GetAnswerWithData(string roomKey, string[] connections)
+        public async Task<HttpResponseMessage> GetAnswerWithData(string roomKey)
         {
             // returns a ready answer with data from the roomkey
-            var requestUriString = $@"https://localhost:5001/api/titlesGame/dataAnswer/{roomKey}";
-
-            for (int i = 0; i < connections.Length; i++)
-            {
-                if (i == 0)
-                {
-                    requestUriString += $"?connections={connections[i]}";
-                }
-                else
-                {
-                    requestUriString += $"&connections={connections[i]}";
-                }
-            }
-            
             var message = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(requestUriString),
+                RequestUri = new Uri( $@"https://localhost:5001/api/titlesGame/dataAnswer/{roomKey}"),
             };
 
             return await _httpClient.SendAsync(message);

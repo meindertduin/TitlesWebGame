@@ -12,7 +12,7 @@
             <div class="round-title">@GameViewModel.NextRoundInfo.RoundStatement</div>
         </div>
         <div>
-            <GameRoundTimer @ref="_gameRoundTimer" IntervalMs="100" TimeUnits="@(GameViewModel.NextRoundInfo.RoundTimeMs / 100)"/>
+            <GameRoundTimer @ref="_gameRoundTimer" IntervalMs="100" TimeUnits="@((GameViewModel.NextRoundInfo.RoundTimeMs - 1000) / 100)"/>
         </div>
         @if (GameViewModel.NextRoundInfo is MultipleChoiceRoundInfoViewModel multipleChoiceRoundInfoViewModel)
         {
@@ -41,7 +41,7 @@
         }
         else if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel competitiveArtistVotingRoundAnswer)
         {
-            <CompetitiveArtistVotingRound Choices="@competitiveArtistVotingRoundAnswer.Choices" />
+            <CompetitiveArtistVotingRound />
         }
     }
     else
