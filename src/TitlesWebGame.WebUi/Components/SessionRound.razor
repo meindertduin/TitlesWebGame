@@ -1,9 +1,7 @@
 ﻿@using TitlesWebGame.WebUi.ViewModels
 @using TitlesWebGame.Domain.ViewModels
-@using TitlesWebGame.WebUi.Interfaces
 @using TitlesWebGame.WebUi.Services
 @using TitlesWebGame.Domain.Entities
-@implements IDisposable;
 
 <div class="container">
     @if (_chosenThisRound == false)
@@ -35,9 +33,10 @@
                 }
             </div>
         }
-        else if (GameViewModel.NextRoundInfo is CanvasPaintingRoundInfoViewModel canvasPaintingRoundInfo)
+        else if (GameViewModel.NextRoundInfo is CanvasPaintingRoundInfoViewModel || 
+                 GameViewModel.NextRoundInfo is CompetitiveArtistUploadRoundInfoViewModel)
         {
-            <CanvasPaintingRound @ref="_gameRoundComponent" />
+            <CanvasPaintingRound />
         }
         else if (GameViewModel.NextRoundInfo is CompetitiveArtistVotingRoundInfoViewModel ||
                  GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel)
@@ -62,24 +61,9 @@
     protected GameSocketConnectionManager GameSocketConnectionManager { get; set; }
 
     GameRoundTimer _gameRoundTimer;
-    IGameRoundComponent _gameRoundComponent;
 
     private bool _chosenThisRound = false;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _gameRoundTimer.TimerDone += HandleTimerDone;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private void HandleTimerDone()
-    {
-        Task.Run(async () => await _gameRoundComponent.HandleTimerDone());
-    }
+    
     
     private async Task HandlePlayerChoice(MouseEventArgs e, string answer)
     {
@@ -91,10 +75,5 @@
         
         _chosenThisRound = true;
     }
-
-    public void Dispose()
-    {
-        _gameRoundTimer.TimerDone -= HandleTimerDone;
-    }
-
+    
 }

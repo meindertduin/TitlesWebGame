@@ -46,6 +46,11 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
                 nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistReviewRoundInfoViewModel>(
                     hubMessageModel.AppendedObject.ToString() ?? String.Empty);
             }
+            else if (nextRoundType == GameRoundsType.CompetitiveArtistUploadRound)
+            {
+                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistUploadRoundInfoViewModel>(
+                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
+            }
             
             if (nextRoundInfo != null)
             {

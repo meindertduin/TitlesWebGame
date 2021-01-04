@@ -19,8 +19,6 @@
 
     private bool _timerFinished = false;
     
-    public event Action TimerDone;
-
     protected override void OnInitialized()
     {
         _progress = TimeUnits;
@@ -42,7 +40,6 @@
         }
 
         _timerFinished = true;
-        TimerDone?.Invoke();
     }
 
 }

@@ -7,5 +7,6 @@
         CompetitiveArtistVotingRound = 2,
         CompetitiveArtistRound = 3,
         CompetitiveArtistReviewRound = 4,
+        CompetitiveArtistUploadRound = 5,
     }
 }
