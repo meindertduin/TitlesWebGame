@@ -3,7 +3,26 @@
 @if (_isVoting)
 {
     <div class="container">
-        <div class="row justify-content-center "></div>
+        <div class="round-title"></div>
+        <div class="row justify-content-center">
+            <div class="col-6 artist-option">
+                <div class="text-center font-weight-bold">
+                    Player 1
+                </div>
+                <div class="text-center">
+                    <img src="" alt="image could not be loaded" class="img-thumbnail">
+                </div>
+                <div class="row justify-content-center">
+                    <button class="btn btn-success text-center mt-2" style="width: 80%">Vote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="round-title">Player 1 has won the most votes!</div>
         <div class="row justify-content-center">
             <div class="col-6 artist-option">
                 <div class="text-center font-weight-bold">
@@ -13,15 +32,10 @@
                     <img src="" alt="image could not be loaded" class="img-thumbnail">
                 </div>
             </div>
-            <div class="col-6 artist-option">B</div>
         </div>
     </div>
 }
-else
-{
-    <div></div>
-}
 
 @code {
-    private bool _isVoting = true;
+    private bool _isVoting = false;
 }

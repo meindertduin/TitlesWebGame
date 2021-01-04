@@ -34,6 +34,9 @@
                             <div class="text-center">
                                 <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
                             </div>
+                            <div class="row justify-content-center">
+                                <button @onclick="() => HandlePlayerChoice(choice)" class="btn btn-success text-center mt-2" style="width: 80%">Vote</button>
+                            </div>
                         </div>
                     }
                 }
@@ -42,9 +45,30 @@
     }
     else
     {
-        <div>
-            It's reviewing round
-        </div>
+        if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel reviewRoundInfo)
+        {
+            var winnerDisplayName = reviewRoundInfo.Winner.ConnectionId == GameViewModel.Player.ConnectionId ? "You" : reviewRoundInfo.Winner.DisplayName;
+            var winnerPaintingData = _answers.FirstOrDefault(x => x.ConnectionId == reviewRoundInfo.Winner.ConnectionId)?.Data;
+            var dataUrl = String.Empty;
+
+            if (winnerPaintingData)
+            {
+                dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(winnerPaintingData);
+            }
+            <div class="container">
+                <div class="round-title">@(winnerDisplayName == "You"? "you have": winnerDisplayName + " has") won the most votes!</div>
+                <div class="row justify-content-center">
+                    <div class="col-6 artist-option">
+                        <div class="text-center font-weight-bold">
+                            @winnerDisplayName
+                        </div>
+                        <div class="text-center">
+                            <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
 
@@ -72,6 +96,15 @@
         Console.WriteLine(_answers[0]);
         
         await base.OnInitializedAsync();
+    }
+
+    public async Task HandlePlayerChoice(string connectionId)
+    {
+        await GameSocketConnectionManager.SendAnswer(GameViewModel.RoomKey, new GameRoundAnswer()
+        {
+            Answer = connectionId,
+            ConnectionId = GameViewModel.Player.ConnectionId,
+        });
     }
     
     public void OnPropertyChangedHandler(object sender, ViewModelPropertyChangedEventArgs e)

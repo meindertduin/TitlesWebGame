@@ -283,7 +283,11 @@ a, .btn-link {
 }
 
 .artist-option{
-    border: 1px solid black;
     margin: 10px;
-    padding-bottom: 10px;
+    border-radius: 10px;
+    background-color: var(--app-yellow);
+    padding: 10px 10px 20px 10px;
+    -webkit-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
+    box-shadow: 4px 4px 38px -8px rgba(0,0,0,0.75);
 }
