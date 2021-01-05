@@ -150,6 +150,8 @@ namespace TitlesWebGame.Api.Services
                     RoundStatement = roundInfo.RoundStatement,
                     GameRoundsType = GameRoundsType.CompetitiveArtistReviewRound,
                     Winner = winner,
+                    IsDraw = scores[0].Item2 == scores[1].Item2,
+                    Choices = scores.Select(score => score.Item1).ToArray(),
                 };
 
                 await _clientMessageService.UpdatePlayersOfNewRoundInfo(gameSessionState.RoomKey, reviewInfoVm);

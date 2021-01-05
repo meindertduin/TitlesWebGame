@@ -57,7 +57,33 @@
     {
         if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel reviewRoundInfo)
         {
-            if (reviewRoundInfo.Winner != null)
+            if (reviewRoundInfo.IsDraw)
+            {
+                <div class="container">
+                    <div class="round-title">
+                        It's a draw!
+                    </div>
+                    <div class="row justify-content-center">
+                        @foreach (var choice in reviewRoundInfo.Choices)
+                        {
+                            var paintingData = _answers.FirstOrDefault(a => a.ConnectionId == choice)?.Data;
+                            
+                            var dataUrl = String.Empty;
+
+                            if (paintingData != null)
+                            {
+                                dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(paintingData);
+                            }
+                            <div class="col-6 artist-option">
+                                <div class="text-center">
+                                    <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (reviewRoundInfo.Winner != null)
             {
                 var winnerDisplayName = reviewRoundInfo.Winner.ConnectionId == GameViewModel.Player.ConnectionId ? "You" : reviewRoundInfo.Winner.DisplayName;
                 var winnerPaintingData = _answers.FirstOrDefault(x => x.ConnectionId == reviewRoundInfo.Winner.ConnectionId)?.Data;
