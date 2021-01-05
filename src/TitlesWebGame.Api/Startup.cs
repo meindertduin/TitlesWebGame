@@ -35,6 +35,8 @@ namespace TitlesWebGame.Api
             // Game session round controllers
             services.AddTransient<MultipleChoiceRoundController>();
             services.AddTransient<CompetitiveArtistRoundController>();
+
+            services.AddHostedService<SessionCleanupService>();
             
             services.AddSignalR();
 

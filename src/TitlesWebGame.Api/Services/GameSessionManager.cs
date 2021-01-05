@@ -31,6 +31,17 @@ namespace TitlesWebGame.Api.Services
             _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
         }
         
+        public static void CleanUpEmptySessions()
+        {
+            foreach (var gameSessionState in _gameSessions)
+            {
+                if (gameSessionState.Value.GetPlayersCount() <= 0)
+                {
+                    _gameSessions.Remove(gameSessionState.Key, out var value);
+                }
+            }
+        }
+        
         public GameSessionInitViewModel CreateSession(GameSessionPlayer ownerSessionPlayer)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

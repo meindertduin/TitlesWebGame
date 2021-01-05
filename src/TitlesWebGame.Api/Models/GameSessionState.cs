@@ -124,6 +124,11 @@ namespace TitlesWebGame.Api.Models
             return _players;
         }
 
+        public int GetPlayersCount()
+        {
+            return _players.Count;
+        }
+        
         public List<GameRoundAnswer> GetRoundAnswers()
         {
             return _currentGameRound.GetRoundAnswers();
