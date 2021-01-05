@@ -20,5 +20,6 @@
         SessionEnded,
         TitlesRoundEnded,
         RejoiningLobby,
+        NewOwnerAssigned,
     }
 }

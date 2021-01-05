@@ -79,6 +79,12 @@ namespace TitlesWebGame.Api.Services
             return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
                 _titlesGameHubMessageFactory.CreateEndTitlesRoundMessage(titlesGameRoundResults));
         }
+
+        public Task UpdatePlayersOfNewGroupOwner(string roomKey, string newOwnerConId)
+        {
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerUpdateMessage",
+                _titlesGameHubMessageFactory.CreateNewAssignedOwnerMessage(newOwnerConId));
+        }
     }
 
     public interface IGameSessionClientMessageService
@@ -89,5 +95,6 @@ namespace TitlesWebGame.Api.Services
         Task UpdatePlayersOfRoundReview(string roomKey, List<GameSessionPlayer> gameSessionPlayers);
         Task UpdatePlayersOfTitlesRoundEnded(string roomKey, List<GameSessionPlayer> players);
         Task UpdatePlayersOfNewRoundInfo(string roomKey, GameRoundInfoViewModel gameRoundInfo);
+        Task UpdatePlayersOfNewGroupOwner(string roomKey, string newOwnerConId);
     }
 }

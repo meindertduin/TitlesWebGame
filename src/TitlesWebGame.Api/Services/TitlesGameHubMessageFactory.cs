@@ -175,5 +175,16 @@ namespace TitlesWebGame.Api.Services
                 MessageType = GameHubMessageType.FailedStartingSession,
             };
         }
+
+        public TitlesGameHubMessageModel CreateNewAssignedOwnerMessage(string newOwnerConId)
+        {
+            return new TitlesGameHubMessageModel()
+            {
+                Message = "New owner has been assigned",
+                Error = false,
+                MessageType = GameHubMessageType.NewOwnerAssigned,
+                AppendedObject = newOwnerConId,
+            };
+        }
     }
 }

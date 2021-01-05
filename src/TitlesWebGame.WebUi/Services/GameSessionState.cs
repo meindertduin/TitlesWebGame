@@ -44,6 +44,12 @@ namespace TitlesWebGame.WebUi.Services
             NotifyStateChanged();
         }
 
+        public void SetNewOwner(string newOwnerId)
+        {
+            OwnerConnectionId = newOwnerId;
+            NotifyStateChanged();
+        }
+        
         public void RemovePlayer(string connectionId)
         {
             var leavingPlayer = Players.FirstOrDefault(x => x.ConnectionId == connectionId);

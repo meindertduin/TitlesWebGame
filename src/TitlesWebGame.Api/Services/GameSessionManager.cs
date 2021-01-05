@@ -16,6 +16,8 @@ namespace TitlesWebGame.Api.Services
         private readonly IHubContext<TitlesGameHub> _titlesGameHub;
         private readonly IGameSessionControllerService _gameSessionControllerService;
         private readonly ITitlesGameHubMessageFactory _titlesGameHubMessageFactory;
+        private readonly IGameSessionClientMessageService _gameSessionClientMessageService;
+
         private static ConcurrentDictionary<string, GameSessionState> _gameSessions = new();
 
         private const int RoomKeyLenght = 6;
@@ -24,11 +26,12 @@ namespace TitlesWebGame.Api.Services
         private Random _random = new();
 
         public GameSessionManager(IHubContext<TitlesGameHub> titlesGameHub, IGameSessionControllerService gameSessionControllerService,
-            ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
+            ITitlesGameHubMessageFactory titlesGameHubMessageFactory, IGameSessionClientMessageService gameSessionClientMessageService)
         {
             _titlesGameHub = titlesGameHub;
             _gameSessionControllerService = gameSessionControllerService;
             _titlesGameHubMessageFactory = titlesGameHubMessageFactory;
+            _gameSessionClientMessageService = gameSessionClientMessageService;
         }
         
         public static void CleanUpEmptySessions()
@@ -125,6 +128,23 @@ namespace TitlesWebGame.Api.Services
             }
             
             return null;
+        }
+
+        public bool LeaveSession(string roomKey, string connectionId)
+        {
+            var gameSession = _gameSessions.FirstOrDefault(g => g.Key == roomKey).Value;
+            if (gameSession != null)
+            { 
+                var removeResult = gameSession.RemovePlayer(connectionId, out string newOwnerConId);
+                if (String.IsNullOrEmpty(newOwnerConId) == false)
+                {
+                    _gameSessionClientMessageService.UpdatePlayersOfNewGroupOwner(roomKey, connectionId);
+                }
+
+                return removeResult;
+            }
+
+            return false;
         }
 
         public bool AddAnswer(string roomKey, GameRoundAnswer gameRoundAnswer)

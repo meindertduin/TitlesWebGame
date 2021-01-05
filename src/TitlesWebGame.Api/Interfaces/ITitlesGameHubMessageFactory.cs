@@ -21,5 +21,6 @@ namespace TitlesWebGame.Api.Services
         TitlesGameHubMessageModel CreateEndTitlesRoundMessage(TitlesRoundResults titlesRoundResults);
         TitlesGameHubMessageModel CreateRejoiningLobbyMessage();
         TitlesGameHubMessageModel CreateFailedToStartSessionMessage(string message);
+        TitlesGameHubMessageModel CreateNewAssignedOwnerMessage(string newOwnerConId);
     }
 }

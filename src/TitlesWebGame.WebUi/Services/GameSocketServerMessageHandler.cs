@@ -45,6 +45,7 @@ namespace TitlesWebGame.WebUi.Services
                 GameHubMessageType.SessionEnded => new SessionEndedHandler(_gameSessionState),
                 GameHubMessageType.TitlesRoundEnded => new TitlesRoundEndedHandler(_gameSessionState),
                 GameHubMessageType.RejoiningLobby => new RejoiningLobbyMessageHandler(_gameSessionState),
+                GameHubMessageType.NewOwnerAssigned => new NewOwnerMessageHandler(_gameSessionState),
                 _ => new EmptyMessageHandler(),
             };
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TitlesWebGame.Domain.Entities;
@@ -95,6 +96,34 @@ namespace TitlesWebGame.Api.Models
                 return true;
             }
 
+            return false;
+        }
+
+        public bool RemovePlayer(string connectionId, out string newOwnerConId)
+        {
+            var player = _players.FirstOrDefault(g => g.ConnectionId == connectionId);
+            if (player != null)
+            {
+                // assign someone else owner if player is owner if there exists another player
+                if (OwnerConnectionId == player.ConnectionId)
+                {
+                    var newOwner = _players
+                        .FirstOrDefault(x => x.ConnectionId != connectionId && x.ConnectionId != "bot");
+                    if (newOwner != null)
+                    {
+                        newOwnerConId = newOwner.ConnectionId;
+                        OwnerConnectionId = newOwner.ConnectionId;
+                        _players.Remove(player);
+                        return true;
+                    }
+                }
+                
+                _players.Remove(player);
+                newOwnerConId = String.Empty;
+                return true;
+            }
+
+            newOwnerConId = String.Empty;
             return false;
         }
 

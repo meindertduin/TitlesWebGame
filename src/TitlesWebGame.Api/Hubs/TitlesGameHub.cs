@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Api.Services;
@@ -14,7 +16,8 @@ namespace TitlesWebGame.Api.Hubs
         
         private const int MaxRoundsPerTitleAmount = 20;
         private const int MaxTitleRoundsPerSessionAmount = 20;
-        
+
+        private static ConcurrentDictionary<string, string> _connectedPlayers = new();
         public TitlesGameHub(IGameSessionManager gameSessionManager, ITitlesGameHubMessageFactory titlesGameHubMessageFactory)
         {
             _gameSessionManager = gameSessionManager;
@@ -31,6 +34,8 @@ namespace TitlesWebGame.Api.Hubs
             };
             
             var gameSessionInitState= _gameSessionManager.CreateSession(ownerGameSessionPlayerModel);
+
+            _connectedPlayers.TryAdd(Context.ConnectionId, gameSessionInitState.RoomKey);
 
             await Clients.Caller.SendAsync("ServerMessageUpdate", 
                 _titlesGameHubMessageFactory.CreateCreationRoomSuccessfulMessage(gameSessionInitState));
@@ -49,6 +54,8 @@ namespace TitlesWebGame.Api.Hubs
             
             if (joinSessionResult != null)
             {
+                _connectedPlayers.TryAdd(Context.ConnectionId, joinSessionResult.RoomKey);
+                
                 await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
                     _titlesGameHubMessageFactory.CreatePlayerJoinedRoomMessage(newPlayerModel));
                 
@@ -92,14 +99,19 @@ namespace TitlesWebGame.Api.Hubs
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomKey);
 
+            var removeResult = _connectedPlayers.TryRemove(Context.ConnectionId, out _);
+            if (removeResult)
+            {
+                _gameSessionManager.LeaveSession(roomKey, Context.ConnectionId);
+            }
+            
             await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
                 _titlesGameHubMessageFactory.CreatePlayerLeftRoomMessage(displayName, Context.ConnectionId));
         }
-
         public async Task AnswerChoice(string roomKey, GameRoundAnswer gameRoundAnswer)
         {
             var answerProcessed = _gameSessionManager.AddAnswer(roomKey, gameRoundAnswer);
-            TitlesGameHubMessageModel callerAnswer = null;
+            TitlesGameHubMessageModel callerAnswer;
             
             if (answerProcessed)
             {
@@ -111,6 +123,19 @@ namespace TitlesWebGame.Api.Hubs
             }
 
             await Clients.Caller.SendAsync("ServerMessageUpdate", callerAnswer);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            var removeResult = _connectedPlayers.TryRemove(Context.ConnectionId, out var roomKey);
+            if (removeResult)
+            {
+                _gameSessionManager.LeaveSession(roomKey, Context.ConnectionId);
+                await Clients.Group(roomKey).SendAsync("ServerMessageUpdate", 
+                    _titlesGameHubMessageFactory.CreatePlayerLeftRoomMessage("player", Context.ConnectionId));
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
 
         private TitlesGameHubMessageModel GetServerErrorMessageModel()
