@@ -16,41 +16,13 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         }
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-
             var nextRoundType =
                 JsonConvert.DeserializeObject<GameRoundInfoViewModel>(hubMessageModel.AppendedObject.ToString() ??
                                                                       String.Empty).GameRoundsType;
 
-            GameRoundInfoViewModel nextRoundInfo = null;
-            
-            // Todo: Set this into a factory class
-
-            if (nextRoundType == GameRoundsType.MultipleChoiceRound)
-            {
-                nextRoundInfo = JsonConvert.DeserializeObject<MultipleChoiceRoundInfoViewModel>(
-                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
-            }
-            else if(nextRoundType == GameRoundsType.CanvasPaintingRound)
-            {
-                nextRoundInfo =
-                    JsonConvert.DeserializeObject<CanvasPaintingRoundInfoViewModel>(
-                        hubMessageModel.AppendedObject.ToString() ?? String.Empty);
-            }
-            else if (nextRoundType == GameRoundsType.CompetitiveArtistVotingRound)
-            {
-                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistVotingRoundInfoViewModel>(
-                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
-            }
-            else if (nextRoundType == GameRoundsType.CompetitiveArtistReviewRound)
-            {
-                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistReviewRoundInfoViewModel>(
-                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
-            }
-            else if (nextRoundType == GameRoundsType.CompetitiveArtistUploadRound)
-            {
-                nextRoundInfo = JsonConvert.DeserializeObject<CompetitiveArtistUploadRoundInfoViewModel>(
-                    hubMessageModel.AppendedObject.ToString() ?? String.Empty);
-            }
+            var deserializer = new RoundInfoDeserializer();
+            GameRoundInfoViewModel nextRoundInfo = deserializer
+                .DeserializeViewModel(hubMessageModel.AppendedObject.ToString() ?? String.Empty, nextRoundType);
             
             if (nextRoundInfo != null)
             {
