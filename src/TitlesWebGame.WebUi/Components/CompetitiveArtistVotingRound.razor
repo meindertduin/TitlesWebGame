@@ -5,6 +5,7 @@
 @using TitlesWebGame.Domain.ViewModels
 @using TitlesWebGame.WebUi.Models
 @using System.Runtime.InteropServices
+@using TitlesWebGame.WebUi.Pages
 @inject GameSocketConnectionManager GameSocketConnectionManager
 @implements IDisposable;
 
@@ -16,10 +17,12 @@
             <div class="row justify-content-center">
                 @if (votingRoundInfo != null)
                 {
-                    if (_hasVoted && votingRoundInfo.Choices.Any(id => id != GameViewModel.Player.ConnectionId))
+                    if (_hasVoted == false && votingRoundInfo.Choices.Any(id => id == GameViewModel.Player.ConnectionId) == false)
                     {
                         foreach (var choice in votingRoundInfo.Choices)
                         {
+                            <div>@GameViewModel.Player.ConnectionId</div>
+                            <div>@choice</div>
                             var displayName = GameViewModel.SessionPlayers.FirstOrDefault(x => x.ConnectionId == choice)?.DisplayName;
                             var data = _answers.FirstOrDefault(x => x.ConnectionId == choice)?.Data;
 

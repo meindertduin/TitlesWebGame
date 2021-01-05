@@ -58,7 +58,7 @@ namespace TitlesWebGame.Api.Models
             return new List<(string, int)>()
             {
                 (winner[0].Key, _rewardPoints),
-                (winner[1].Key, _rewardPoints),
+                (winner[1].Key, 0),
             };
         }
 
