@@ -19,7 +19,6 @@ namespace TitlesWebGame.WebUi.Services
         
         public void Handle(TitlesGameHubMessageModel serverMessage)
         {
-            Console.WriteLine(serverMessage.Message);
             if (serverMessage.Error)
             {
                 _applicationViewModel.ErrorMessage = serverMessage.Message;

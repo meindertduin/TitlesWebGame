@@ -82,7 +82,7 @@ namespace TitlesWebGame.Api.Services
 
         public Task UpdatePlayersOfNewGroupOwner(string roomKey, string newOwnerConId)
         {
-            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerUpdateMessage",
+            return _titlesGameHub.Clients.Group(roomKey).SendAsync("ServerMessageUpdate",
                 _titlesGameHubMessageFactory.CreateNewAssignedOwnerMessage(newOwnerConId));
         }
     }

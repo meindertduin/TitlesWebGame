@@ -138,7 +138,7 @@ namespace TitlesWebGame.Api.Services
                 var removeResult = gameSession.RemovePlayer(connectionId, out string newOwnerConId);
                 if (String.IsNullOrEmpty(newOwnerConId) == false)
                 {
-                    _gameSessionClientMessageService.UpdatePlayersOfNewGroupOwner(roomKey, connectionId);
+                    _gameSessionClientMessageService.UpdatePlayersOfNewGroupOwner(roomKey, newOwnerConId);
                 }
 
                 return removeResult;

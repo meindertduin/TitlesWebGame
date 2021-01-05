@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection.PortableExecutable;
+using Newtonsoft.Json;
 using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
@@ -13,7 +15,7 @@ namespace TitlesWebGame.WebUi.Services.ServerMessageCommands
         }
         public void Execute(TitlesGameHubMessageModel hubMessageModel)
         {
-            var newOwnerConnectionId = hubMessageModel.AppendedObject as string;
+            var newOwnerConnectionId = hubMessageModel.AppendedObject.ToString();
             
             if (String.IsNullOrEmpty(newOwnerConnectionId) == false)
             {

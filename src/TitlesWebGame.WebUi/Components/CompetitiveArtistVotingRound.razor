@@ -57,29 +57,48 @@
     {
         if (GameViewModel.NextRoundInfo is CompetitiveArtistReviewRoundInfoViewModel reviewRoundInfo)
         {
-            var winnerDisplayName = reviewRoundInfo.Winner.ConnectionId == GameViewModel.Player.ConnectionId ? "You" : reviewRoundInfo.Winner.DisplayName;
-            var winnerPaintingData = _answers.FirstOrDefault(x => x.ConnectionId == reviewRoundInfo.Winner.ConnectionId)?.Data;
-            var dataUrl = String.Empty;
-
-            if (winnerPaintingData != null)
+            if (reviewRoundInfo.Winner != null)
             {
-                dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(winnerPaintingData);
-            }
-            <div class="container">
-                <div class="round-title">
-                    @(winnerDisplayName == "You" ? "you have" : winnerDisplayName + " has") won the match!
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-6 artist-option">
-                        <div class="text-center font-weight-bold">
-                            @winnerDisplayName
-                        </div>
-                        <div class="text-center">
-                            <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                var winnerDisplayName = reviewRoundInfo.Winner.ConnectionId == GameViewModel.Player.ConnectionId ? "You" : reviewRoundInfo.Winner.DisplayName;
+                var winnerPaintingData = _answers.FirstOrDefault(x => x.ConnectionId == reviewRoundInfo.Winner.ConnectionId)?.Data;
+                var dataUrl = String.Empty;
+
+                if (winnerPaintingData != null)
+                {
+                    dataUrl = "data:image/jpg;base64," + Convert.ToBase64String(winnerPaintingData);
+                }
+                <div class="container">
+                    <div class="round-title">
+                        @(winnerDisplayName == "You" ? "you have" : winnerDisplayName + " has") won the match!
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-6 artist-option">
+                            <div class="text-center font-weight-bold">
+                                @winnerDisplayName
+                            </div>
+                            <div class="text-center">
+                                <img src="@dataUrl" alt="image could not be loaded" class="img-thumbnail">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="container">
+                    <div class="round-title">
+                        The winner disconnected (real winners don't leave and have strong internet connection)
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-6 artist-option">
+                            Mr. Disconnect
+                            <div class="text-center">
+                                <img src="" alt="image could not be loaded" class="img-thumbnail">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         }
     }
 </div>
