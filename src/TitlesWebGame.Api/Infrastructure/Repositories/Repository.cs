@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using TitlesWebGame.Domain.Interfaces;
 
 namespace TitlesWebGame.Api.Infrastructure.Repositories
 {
-    public abstract class Repository<T> : IRepository<T>
+    public class Repository<T> : IRepository<T>
     {
         private readonly string _tableName;
         private readonly IConfiguration _configuration;
@@ -23,19 +23,19 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
             _configuration = configuration;
         }
 
-        private SqliteConnection SqliteConnection()
+        private SQLiteConnection SqliteConnection()
         {
-            return new SqliteConnection(_configuration["ConnectionString"]);
+            return new (_configuration["ConnectionString"]);
         }
 
-        private IDbConnection CreateConnection()
+        protected IDbConnection CreateConnection()
         {
             var connection = SqliteConnection();
             connection.Open();
             return connection;
         }
 
-        private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
+        protected IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
         
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
@@ -75,7 +75,7 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
             await connection.ExecuteAsync(insertQuery, t);
         }
 
-        private string GenerateInsertQuery()
+        string GenerateInsertQuery()
         {
             var insertQuery = new StringBuilder($"INSERT INTO {_tableName} ");
 
@@ -94,6 +94,20 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
                 .Remove(insertQuery.Length - 1, 1)
                 .Append(")");
             
+            return insertQuery.ToString();
+        }
+
+        protected string GenerateDiscriminatedInsertQuery<U>()
+        {
+            var insertQuery = new StringBuilder($"INSERT INTO {_tableName} ");
+
+            var properties = typeof(U).GetProperties().ToList();
+            properties.ForEach(prop => { insertQuery.Append($"[{prop}],"); });
+
+            insertQuery.Append($"[Discriminator]) VALUES (");
+            properties.ForEach(prop => { insertQuery.Append($"@{prop},"); });
+            insertQuery.Append($"{nameof(U)})");
+
             return insertQuery.ToString();
         }
 

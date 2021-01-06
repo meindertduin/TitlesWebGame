@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using TitlesWebGame.Api.Infrastructure.Repositories;
 using TitlesWebGame.Api.Models;
 using TitlesWebGame.Domain.Entities;
 using TitlesWebGame.Domain.Enums;
@@ -13,14 +14,17 @@ namespace TitlesWebGame.Api.Services
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IGameSessionClientMessageService _clientMessageService;
+        private readonly IGameRoundInfoRepository _gameRoundInfoRepository;
         private const int RoundReviewTimeMs = 3000;
         private const int TitlesRoundReviewTimeMs = 2000;
         private IGameRoundController _currentRoundController;
         
-        public GameSessionControllerService(IServiceProvider serviceProvider, IGameSessionClientMessageService clientMessageService)
+        public GameSessionControllerService(IServiceProvider serviceProvider, IGameSessionClientMessageService clientMessageService, 
+            IGameRoundInfoRepository gameRoundInfoRepository)
         {
             _serviceProvider = serviceProvider;
             _clientMessageService = clientMessageService;
+            _gameRoundInfoRepository = gameRoundInfoRepository;
         }
         
         public async Task PlaySessionGame(GameSessionState gameSessionState, GameSessionStartOptions gameSessionStartOptions)
@@ -48,7 +52,7 @@ namespace TitlesWebGame.Api.Services
                 var titleCategory = TitleCategory.Artist;
                 playedRoundCategories.Add(titleCategory);
 
-                var loadedRounds = GetTitleRoundRounds(gameSessionStartOptions.RoundsPerTitleAmount);
+                var loadedRounds = await GetTitleRoundRounds(gameSessionStartOptions.RoundsPerTitleAmount);
 
                 gameSessionState.SetRoundInfo(loadedRounds);
 
@@ -61,23 +65,11 @@ namespace TitlesWebGame.Api.Services
             }
         }
 
-        private List<GameRoundInfo> GetTitleRoundRounds(int amount)
+        private async Task<List<GameRoundInfo>> GetTitleRoundRounds(int amount)
         {
             // gets title rounds the repository
-            var loadedRounds = new List<GameRoundInfo>()
-            {
-                new CompetitiveArtistRoundInfo()
-                {
-                    RewardPoints = 500,
-                    GameRoundsType = GameRoundsType.CompetitiveArtistRound,
-                    RoundStatement = "Welcome to competitive artist",
-                    RoundTimeMs = 3000,
-                    TitleCategory = TitleCategory.Artist,
-                    PaintingRoundTimeMs = 3000,
-                    VotingRoundTimeMs = 5000,
-                }
-            };
-            return loadedRounds;
+            var gameRound = await _gameRoundInfoRepository.GetAsync(1);
+            return new List<GameRoundInfo>() { gameRound };
         }
 
         private async Task PlayGameRounds(GameSessionState gameSessionState)

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TitlesWebGame.Api.Hubs;
+using TitlesWebGame.Api.Infrastructure.Repositories;
 using TitlesWebGame.Api.Services;
 
 namespace TitlesWebGame.Api
@@ -29,6 +30,8 @@ namespace TitlesWebGame.Api
             services.AddSingleton<IGameSessionManager, GameSessionManager>();
             services.AddTransient<ITitlesGameHubMessageFactory, TitlesGameHubMessageFactory>();
             services.AddTransient<IGameSessionControllerService, GameSessionControllerService>();
+
+            services.AddSingleton<IGameRoundInfoRepository, GameRoundInfoRepository>();
 
             services.AddTransient<IGameSessionClientMessageService, GameSessionClientMessageService>();
             
