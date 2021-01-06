@@ -63,6 +63,7 @@ namespace TitlesWebGame.Api.Services
 
         private List<GameRoundInfo> GetTitleRoundRounds(int amount)
         {
+            // gets title rounds the repository
             var loadedRounds = new List<GameRoundInfo>()
             {
                 new CompetitiveArtistRoundInfo()
