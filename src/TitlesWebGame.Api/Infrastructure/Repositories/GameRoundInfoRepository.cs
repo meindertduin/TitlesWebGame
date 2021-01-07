@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using TitlesWebGame.Domain.Entities;
@@ -28,7 +30,37 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
             using var connection = CreateConnection();
             var result =
                 await connection.QuerySingleOrDefaultAsync($"SELECT * FROM {TableName} WHERE Id=@Id", new {Id = id});
-            
+            return MapGameRoundInfo(result);
+        }
+
+        public async Task<List<GameRoundInfo>> GetRandomRounds(int[] categories, int amountPerCategory)
+        {
+            using var connection = CreateConnection();
+            var queryString =
+                new StringBuilder(
+                    $"SELECT * FROM {TableName} WHERE Id IN (SELECT Id FROM {TableName} WHERE GameRoundsType IN (");
+            foreach (var category in categories)
+            {
+                queryString.Append($"{category},");
+            }
+
+            queryString.Append($") ORDER BY RANDOM() LIMIT {amountPerCategory})");
+            var result = await connection.QueryAsync(queryString.ToString());
+
+            var gameRounds = new List<GameRoundInfo>();
+            foreach (var res in result)
+            {
+                var mapResult = MapGameRoundInfo(res);
+                if (mapResult != null)
+                {
+                    gameRounds.Add(mapResult);
+                }
+            }
+
+            return gameRounds;
+        }
+        
+        private GameRoundInfo MapGameRoundInfo(dynamic result){
             switch (result.Discriminator)
             {
                 case nameof(MultipleChoiceRoundInfo):
