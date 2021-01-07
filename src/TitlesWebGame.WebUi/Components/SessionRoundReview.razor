@@ -17,7 +17,7 @@
         <div class="option-button option-color-@colorOption">
             @if (GameViewModel.PreviousRoundInfo is MultipleChoiceRoundInfo previousRoundInfo)
             {
-                <MultipleChoiceAnswerDisplay Answer="@(previousRoundInfo.Answer)" Choices="@previousRoundInfo.Choices" ColorOption="@colorOption"/>
+                <MultipleChoiceAnswerDisplay Answer="@(previousRoundInfo.Answer)" Choices="@previousRoundInfo.Choices.Split(',')" ColorOption="@colorOption"/>
             }
         </div>
     </div>
