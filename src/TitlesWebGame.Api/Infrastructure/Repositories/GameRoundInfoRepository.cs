@@ -44,8 +44,13 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
                 queryString.Append($"{category},");
             }
 
-            queryString.Append($") ORDER BY RANDOM() LIMIT {amountPerCategory})");
-            var result = await connection.QueryAsync(queryString.ToString());
+            queryString
+                .Remove(queryString.Length -1, 1)
+                .Append($") ORDER BY RANDOM())");
+
+
+            var query = queryString.ToString();
+            var result = await connection.QueryAsync(query);
 
             var gameRounds = new List<GameRoundInfo>();
             foreach (var res in result)
@@ -77,5 +82,6 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
     {
         Task InsertAsync(GameRoundInfo t);
         Task<GameRoundInfo> GetAsync(int id);
+        Task<List<GameRoundInfo>> GetRandomRounds(int[] categories, int amountPerCategory);
     }
 }
