@@ -6,6 +6,6 @@ namespace TitlesWebGame.Domain.Entities
     {
         public string RoundStatement { get; set; }
         public string Answer { get; set; }
-        public string[] Choices { get; set; }
+        public string Choices { get; set; }
     }
 }

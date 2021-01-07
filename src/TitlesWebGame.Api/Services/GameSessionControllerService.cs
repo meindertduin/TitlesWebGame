@@ -68,8 +68,8 @@ namespace TitlesWebGame.Api.Services
         private async Task<List<GameRoundInfo>> GetTitleRoundRounds(int amount)
         {
             // gets title rounds the repository
-            var gameRound = await _gameRoundInfoRepository.GetAsync(1);
-            return new List<GameRoundInfo>() { gameRound };
+            return await _gameRoundInfoRepository.GetRandomRounds(
+                new[] {(int) GameRoundsType.MultipleChoiceRound, (int) GameRoundsType.CompetitiveArtistRound}, 1);
         }
 
         private async Task PlayGameRounds(GameSessionState gameSessionState)

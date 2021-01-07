@@ -39,7 +39,7 @@ namespace TitlesWebGame.Api.Services
                 {
                     RoundTimeMs = multipleChoiceRoundInfo.RoundTimeMs,
                     RewardPoints = multipleChoiceRoundInfo.RewardPoints,
-                    Choices = multipleChoiceRoundInfo.Choices,
+                    Choices = multipleChoiceRoundInfo.Choices.Split(','),
                     RoundStatement = multipleChoiceRoundInfo.RoundStatement,
                     GameRoundsType = multipleChoiceRoundInfo.GameRoundsType,
                     TitleCategory = multipleChoiceRoundInfo.TitleCategory,

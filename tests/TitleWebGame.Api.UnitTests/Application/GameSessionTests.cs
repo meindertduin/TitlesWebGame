@@ -91,7 +91,7 @@ namespace TitleWebGame.Api.Tests.Application
             return new()
             {
                 Answer = "1",
-                Choices = new []{ "bear", "zebra", "giraffe", "crocodile"},
+                Choices = "bear,zebra,giraffe,crocodile",
                 RewardPoints = 500,
                 GameRoundsType = GameRoundsType.MultipleChoiceRound,
                 RoundStatement = "What animal is primarily known for having stripes",
