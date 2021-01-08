@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
+      <UserSecretsId>b28b259d-a023-470f-b42f-c58db3b1e101</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />
@@ -12,6 +13,7 @@
 <!--        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0" PrivateAssets="all" />-->
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+        <PackageReference Include="Syncfusion.Blazor" Version="18.4.0.33" />
         <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
         <PackageReference Include="Toolbelt.Blazor.DevServer.WithCssLiveReloader" Version="5.0.1" />
     </ItemGroup>
