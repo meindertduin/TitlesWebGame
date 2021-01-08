@@ -1,6 +1,37 @@
 ﻿@page "/Admin/GameRounds"
+@using TitlesWebGame.WebUi.Models
+@using TitlesWebGame.Domain.Enums
 
+<SfGrid DataSource="GameRounds" AllowSorting="true" AllowFiltering="true" AllowGrouping="true">
+    <GridColumns>
+        <GridColumn Field="@nameof(GameRoundInfoVm.Id)" HeaderText="Id" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.GameRoundsType) HeaderText="Game round type" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.TitleCategory) HeaderText="Title category" Width="150"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.RewardPoints) HeaderText="Reward points" Width="130"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.RoundTimeMs) HeaderText="Round time ms" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.PaintingRoundTimeMs) HeaderText="Painting time ms" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.VotingRoundTimeMs) HeaderText="Voting time ms" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.Choices) HeaderText="Choices" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(GameRoundInfoVm.Answer) HeaderText="Answer" Width="120"></GridColumn>
+    </GridColumns>
+</SfGrid>
 
 @code {
+    public List<GameRoundInfoVm> GameRounds { get; set; }
     
+    protected override void OnInitialized()
+    {
+        GameRounds = new()
+        {
+            new GameRoundInfoVm()
+            {
+                GameRoundsType = GameRoundsType.CompetitiveArtistRound,
+                TitleCategory = TitleCategory.Artist,
+                RewardPoints = 500,
+                RoundTimeMs = 3000,
+            }
+        };
+        base.OnInitialized();
+    }
+
 }
