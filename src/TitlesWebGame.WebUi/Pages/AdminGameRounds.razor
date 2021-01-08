@@ -1,6 +1,6 @@
 ﻿@page "/Admin/GameRounds"
-@using TitlesWebGame.WebUi.Models
-@using TitlesWebGame.Domain.Enums
+@using TitlesWebGame.Domain.ViewModels
+@inject HttpClient Http;
 
 <SfGrid DataSource="GameRounds" AllowSorting="true" AllowFiltering="true" AllowGrouping="true">
     <GridColumns>
@@ -18,20 +18,11 @@
 
 @code {
     public List<GameRoundInfoVm> GameRounds { get; set; }
-    
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
-        GameRounds = new()
-        {
-            new GameRoundInfoVm()
-            {
-                GameRoundsType = GameRoundsType.CompetitiveArtistRound,
-                TitleCategory = TitleCategory.Artist,
-                RewardPoints = 500,
-                RoundTimeMs = 3000,
-            }
-        };
-        base.OnInitialized();
+        GameRounds = await Http.GetFromJsonAsync<List<GameRoundInfoVm>>("/api/gameroundinfo");
+        await base.OnInitializedAsync();
     }
 
 }

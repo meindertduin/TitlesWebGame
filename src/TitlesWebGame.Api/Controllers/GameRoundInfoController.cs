@@ -16,11 +16,18 @@ namespace TitlesWebGame.Api.Controllers
             _gameRoundInfoRepository = gameRoundInfoRepository;
         }
         
-        [HttpGet]
+        [HttpGet("/random")]
         public async Task<IActionResult> GetRandom()
         {
             var result = await _gameRoundInfoRepository.GetRandomRounds(
                 new[] {(int) GameRoundsType.MultipleChoiceRound, (int) GameRoundsType.CompetitiveArtistRound}, 1);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _gameRoundInfoRepository.GetAllGameRounds();
             return Ok(result);
         }
     }

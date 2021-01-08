@@ -1,6 +1,6 @@
 ﻿using TitlesWebGame.Domain.Enums;
 
-namespace TitlesWebGame.WebUi.Models
+namespace TitlesWebGame.Domain.ViewModels
 {
     public class GameRoundInfoVm
     {

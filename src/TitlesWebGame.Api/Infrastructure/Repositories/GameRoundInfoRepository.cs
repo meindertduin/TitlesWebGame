@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using TitlesWebGame.Domain.Entities;
+using TitlesWebGame.Domain.ViewModels;
 
 namespace TitlesWebGame.Api.Infrastructure.Repositories
 {
@@ -66,6 +67,13 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
 
             return gameRounds;
         }
+
+        public async Task<List<GameRoundInfoVm>> GetAllGameRounds()
+        {
+            using var connection = CreateConnection();
+            var result = await connection.QueryAsync<GameRoundInfoVm>($"SELECT * FROM {TableName}");
+            return result.ToList();
+        }
         
         private GameRoundInfo MapGameRoundInfo(dynamic result){
             switch (result.Discriminator)
@@ -85,5 +93,6 @@ namespace TitlesWebGame.Api.Infrastructure.Repositories
         Task InsertAsync(GameRoundInfo t);
         Task<GameRoundInfo> GetAsync(int id);
         Task<List<GameRoundInfo>> GetRandomRounds(int[] categories, int amountPerCategory);
+        Task<List<GameRoundInfoVm>> GetAllGameRounds();
     }
 }

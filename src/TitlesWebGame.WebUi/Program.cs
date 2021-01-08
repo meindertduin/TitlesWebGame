@@ -27,7 +27,7 @@ namespace TitlesWebGame.WebUi
             builder.Services.AddSingleton<ApplicationViewModel>();
 
             builder.Services.AddScoped(
-                sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
+                sp => new HttpClient {BaseAddress = new Uri("https://localhost:5001")});
 
             await builder.Build().RunAsync();
         }
