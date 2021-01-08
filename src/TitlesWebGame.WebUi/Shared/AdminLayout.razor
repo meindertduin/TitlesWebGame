@@ -1,0 +1,34 @@
+﻿@inherits LayoutComponentBase
+
+<div class="d-flex @NavMenuCssClass" id="wrapper">
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading">Amdin Page</div>
+    <div class="list-group list-group-flush">
+      <a href="/admin/gamerounds" class="list-group-item list-group-item-action bg-light">Manage Game rounds</a>
+    </div>
+  </div>
+
+  <div id="page-content-wrapper">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <button class="btn btn-primary" id="menu-toggle" @onclick="ToggleNavMenu">Toggle Menu</button>
+    </nav>
+
+    <div class="container-fluid" id="main">
+      @Body
+    </div>
+  </div>
+</div>
+
+@code
+{
+  private bool _collapseNavMenu = true;
+
+  private string NavMenuCssClass => _collapseNavMenu ? "toggled" : null;
+
+  private void ToggleNavMenu()
+  {
+    _collapseNavMenu = !_collapseNavMenu;
+  }
+}
+

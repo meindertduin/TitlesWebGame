@@ -11,12 +11,12 @@
 
 
 
-<div class="page">
+<div class="page gen-bg-green">
     <div class="main">
         <div class="content px-4">
             @Body
         </div>
-        <div id="errorSnackbar" class="@(_showErrorSnackbar?_showClassName:String.Empty)">
+        <div id="errorSnackbar" class="@(_showErrorSnackbar ? _showClassName : String.Empty)">
             <div class="mx-2">
                 @ApplicationViewModel.ErrorMessage
             </div>
@@ -29,7 +29,7 @@
 {
     private string _showClassName = "show";
     private bool _showErrorSnackbar;
-
+        
         private const int ErrorDisplayTime = 10;
 
     private Task _currentDisplayTask;
